@@ -19,7 +19,13 @@ export {
   createNullEmailAddress,
   isNullEmailAddress,
 } from './EmailAddress'
-export { type Location, createLocation, locationEquals } from './Location'
+export {
+  type Location,
+  createLocation,
+  locationEquals,
+  createNullLocation,
+  isNullLocation,
+} from './Location'
 export {
   type RelationshipContext,
   createRelationshipContext,

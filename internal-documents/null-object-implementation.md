@@ -52,22 +52,22 @@ Implement NullObject pattern for domain value objects to replace undefined/null 
 - [x] Test `isNullEmailAddress()` returns false for real emails
 - [x] Test null email equality with other null emails
 
-### 3. Location Null Object
+### 3. Location Null Object ✅ COMPLETE
 **File**: `src/domain/contact/Location.ts`
 
 **Tasks**:
-- [ ] Create `createNullLocation()` factory function
-- [ ] Return a singleton null location instance
-- [ ] Null location has default values: city="Unknown", country="Unknown", timezone="UTC"
-- [ ] Add `isNullLocation(location: Location): boolean` helper
+- [x] Create `createNullLocation()` factory function
+- [x] Return a singleton null location instance
+- [x] Null location has default values: city="Unknown", country="Unknown", timezone="UTC"
+- [x] Add `isNullLocation(location: Location): boolean` helper
 
 **Tests** (`src/domain/contact/__tests__/Location.test.ts`):
-- [ ] Test `createNullLocation()` returns consistent singleton
-- [ ] Test null location has expected default values
-- [ ] Test `isNullLocation()` returns true for null object
-- [ ] Test `isNullLocation()` returns false for real locations
-- [ ] Test null location equality with other null locations
-- [ ] Test null location timezone is "UTC"
+- [x] Test `createNullLocation()` returns consistent singleton
+- [x] Test null location has expected default values
+- [x] Test `isNullLocation()` returns true for null object
+- [x] Test `isNullLocation()` returns false for real locations
+- [x] Test null location equality with other null locations
+- [x] Test null location timezone is "UTC"
 
 ### 4. RelationshipContext Null Object ✅ COMPLETE
 **File**: `src/domain/contact/RelationshipContext.ts`

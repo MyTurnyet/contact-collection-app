@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { createLocation, locationEquals } from '../Location'
+import {
+  createLocation,
+  locationEquals,
+  createNullLocation,
+  isNullLocation,
+} from '../Location'
 
 describe('Location', () => {
   describe('createLocation', () => {
@@ -107,5 +112,75 @@ describe('Location', () => {
       })
 
       expect(locationEquals(loc1, loc2)).toBe(false)
+    })
+  })
+
+  describe('createNullLocation', () => {
+    it('should return consistent singleton', () => {
+      const null1 = createNullLocation()
+      const null2 = createNullLocation()
+
+      expect(null1).toBe(null2)
+    })
+
+    it('should have default values for city, country, and timezone', () => {
+      const nullLocation = createNullLocation()
+
+      expect(nullLocation.city).toBe('Unknown')
+      expect(nullLocation.country).toBe('Unknown')
+      expect(nullLocation.timezone).toBe('UTC')
+    })
+
+    it('should have undefined state', () => {
+      const nullLocation = createNullLocation()
+
+      expect(nullLocation.state).toBeUndefined()
+    })
+
+    it('should have UTC as timezone', () => {
+      const nullLocation = createNullLocation()
+
+      expect(nullLocation.timezone).toBe('UTC')
+    })
+
+    it('should be equal to other null locations', () => {
+      const null1 = createNullLocation()
+      const null2 = createNullLocation()
+
+      expect(locationEquals(null1, null2)).toBe(true)
+    })
+  })
+
+  describe('isNullLocation', () => {
+    it('should return true for null location', () => {
+      const nullLocation = createNullLocation()
+
+      expect(isNullLocation(nullLocation)).toBe(true)
+    })
+
+    it('should return false for real location', () => {
+      const location = createLocation({
+        city: 'New York',
+        country: 'USA',
+        timezone: 'America/New_York',
+      })
+
+      expect(isNullLocation(location)).toBe(false)
+    })
+
+    it('should return false for different real locations', () => {
+      const location1 = createLocation({
+        city: 'New York',
+        country: 'USA',
+        timezone: 'America/New_York',
+      })
+      const location2 = createLocation({
+        city: 'Boston',
+        country: 'USA',
+        timezone: 'America/New_York',
+      })
+
+      expect(isNullLocation(location1)).toBe(false)
+      expect(isNullLocation(location2)).toBe(false)
     })
   })

@@ -58,3 +58,18 @@ export function locationEquals(a: Location, b: Location): boolean {
     a.timezone === b.timezone
   )
 }
+
+const NULL_LOCATION: Location = Object.freeze({
+  city: 'Unknown',
+  country: 'Unknown',
+  timezone: 'UTC',
+  state: undefined,
+})
+
+export function createNullLocation(): Location {
+  return NULL_LOCATION
+}
+
+export function isNullLocation(location: Location): boolean {
+  return location === NULL_LOCATION
+}
