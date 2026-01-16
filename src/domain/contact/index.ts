@@ -9,6 +9,8 @@ export {
   type PhoneNumber,
   createPhoneNumber,
   phoneNumberEquals,
+  createNullPhoneNumber,
+  isNullPhoneNumber,
 } from './PhoneNumber'
 export {
   type EmailAddress,

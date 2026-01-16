@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { createPhoneNumber, phoneNumberEquals } from '../PhoneNumber'
+import {
+  createPhoneNumber,
+  phoneNumberEquals,
+  createNullPhoneNumber,
+  isNullPhoneNumber,
+} from '../PhoneNumber'
 
 describe('PhoneNumber', () => {
   describe('createPhoneNumber', () => {
@@ -66,6 +71,50 @@ describe('PhoneNumber', () => {
       const phone2 = createPhoneNumber('555-987-6543')
 
       expect(phoneNumberEquals(phone1, phone2)).toBe(false)
+    })
+  })
+
+  describe('createNullPhoneNumber', () => {
+    it('should return consistent singleton', () => {
+      const null1 = createNullPhoneNumber()
+      const null2 = createNullPhoneNumber()
+
+      expect(null1).toBe(null2)
+    })
+
+    it('should have empty string as display value', () => {
+      const nullPhone = createNullPhoneNumber()
+
+      expect(nullPhone).toBe('')
+    })
+
+    it('should be equal to other null phone numbers', () => {
+      const null1 = createNullPhoneNumber()
+      const null2 = createNullPhoneNumber()
+
+      expect(phoneNumberEquals(null1, null2)).toBe(true)
+    })
+  })
+
+  describe('isNullPhoneNumber', () => {
+    it('should return true for null phone number', () => {
+      const nullPhone = createNullPhoneNumber()
+
+      expect(isNullPhoneNumber(nullPhone)).toBe(true)
+    })
+
+    it('should return false for real phone number', () => {
+      const phone = createPhoneNumber('555-123-4567')
+
+      expect(isNullPhoneNumber(phone)).toBe(false)
+    })
+
+    it('should return false for different real phone numbers', () => {
+      const phone1 = createPhoneNumber('555-123-4567')
+      const phone2 = createPhoneNumber('555-987-6543')
+
+      expect(isNullPhoneNumber(phone1)).toBe(false)
+      expect(isNullPhoneNumber(phone2)).toBe(false)
     })
   })
 })

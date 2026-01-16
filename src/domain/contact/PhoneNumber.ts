@@ -41,3 +41,13 @@ function containsOnlyDigitsAndPlus(value: string): boolean {
 export function phoneNumberEquals(a: PhoneNumber, b: PhoneNumber): boolean {
   return a === b
 }
+
+const NULL_PHONE_NUMBER: PhoneNumber = '' as PhoneNumber
+
+export function createNullPhoneNumber(): PhoneNumber {
+  return NULL_PHONE_NUMBER
+}
+
+export function isNullPhoneNumber(phone: PhoneNumber): boolean {
+  return phone === NULL_PHONE_NUMBER
+}
