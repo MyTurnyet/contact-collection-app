@@ -38,3 +38,13 @@ function validateDescription(description: string): void {
     throw new Error('Description is required')
   }
 }
+
+export function importantDateEquals(
+  a: ImportantDate,
+  b: ImportantDate
+): boolean {
+  return (
+    a.date.getTime() === b.date.getTime() &&
+    a.description === b.description
+  )
+}

@@ -1,8 +1,11 @@
-import { type ContactId } from './ContactId'
-import { type PhoneNumber } from './PhoneNumber'
-import { type EmailAddress } from './EmailAddress'
-import { type Location } from './Location'
-import { type RelationshipContext } from './RelationshipContext'
+import { type ContactId, contactIdEquals } from './ContactId'
+import { type PhoneNumber, phoneNumberEquals } from './PhoneNumber'
+import { type EmailAddress, emailAddressEquals } from './EmailAddress'
+import { type Location, locationEquals } from './Location'
+import {
+  type RelationshipContext,
+  relationshipContextEquals,
+} from './RelationshipContext'
 import type ImportantDateCollection from './collections/ImportantDateCollection'
 import { createImportantDateCollection } from './collections/ImportantDateCollection'
 
@@ -60,4 +63,19 @@ function validateName(name: string): void {
   if (!name || name.trim().length === 0) {
     throw new Error('Name is required')
   }
+}
+
+export function contactEquals(a: Contact, b: Contact): boolean {
+  return (
+    contactIdEquals(a.id, b.id) &&
+    a.name === b.name &&
+    phoneNumberEquals(a.phoneNumber, b.phoneNumber) &&
+    emailAddressEquals(a.emailAddress, b.emailAddress) &&
+    locationEquals(a.location, b.location) &&
+    relationshipContextEquals(
+      a.relationshipContext,
+      b.relationshipContext
+    ) &&
+    a.importantDates === b.importantDates
+  )
 }

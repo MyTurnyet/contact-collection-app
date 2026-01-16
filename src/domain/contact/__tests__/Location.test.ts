@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createLocation } from '../Location'
+import { createLocation, locationEquals } from '../Location'
 
 describe('Location', () => {
   describe('createLocation', () => {
@@ -75,3 +75,37 @@ describe('Location', () => {
     })
   })
 })
+
+  describe("locationEquals", () => {
+    it("should return true for same locations", () => {
+      const loc1 = createLocation({
+        city: "New York",
+        state: "NY",
+        country: "USA",
+        timezone: "America/New_York",
+      })
+      const loc2 = createLocation({
+        city: "New York",
+        state: "NY",
+        country: "USA",
+        timezone: "America/New_York",
+      })
+
+      expect(locationEquals(loc1, loc2)).toBe(true)
+    })
+
+    it("should return false for different locations", () => {
+      const loc1 = createLocation({
+        city: "New York",
+        country: "USA",
+        timezone: "America/New_York",
+      })
+      const loc2 = createLocation({
+        city: "Boston",
+        country: "USA",
+        timezone: "America/New_York",
+      })
+
+      expect(locationEquals(loc1, loc2)).toBe(false)
+    })
+  })

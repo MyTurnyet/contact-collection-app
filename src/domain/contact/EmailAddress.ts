@@ -20,3 +20,10 @@ function isValidFormat(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
 }
+
+export function emailAddressEquals(
+  a: EmailAddress,
+  b: EmailAddress
+): boolean {
+  return a === b
+}

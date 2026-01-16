@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { createContactId, contactIdFromString } from '../ContactId'
+import {
+  createContactId,
+  contactIdFromString,
+  contactIdEquals,
+} from '../ContactId'
 
 describe('ContactId', () => {
   describe('createContactId', () => {
@@ -39,6 +43,23 @@ describe('ContactId', () => {
       expect(() => contactIdFromString('')).toThrow(
         'Invalid ContactId format'
       )
+    })
+  })
+
+  describe('contactIdEquals', () => {
+    it('should return true for same ContactIds', () => {
+      const uuid = '123e4567-e89b-12d3-a456-426614174000'
+      const id1 = contactIdFromString(uuid)
+      const id2 = contactIdFromString(uuid)
+
+      expect(contactIdEquals(id1, id2)).toBe(true)
+    })
+
+    it('should return false for different ContactIds', () => {
+      const id1 = createContactId()
+      const id2 = createContactId()
+
+      expect(contactIdEquals(id1, id2)).toBe(false)
     })
   })
 })

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createImportantDate } from '../ImportantDate'
+import { createImportantDate, importantDateEquals } from '../ImportantDate'
 
 describe('ImportantDate', () => {
   describe('createImportantDate', () => {
@@ -72,3 +72,44 @@ describe('ImportantDate', () => {
     })
   })
 })
+
+  describe("importantDateEquals", () => {
+    it("should return true for same dates", () => {
+      const date1 = createImportantDate({
+        date: new Date("1990-05-15"),
+        description: "Birthday",
+      })
+      const date2 = createImportantDate({
+        date: new Date("1990-05-15"),
+        description: "Birthday",
+      })
+
+      expect(importantDateEquals(date1, date2)).toBe(true)
+    })
+
+    it("should return false for different dates", () => {
+      const date1 = createImportantDate({
+        date: new Date("1990-05-15"),
+        description: "Birthday",
+      })
+      const date2 = createImportantDate({
+        date: new Date("1995-06-20"),
+        description: "Birthday",
+      })
+
+      expect(importantDateEquals(date1, date2)).toBe(false)
+    })
+
+    it("should return false for same date but different description", () => {
+      const date1 = createImportantDate({
+        date: new Date("1990-05-15"),
+        description: "Birthday",
+      })
+      const date2 = createImportantDate({
+        date: new Date("1990-05-15"),
+        description: "Anniversary",
+      })
+
+      expect(importantDateEquals(date1, date2)).toBe(false)
+    })
+  })

@@ -37,3 +37,7 @@ function isValidLength(value: string): boolean {
 function containsOnlyDigitsAndPlus(value: string): boolean {
   return /^\+\d+$/.test(value)
 }
+
+export function phoneNumberEquals(a: PhoneNumber, b: PhoneNumber): boolean {
+  return a === b
+}

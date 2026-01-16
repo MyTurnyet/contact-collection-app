@@ -15,3 +15,10 @@ function validateContext(value: string): void {
     throw new Error('Relationship context cannot be empty')
   }
 }
+
+export function relationshipContextEquals(
+  a: RelationshipContext,
+  b: RelationshipContext
+): boolean {
+  return a === b
+}

@@ -96,6 +96,20 @@ UI → Infrastructure → Application → Domain
 
 ## Domain Modeling
 
+### Validation Strategy
+- **Value objects**: Validate in factory functions (e.g., `createPhoneNumber`, `createEmailAddress`)
+  - Validation happens at construction time
+  - Invalid states cannot exist - throw errors immediately
+  - Each value object is responsible for its own validation rules
+- **Entities**: Only validate fields not covered by value objects
+  - Example: `Contact` validates the `name` field (plain string)
+  - Does NOT re-validate `phoneNumber`, `emailAddress`, etc. (already validated by value object constructors)
+- **Rationale**:
+  - Single Responsibility Principle - validation logic lives where it belongs
+  - Avoids duplication - entity validators don't repeat value object validation
+  - Guarantees correctness - invalid value objects cannot be constructed
+  - Clear error messages - validation failures occur at point of creation
+
 ### Value Objects
 - Immutable objects with validation
 - Examples: `ContactId`, `PhoneNumber`, `EmailAddress`, `CheckInFrequency`

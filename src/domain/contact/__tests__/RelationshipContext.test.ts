@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createRelationshipContext } from '../RelationshipContext'
+import { createRelationshipContext, relationshipContextEquals } from '../RelationshipContext'
 
 describe('RelationshipContext', () => {
   describe('createRelationshipContext', () => {
@@ -51,3 +51,19 @@ describe('RelationshipContext', () => {
     })
   })
 })
+
+  describe("relationshipContextEquals", () => {
+    it("should return true for same contexts", () => {
+      const context1 = createRelationshipContext("Friend")
+      const context2 = createRelationshipContext("Friend")
+
+      expect(relationshipContextEquals(context1, context2)).toBe(true)
+    })
+
+    it("should return false for different contexts", () => {
+      const context1 = createRelationshipContext("Friend")
+      const context2 = createRelationshipContext("Family")
+
+      expect(relationshipContextEquals(context1, context2)).toBe(false)
+    })
+  })

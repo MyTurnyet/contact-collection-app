@@ -49,3 +49,12 @@ function validateTimezone(timezone: string): void {
     throw new Error('Timezone is required')
   }
 }
+
+export function locationEquals(a: Location, b: Location): boolean {
+  return (
+    a.city === b.city &&
+    a.state === b.state &&
+    a.country === b.country &&
+    a.timezone === b.timezone
+  )
+}

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createPhoneNumber } from '../PhoneNumber'
+import { createPhoneNumber, phoneNumberEquals } from '../PhoneNumber'
 
 describe('PhoneNumber', () => {
   describe('createPhoneNumber', () => {
@@ -50,6 +50,22 @@ describe('PhoneNumber', () => {
       const phone = createPhoneNumber('(555) 123-4567')
 
       expect(phone).toBe('+15551234567')
+    })
+  })
+
+  describe('phoneNumberEquals', () => {
+    it('should return true for normalized same numbers', () => {
+      const phone1 = createPhoneNumber('(555) 123-4567')
+      const phone2 = createPhoneNumber('555-123-4567')
+
+      expect(phoneNumberEquals(phone1, phone2)).toBe(true)
+    })
+
+    it('should return false for different numbers', () => {
+      const phone1 = createPhoneNumber('555-123-4567')
+      const phone2 = createPhoneNumber('555-987-6543')
+
+      expect(phoneNumberEquals(phone1, phone2)).toBe(false)
     })
   })
 })

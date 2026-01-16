@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createEmailAddress } from '../EmailAddress'
+import { createEmailAddress, emailAddressEquals } from '../EmailAddress'
 
 describe('EmailAddress', () => {
   describe('createEmailAddress', () => {
@@ -68,6 +68,22 @@ describe('EmailAddress', () => {
       const email = createEmailAddress('User@EXAMPLE.COM')
 
       expect(email).toBe('user@example.com')
+    })
+  })
+
+  describe('emailAddressEquals', () => {
+    it('should return true for normalized same emails', () => {
+      const email1 = createEmailAddress('User@Example.COM')
+      const email2 = createEmailAddress('user@example.com')
+
+      expect(emailAddressEquals(email1, email2)).toBe(true)
+    })
+
+    it('should return false for different emails', () => {
+      const email1 = createEmailAddress('user1@example.com')
+      const email2 = createEmailAddress('user2@example.com')
+
+      expect(emailAddressEquals(email1, email2)).toBe(false)
     })
   })
 })

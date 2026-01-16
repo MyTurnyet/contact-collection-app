@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createContact } from '../Contact'
+import { createContact, contactEquals } from '../Contact'
 import { createContactId } from '../ContactId'
 import { createPhoneNumber } from '../PhoneNumber'
 import { createEmailAddress } from '../EmailAddress'
@@ -128,3 +128,97 @@ describe('Contact', () => {
     })
   })
 })
+
+  describe("contactEquals", () => {
+    it("should return true for same contacts", () => {
+      const id = createContactId()
+      const importantDates = createImportantDateCollection([])
+      const contact1 = createContact({
+        id,
+        name: "John Doe",
+        phoneNumber: createPhoneNumber("555-123-4567"),
+        emailAddress: createEmailAddress("john@example.com"),
+        location: createLocation({
+          city: "New York",
+          country: "USA",
+          timezone: "America/New_York",
+        }),
+        relationshipContext: createRelationshipContext("Friend"),
+        importantDates,
+      })
+      const contact2 = createContact({
+        id,
+        name: "John Doe",
+        phoneNumber: createPhoneNumber("555-123-4567"),
+        emailAddress: createEmailAddress("john@example.com"),
+        location: createLocation({
+          city: "New York",
+          country: "USA",
+          timezone: "America/New_York",
+        }),
+        relationshipContext: createRelationshipContext("Friend"),
+        importantDates,
+      })
+
+      expect(contactEquals(contact1, contact2)).toBe(true)
+    })
+
+    it("should return false for different contact names", () => {
+      const id = createContactId()
+      const contact1 = createContact({
+        id,
+        name: "John Doe",
+        phoneNumber: createPhoneNumber("555-123-4567"),
+        emailAddress: createEmailAddress("john@example.com"),
+        location: createLocation({
+          city: "New York",
+          country: "USA",
+          timezone: "America/New_York",
+        }),
+        relationshipContext: createRelationshipContext("Friend"),
+      })
+      const contact2 = createContact({
+        id,
+        name: "Jane Doe",
+        phoneNumber: createPhoneNumber("555-123-4567"),
+        emailAddress: createEmailAddress("john@example.com"),
+        location: createLocation({
+          city: "New York",
+          country: "USA",
+          timezone: "America/New_York",
+        }),
+        relationshipContext: createRelationshipContext("Friend"),
+      })
+
+      expect(contactEquals(contact1, contact2)).toBe(false)
+    })
+
+    it("should return false for different contact IDs", () => {
+      const contact1 = createContact({
+        id: createContactId(),
+        name: "John Doe",
+        phoneNumber: createPhoneNumber("555-123-4567"),
+        emailAddress: createEmailAddress("john@example.com"),
+        location: createLocation({
+          city: "New York",
+          country: "USA",
+          timezone: "America/New_York",
+        }),
+        relationshipContext: createRelationshipContext("Friend"),
+      })
+      const contact2 = createContact({
+        id: createContactId(),
+        name: "John Doe",
+        phoneNumber: createPhoneNumber("555-123-4567"),
+        emailAddress: createEmailAddress("john@example.com"),
+        location: createLocation({
+          city: "New York",
+          country: "USA",
+          timezone: "America/New_York",
+        }),
+        relationshipContext: createRelationshipContext("Friend"),
+      })
+
+      expect(contactEquals(contact1, contact2)).toBe(false)
+    })
+  })

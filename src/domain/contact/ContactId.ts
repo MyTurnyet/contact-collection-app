@@ -16,3 +16,7 @@ export function contactIdFromString(value: string): ContactId {
 function isValidUuid(value: string): boolean {
   return value.length > 0 && validateUuid(value)
 }
+
+export function contactIdEquals(a: ContactId, b: ContactId): boolean {
+  return a === b
+}
