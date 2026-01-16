@@ -16,6 +16,8 @@ export {
   type EmailAddress,
   createEmailAddress,
   emailAddressEquals,
+  createNullEmailAddress,
+  isNullEmailAddress,
 } from './EmailAddress'
 export { type Location, createLocation, locationEquals } from './Location'
 export {

@@ -20,37 +20,37 @@ Implement NullObject pattern for domain value objects to replace undefined/null 
 
 ## Contact Domain - Value Objects
 
-### 1. PhoneNumber Null Object
+### 1. PhoneNumber Null Object ✅ COMPLETE
 **File**: `src/domain/contact/PhoneNumber.ts`
 
 **Tasks**:
-- [ ] Create `createNullPhoneNumber()` factory function
-- [ ] Return a singleton null phone number instance
-- [ ] Null phone displays as empty string or "No phone"
-- [ ] Add `isNullPhoneNumber(phone: PhoneNumber): boolean` helper
+- [x] Create `createNullPhoneNumber()` factory function
+- [x] Return a singleton null phone number instance
+- [x] Null phone displays as empty string
+- [x] Add `isNullPhoneNumber(phone: PhoneNumber): boolean` helper
 
 **Tests** (`src/domain/contact/__tests__/PhoneNumber.test.ts`):
-- [ ] Test `createNullPhoneNumber()` returns consistent singleton
-- [ ] Test null phone number has expected display value
-- [ ] Test `isNullPhoneNumber()` returns true for null object
-- [ ] Test `isNullPhoneNumber()` returns false for real phone numbers
-- [ ] Test null phone number equality with other null phone numbers
+- [x] Test `createNullPhoneNumber()` returns consistent singleton
+- [x] Test null phone number has expected display value
+- [x] Test `isNullPhoneNumber()` returns true for null object
+- [x] Test `isNullPhoneNumber()` returns false for real phone numbers
+- [x] Test null phone number equality with other null phone numbers
 
-### 2. EmailAddress Null Object
+### 2. EmailAddress Null Object ✅ COMPLETE
 **File**: `src/domain/contact/EmailAddress.ts`
 
 **Tasks**:
-- [ ] Create `createNullEmailAddress()` factory function
-- [ ] Return a singleton null email instance
-- [ ] Null email displays as empty string or "No email"
-- [ ] Add `isNullEmailAddress(email: EmailAddress): boolean` helper
+- [x] Create `createNullEmailAddress()` factory function
+- [x] Return a singleton null email instance
+- [x] Null email displays as empty string
+- [x] Add `isNullEmailAddress(email: EmailAddress): boolean` helper
 
 **Tests** (`src/domain/contact/__tests__/EmailAddress.test.ts`):
-- [ ] Test `createNullEmailAddress()` returns consistent singleton
-- [ ] Test null email has expected display value
-- [ ] Test `isNullEmailAddress()` returns true for null object
-- [ ] Test `isNullEmailAddress()` returns false for real emails
-- [ ] Test null email equality with other null emails
+- [x] Test `createNullEmailAddress()` returns consistent singleton
+- [x] Test null email has expected display value
+- [x] Test `isNullEmailAddress()` returns true for null object
+- [x] Test `isNullEmailAddress()` returns false for real emails
+- [x] Test null email equality with other null emails
 
 ### 3. Location Null Object
 **File**: `src/domain/contact/Location.ts`

@@ -27,3 +27,13 @@ export function emailAddressEquals(
 ): boolean {
   return a === b
 }
+
+const NULL_EMAIL_ADDRESS: EmailAddress = '' as EmailAddress
+
+export function createNullEmailAddress(): EmailAddress {
+  return NULL_EMAIL_ADDRESS
+}
+
+export function isNullEmailAddress(email: EmailAddress): boolean {
+  return email === NULL_EMAIL_ADDRESS
+}

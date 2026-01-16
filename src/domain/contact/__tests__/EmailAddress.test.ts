@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { createEmailAddress, emailAddressEquals } from '../EmailAddress'
+import {
+  createEmailAddress,
+  emailAddressEquals,
+  createNullEmailAddress,
+  isNullEmailAddress,
+} from '../EmailAddress'
 
 describe('EmailAddress', () => {
   describe('createEmailAddress', () => {
@@ -84,6 +89,50 @@ describe('EmailAddress', () => {
       const email2 = createEmailAddress('user2@example.com')
 
       expect(emailAddressEquals(email1, email2)).toBe(false)
+    })
+  })
+
+  describe('createNullEmailAddress', () => {
+    it('should return consistent singleton', () => {
+      const null1 = createNullEmailAddress()
+      const null2 = createNullEmailAddress()
+
+      expect(null1).toBe(null2)
+    })
+
+    it('should have empty string as display value', () => {
+      const nullEmail = createNullEmailAddress()
+
+      expect(nullEmail).toBe('')
+    })
+
+    it('should be equal to other null email addresses', () => {
+      const null1 = createNullEmailAddress()
+      const null2 = createNullEmailAddress()
+
+      expect(emailAddressEquals(null1, null2)).toBe(true)
+    })
+  })
+
+  describe('isNullEmailAddress', () => {
+    it('should return true for null email address', () => {
+      const nullEmail = createNullEmailAddress()
+
+      expect(isNullEmailAddress(nullEmail)).toBe(true)
+    })
+
+    it('should return false for real email address', () => {
+      const email = createEmailAddress('user@example.com')
+
+      expect(isNullEmailAddress(email)).toBe(false)
+    })
+
+    it('should return false for different real email addresses', () => {
+      const email1 = createEmailAddress('user1@example.com')
+      const email2 = createEmailAddress('user2@example.com')
+
+      expect(isNullEmailAddress(email1)).toBe(false)
+      expect(isNullEmailAddress(email2)).toBe(false)
     })
   })
 })
