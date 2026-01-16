@@ -10,12 +10,24 @@ import { createImportantDateCollection } from '../collections/ImportantDateColle
 
 describe('Contact', () => {
   describe('createContact', () => {
-    it('should create Contact with all required fields', () => {
+    it('should create Contact with only name', () => {
       const contact = createContact({
         id: createContactId(),
         name: 'John Doe',
-        phoneNumber: createPhoneNumber('555-123-4567'),
-        emailAddress: createEmailAddress('john@example.com'),
+      })
+
+      expect(contact).toBeDefined()
+      expect(contact.name).toBe('John Doe')
+      expect(contact.phone).toBeUndefined()
+      expect(contact.email).toBeUndefined()
+    })
+
+    it('should create Contact with all fields', () => {
+      const contact = createContact({
+        id: createContactId(),
+        name: 'John Doe',
+        phone: createPhoneNumber('555-123-4567'),
+        email: createEmailAddress('john@example.com'),
         location: createLocation({
           city: 'New York',
           state: 'NY',
@@ -27,6 +39,8 @@ describe('Contact', () => {
 
       expect(contact).toBeDefined()
       expect(contact.name).toBe('John Doe')
+      expect(contact.phone).toBe('+15551234567')
+      expect(contact.email).toBe('john@example.com')
     })
 
     it('should create Contact with important dates', () => {
@@ -38,8 +52,8 @@ describe('Contact', () => {
       const contact = createContact({
         id: createContactId(),
         name: 'Jane Smith',
-        phoneNumber: createPhoneNumber('555-987-6543'),
-        emailAddress: createEmailAddress('jane@example.com'),
+        phone: createPhoneNumber('555-987-6543'),
+        email: createEmailAddress('jane@example.com'),
         location: createLocation({
           city: 'Seattle',
           state: 'WA',
@@ -58,15 +72,8 @@ describe('Contact', () => {
       const contact = createContact({
         id: createContactId(),
         name: 'Bob Johnson',
-        phoneNumber: createPhoneNumber('555-111-2222'),
-        emailAddress: createEmailAddress('bob@example.com'),
-        location: createLocation({
-          city: 'Austin',
-          state: 'TX',
-          country: 'USA',
-          timezone: 'America/Chicago',
-        }),
-        relationshipContext: createRelationshipContext('Coworker'),
+        phone: createPhoneNumber('555-111-2222'),
+        email: createEmailAddress('bob@example.com'),
       })
 
       expect(contact.importantDates.isEmpty()).toBe(true)
@@ -78,14 +85,6 @@ describe('Contact', () => {
         createContact({
           id: createContactId(),
           name: '',
-          phoneNumber: createPhoneNumber('555-123-4567'),
-          emailAddress: createEmailAddress('test@example.com'),
-          location: createLocation({
-            city: 'New York',
-            country: 'USA',
-            timezone: 'America/New_York',
-          }),
-          relationshipContext: createRelationshipContext('Friend'),
         })
       ).toThrow('Name is required')
     })
@@ -94,14 +93,6 @@ describe('Contact', () => {
       const contact = createContact({
         id: createContactId(),
         name: '  Alice Williams  ',
-        phoneNumber: createPhoneNumber('555-333-4444'),
-        emailAddress: createEmailAddress('alice@example.com'),
-        location: createLocation({
-          city: 'Boston',
-          country: 'USA',
-          timezone: 'America/New_York',
-        }),
-        relationshipContext: createRelationshipContext('Friend'),
       })
 
       expect(contact.name).toBe('Alice Williams')
@@ -111,14 +102,6 @@ describe('Contact', () => {
       const contact = createContact({
         id: createContactId(),
         name: 'Test User',
-        phoneNumber: createPhoneNumber('555-555-5555'),
-        emailAddress: createEmailAddress('test@example.com'),
-        location: createLocation({
-          city: 'Denver',
-          country: 'USA',
-          timezone: 'America/Denver',
-        }),
-        relationshipContext: createRelationshipContext('Acquaintance'),
       })
 
       expect(() => {
@@ -130,14 +113,14 @@ describe('Contact', () => {
 })
 
   describe("contactEquals", () => {
-    it("should return true for same contacts", () => {
+    it("should return true for same contacts with all fields", () => {
       const id = createContactId()
       const importantDates = createImportantDateCollection([])
       const contact1 = createContact({
         id,
         name: "John Doe",
-        phoneNumber: createPhoneNumber("555-123-4567"),
-        emailAddress: createEmailAddress("john@example.com"),
+        phone: createPhoneNumber("555-123-4567"),
+        email: createEmailAddress("john@example.com"),
         location: createLocation({
           city: "New York",
           country: "USA",
@@ -149,8 +132,8 @@ describe('Contact', () => {
       const contact2 = createContact({
         id,
         name: "John Doe",
-        phoneNumber: createPhoneNumber("555-123-4567"),
-        emailAddress: createEmailAddress("john@example.com"),
+        phone: createPhoneNumber("555-123-4567"),
+        email: createEmailAddress("john@example.com"),
         location: createLocation({
           city: "New York",
           country: "USA",
@@ -163,31 +146,32 @@ describe('Contact', () => {
       expect(contactEquals(contact1, contact2)).toBe(true)
     })
 
+    it("should return true for same contacts with only name", () => {
+      const id = createContactId()
+      const importantDates = createImportantDateCollection([])
+      const contact1 = createContact({
+        id,
+        name: "John Doe",
+        importantDates,
+      })
+      const contact2 = createContact({
+        id,
+        name: "John Doe",
+        importantDates,
+      })
+
+      expect(contactEquals(contact1, contact2)).toBe(true)
+    })
+
     it("should return false for different contact names", () => {
       const id = createContactId()
       const contact1 = createContact({
         id,
         name: "John Doe",
-        phoneNumber: createPhoneNumber("555-123-4567"),
-        emailAddress: createEmailAddress("john@example.com"),
-        location: createLocation({
-          city: "New York",
-          country: "USA",
-          timezone: "America/New_York",
-        }),
-        relationshipContext: createRelationshipContext("Friend"),
       })
       const contact2 = createContact({
         id,
         name: "Jane Doe",
-        phoneNumber: createPhoneNumber("555-123-4567"),
-        emailAddress: createEmailAddress("john@example.com"),
-        location: createLocation({
-          city: "New York",
-          country: "USA",
-          timezone: "America/New_York",
-        }),
-        relationshipContext: createRelationshipContext("Friend"),
       })
 
       expect(contactEquals(contact1, contact2)).toBe(false)
@@ -197,26 +181,10 @@ describe('Contact', () => {
       const contact1 = createContact({
         id: createContactId(),
         name: "John Doe",
-        phoneNumber: createPhoneNumber("555-123-4567"),
-        emailAddress: createEmailAddress("john@example.com"),
-        location: createLocation({
-          city: "New York",
-          country: "USA",
-          timezone: "America/New_York",
-        }),
-        relationshipContext: createRelationshipContext("Friend"),
       })
       const contact2 = createContact({
         id: createContactId(),
         name: "John Doe",
-        phoneNumber: createPhoneNumber("555-123-4567"),
-        emailAddress: createEmailAddress("john@example.com"),
-        location: createLocation({
-          city: "New York",
-          country: "USA",
-          timezone: "America/New_York",
-        }),
-        relationshipContext: createRelationshipContext("Friend"),
       })
 
       expect(contactEquals(contact1, contact2)).toBe(false)

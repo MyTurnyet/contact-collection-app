@@ -1,0 +1,250 @@
+# Null Object Pattern Implementation Tasks
+
+## Overview
+Implement NullObject pattern for domain value objects to replace undefined/null checks with explicit, safe default objects that implement the same interface.
+
+## Benefits
+- Eliminate null/undefined checks throughout the codebase
+- Provide safe, predictable default behavior
+- Make code more readable and maintainable
+- Reduce potential null reference errors
+
+## Implementation Principles
+1. Null objects should be immutable singletons
+2. Null objects should implement the same interface as real objects
+3. Null objects should be identifiable via `isNull()` method or similar
+4. Null objects should provide safe default behavior
+5. All null objects should be tested
+
+---
+
+## Contact Domain - Value Objects
+
+### 1. PhoneNumber Null Object
+**File**: `src/domain/contact/PhoneNumber.ts`
+
+**Tasks**:
+- [ ] Create `createNullPhoneNumber()` factory function
+- [ ] Return a singleton null phone number instance
+- [ ] Null phone displays as empty string or "No phone"
+- [ ] Add `isNullPhoneNumber(phone: PhoneNumber): boolean` helper
+
+**Tests** (`src/domain/contact/__tests__/PhoneNumber.test.ts`):
+- [ ] Test `createNullPhoneNumber()` returns consistent singleton
+- [ ] Test null phone number has expected display value
+- [ ] Test `isNullPhoneNumber()` returns true for null object
+- [ ] Test `isNullPhoneNumber()` returns false for real phone numbers
+- [ ] Test null phone number equality with other null phone numbers
+
+### 2. EmailAddress Null Object
+**File**: `src/domain/contact/EmailAddress.ts`
+
+**Tasks**:
+- [ ] Create `createNullEmailAddress()` factory function
+- [ ] Return a singleton null email instance
+- [ ] Null email displays as empty string or "No email"
+- [ ] Add `isNullEmailAddress(email: EmailAddress): boolean` helper
+
+**Tests** (`src/domain/contact/__tests__/EmailAddress.test.ts`):
+- [ ] Test `createNullEmailAddress()` returns consistent singleton
+- [ ] Test null email has expected display value
+- [ ] Test `isNullEmailAddress()` returns true for null object
+- [ ] Test `isNullEmailAddress()` returns false for real emails
+- [ ] Test null email equality with other null emails
+
+### 3. Location Null Object
+**File**: `src/domain/contact/Location.ts`
+
+**Tasks**:
+- [ ] Create `createNullLocation()` factory function
+- [ ] Return a singleton null location instance
+- [ ] Null location has default values: city="Unknown", country="Unknown", timezone="UTC"
+- [ ] Add `isNullLocation(location: Location): boolean` helper
+
+**Tests** (`src/domain/contact/__tests__/Location.test.ts`):
+- [ ] Test `createNullLocation()` returns consistent singleton
+- [ ] Test null location has expected default values
+- [ ] Test `isNullLocation()` returns true for null object
+- [ ] Test `isNullLocation()` returns false for real locations
+- [ ] Test null location equality with other null locations
+- [ ] Test null location timezone is "UTC"
+
+### 4. RelationshipContext Null Object
+**File**: `src/domain/contact/RelationshipContext.ts`
+
+**Tasks**:
+- [ ] Create `createNullRelationshipContext()` factory function
+- [ ] Return a singleton null relationship instance
+- [ ] Null relationship displays as "Unspecified" or empty string
+- [ ] Add `isNullRelationshipContext(context: RelationshipContext): boolean` helper
+
+**Tests** (`src/domain/contact/__tests__/RelationshipContext.test.ts`):
+- [ ] Test `createNullRelationshipContext()` returns consistent singleton
+- [ ] Test null relationship has expected display value
+- [ ] Test `isNullRelationshipContext()` returns true for null object
+- [ ] Test `isNullRelationshipContext()` returns false for real contexts
+- [ ] Test null relationship equality with other null relationships
+
+---
+
+## Category Domain - Value Objects
+
+### 5. Category Null Object
+**File**: `src/domain/category/Category.ts`
+
+**Tasks**:
+- [ ] Create `createNullCategory()` factory function
+- [ ] Null category represents "Uncategorized" or "No Category"
+- [ ] Null category should have a special CategoryId (e.g., "00000000-0000-0000-0000-000000000000")
+- [ ] Null category name: "Uncategorized"
+- [ ] Null category frequency: create a NullCheckInFrequency (never checks in)
+- [ ] Add `isNullCategory(category: Category): boolean` helper
+
+**Tests** (`src/domain/category/__tests__/Category.test.ts`):
+- [ ] Test `createNullCategory()` returns consistent singleton
+- [ ] Test null category has special ID
+- [ ] Test null category name is "Uncategorized"
+- [ ] Test null category has null frequency
+- [ ] Test `isNullCategory()` returns true for null object
+- [ ] Test `isNullCategory()` returns false for real categories
+- [ ] Test null category equality with other null categories
+
+### 6. CheckInFrequency Null Object
+**File**: `src/domain/category/CheckInFrequency.ts`
+
+**Tasks**:
+- [ ] Create `createNullCheckInFrequency()` factory function
+- [ ] Null frequency represents "Never" or no check-ins
+- [ ] Null frequency has 0 days value or special marker
+- [ ] Add `isNullCheckInFrequency(frequency: CheckInFrequency): boolean` helper
+
+**Tests** (`src/domain/category/__tests__/CheckInFrequency.test.ts`):
+- [ ] Test `createNullCheckInFrequency()` returns consistent singleton
+- [ ] Test null frequency has 0 or special value for days
+- [ ] Test null frequency display shows "Never" or appropriate text
+- [ ] Test `isNullCheckInFrequency()` returns true for null object
+- [ ] Test `isNullCheckInFrequency()` returns false for real frequencies
+- [ ] Test null frequency equality with other null frequencies
+
+---
+
+## Contact Entity Updates
+
+### 7. Update Contact to Use Null Objects
+**File**: `src/domain/contact/Contact.ts`
+
+**Tasks**:
+- [ ] Update Contact interface to use null objects instead of optional fields
+- [ ] Change `phone?: PhoneNumber` to `phone: PhoneNumber`
+- [ ] Change `email?: EmailAddress` to `email: EmailAddress`
+- [ ] Change `location?: Location` to `location: Location`
+- [ ] Change `relationshipContext?: RelationshipContext` to `relationshipContext: RelationshipContext`
+- [ ] Update `createContact()` to use null objects for missing values
+- [ ] Update `contactEquals()` to handle null object comparisons
+- [ ] Remove optional equality helper functions (no longer needed)
+
+**Tests** (`src/domain/contact/__tests__/Contact.test.ts`):
+- [ ] Update test: "should create Contact with only name" to verify null objects
+- [ ] Test contact with only name has null phone, email, location, relationship
+- [ ] Test `contactEquals()` works with null objects
+- [ ] Test contacts with different null/real values are not equal
+- [ ] Remove or update tests that check for undefined values
+
+---
+
+## Application Layer Updates
+
+### 8. Update CreateContact Use Case
+**File**: `src/application/contacts/CreateContact.ts`
+
+**Tasks**:
+- [ ] Update `buildContact()` to use null objects instead of undefined
+- [ ] Update `buildLocation()` to return null location instead of undefined
+- [ ] Update `buildRelationshipContext()` to return null context instead of undefined
+- [ ] Update phone/email handling to use null objects
+
+**Tests** (`src/application/contacts/__tests__/CreateContact.test.ts`):
+- [ ] Update tests to verify null objects are used for missing fields
+- [ ] Test contact with only name has null objects for other fields
+- [ ] Verify saved contacts use null objects appropriately
+
+---
+
+## Domain Index Exports
+
+### 9. Update Domain Module Exports
+**File**: `src/domain/contact/index.ts`
+
+**Tasks**:
+- [ ] Export all null object factory functions
+- [ ] Export all `isNull*()` helper functions
+- [ ] Ensure consistent API across all value objects
+
+**File**: `src/domain/category/index.ts`
+
+**Tasks**:
+- [ ] Export null category and frequency factories
+- [ ] Export `isNull*()` helper functions
+
+---
+
+## Documentation
+
+### 10. Document Null Object Pattern Usage
+
+**File**: `internal-documents/null-object-pattern.md` (new file)
+
+**Tasks**:
+- [ ] Document when to use null objects vs optional values
+- [ ] Provide examples of checking for null objects
+- [ ] Document the singleton pattern used for null objects
+- [ ] Explain benefits and trade-offs
+
+---
+
+## Testing Strategy
+
+### General Test Requirements
+For each null object implementation:
+1. **Singleton test**: Verify same instance returned on multiple calls
+2. **Identity test**: Verify `isNull*()` correctly identifies null objects
+3. **Equality test**: Verify null objects equal other null objects
+4. **Behavior test**: Verify null object provides safe default behavior
+5. **Display test**: Verify null object has appropriate string representation
+
+### Integration Testing
+- [ ] Run full test suite after implementation
+- [ ] Verify no regressions in existing tests
+- [ ] Ensure all domain tests pass with null objects
+- [ ] Ensure all application tests pass with null objects
+
+---
+
+## Implementation Order
+
+Recommended sequence:
+1. Start with simple value objects (PhoneNumber, EmailAddress, RelationshipContext)
+2. Implement Location null object
+3. Implement CheckInFrequency null object
+4. Implement Category null object
+5. Update Contact entity to use null objects
+6. Update CreateContact use case
+7. Update domain exports
+8. Run full test suite and fix any issues
+9. Write documentation
+
+---
+
+## Validation Checklist
+
+Before considering this task complete:
+- [ ] All null object factories implemented and tested
+- [ ] All `isNull*()` helpers implemented and tested
+- [ ] Contact entity updated to use null objects
+- [ ] Application layer updated to use null objects
+- [ ] All exports updated
+- [ ] Full test suite passes
+- [ ] No undefined checks remain in domain/application layers
+- [ ] Documentation written
+- [ ] Code follows 8-line method limit
+- [ ] Code follows cognitive complexity limit of 4

@@ -12,20 +12,20 @@ import { createImportantDateCollection } from './collections/ImportantDateCollec
 export interface Contact {
   readonly id: ContactId
   readonly name: string
-  readonly phoneNumber: PhoneNumber
-  readonly emailAddress: EmailAddress
-  readonly location: Location
-  readonly relationshipContext: RelationshipContext
+  readonly phone?: PhoneNumber
+  readonly email?: EmailAddress
+  readonly location?: Location
+  readonly relationshipContext?: RelationshipContext
   readonly importantDates: ImportantDateCollection
 }
 
 interface ContactInput {
   id: ContactId
   name: string
-  phoneNumber: PhoneNumber
-  emailAddress: EmailAddress
-  location: Location
-  relationshipContext: RelationshipContext
+  phone?: PhoneNumber
+  email?: EmailAddress
+  location?: Location
+  relationshipContext?: RelationshipContext
   importantDates?: ImportantDateCollection
 }
 
@@ -52,8 +52,8 @@ function buildBaseContact(input: ContactInput) {
   return {
     id: input.id,
     name: input.name.trim(),
-    phoneNumber: input.phoneNumber,
-    emailAddress: input.emailAddress,
+    phone: input.phone,
+    email: input.email,
     location: input.location,
     relationshipContext: input.relationshipContext,
   }
@@ -69,13 +69,37 @@ export function contactEquals(a: Contact, b: Contact): boolean {
   return (
     contactIdEquals(a.id, b.id) &&
     a.name === b.name &&
-    phoneNumberEquals(a.phoneNumber, b.phoneNumber) &&
-    emailAddressEquals(a.emailAddress, b.emailAddress) &&
-    locationEquals(a.location, b.location) &&
-    relationshipContextEquals(
-      a.relationshipContext,
-      b.relationshipContext
-    ) &&
+    optionalPhoneEquals(a.phone, b.phone) &&
+    optionalEmailEquals(a.email, b.email) &&
+    optionalLocationEquals(a.location, b.location) &&
+    optionalRelationshipEquals(a.relationshipContext, b.relationshipContext) &&
     a.importantDates === b.importantDates
   )
+}
+
+function optionalPhoneEquals(a?: PhoneNumber, b?: PhoneNumber): boolean {
+  if (a === undefined && b === undefined) return true
+  if (a === undefined || b === undefined) return false
+  return phoneNumberEquals(a, b)
+}
+
+function optionalEmailEquals(a?: EmailAddress, b?: EmailAddress): boolean {
+  if (a === undefined && b === undefined) return true
+  if (a === undefined || b === undefined) return false
+  return emailAddressEquals(a, b)
+}
+
+function optionalLocationEquals(a?: Location, b?: Location): boolean {
+  if (a === undefined && b === undefined) return true
+  if (a === undefined || b === undefined) return false
+  return locationEquals(a, b)
+}
+
+function optionalRelationshipEquals(
+  a?: RelationshipContext,
+  b?: RelationshipContext
+): boolean {
+  if (a === undefined && b === undefined) return true
+  if (a === undefined || b === undefined) return false
+  return relationshipContextEquals(a, b)
 }
