@@ -6,6 +6,7 @@ import { createEmailAddress } from '../EmailAddress'
 import { createLocation } from '../Location'
 import { createRelationshipContext } from '../RelationshipContext'
 import { createImportantDate } from '../ImportantDate'
+import { createImportantDateCollection } from '../ImportantDateCollection'
 
 describe('Contact', () => {
   describe('createContact', () => {
@@ -46,11 +47,11 @@ describe('Contact', () => {
           timezone: 'America/Los_Angeles',
         }),
         relationshipContext: createRelationshipContext('Family'),
-        importantDates: [birthday],
+        importantDates: createImportantDateCollection([birthday]),
       })
 
-      expect(contact.importantDates).toHaveLength(1)
-      expect(contact.importantDates?.[0].description).toBe('Birthday')
+      expect(contact.importantDates.size).toBe(1)
+      expect(contact.importantDates.isEmpty()).toBe(false)
     })
 
     it('should create Contact without important dates', () => {
@@ -68,7 +69,8 @@ describe('Contact', () => {
         relationshipContext: createRelationshipContext('Coworker'),
       })
 
-      expect(contact.importantDates).toBeUndefined()
+      expect(contact.importantDates.isEmpty()).toBe(true)
+      expect(contact.importantDates.size).toBe(0)
     })
 
     it('should throw error for empty name', () => {

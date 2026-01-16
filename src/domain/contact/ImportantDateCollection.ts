@@ -1,4 +1,4 @@
-import type {ImportantDate} from "./ImportantDate.ts";
+import type { ImportantDate } from './ImportantDate'
 
 class ImportantDateCollection {
     get size(): number {

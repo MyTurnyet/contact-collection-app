@@ -3,7 +3,8 @@ import { type PhoneNumber } from './PhoneNumber'
 import { type EmailAddress } from './EmailAddress'
 import { type Location } from './Location'
 import { type RelationshipContext } from './RelationshipContext'
-import { type ImportantDate } from './ImportantDate'
+import type ImportantDateCollection from './ImportantDateCollection'
+import { createImportantDateCollection } from './ImportantDateCollection'
 
 export interface Contact {
   readonly id: ContactId
@@ -12,7 +13,7 @@ export interface Contact {
   readonly emailAddress: EmailAddress
   readonly location: Location
   readonly relationshipContext: RelationshipContext
-  readonly importantDates?: ImportantDate[]
+  readonly importantDates: ImportantDateCollection
 }
 
 interface ContactInput {
@@ -22,7 +23,7 @@ interface ContactInput {
   emailAddress: EmailAddress
   location: Location
   relationshipContext: RelationshipContext
-  importantDates?: ImportantDate[]
+  importantDates?: ImportantDateCollection
 }
 
 export function createContact(input: ContactInput): Contact {
@@ -36,7 +37,12 @@ function validateContact(input: ContactInput): void {
 
 function buildContact(input: ContactInput): Contact {
   const baseContact = buildBaseContact(input)
-  return { ...baseContact, importantDates: input.importantDates }
+  const dates = getImportantDates(input)
+  return { ...baseContact, importantDates: dates }
+}
+
+function getImportantDates(input: ContactInput) {
+  return input.importantDates ?? createImportantDateCollection([])
 }
 
 function buildBaseContact(input: ContactInput) {

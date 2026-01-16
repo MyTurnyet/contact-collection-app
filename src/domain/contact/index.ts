@@ -5,6 +5,7 @@ export { type EmailAddress, createEmailAddress } from './EmailAddress'
 export { type Location, createLocation } from './Location'
 export { type RelationshipContext, createRelationshipContext } from './RelationshipContext'
 export { type ImportantDate, createImportantDate } from './ImportantDate'
+export { default as ImportantDateCollection, createImportantDateCollection } from './ImportantDateCollection'
 
 // Entity
 export { type Contact, createContact } from './Contact'

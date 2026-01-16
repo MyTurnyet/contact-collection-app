@@ -1,6 +1,6 @@
-import {describe, it, expect} from 'vitest'
-import ImportantDateCollection, {createImportantDateCollection} from "../ImportantDateCollection.ts";
-import {createImportantDate} from "../ImportantDate.ts";
+import { describe, it, expect } from 'vitest'
+import ImportantDateCollection, { createImportantDateCollection } from '../ImportantDateCollection'
+import { createImportantDate } from '../ImportantDate'
 
 
 describe('ImportantDateCollection', () => {
