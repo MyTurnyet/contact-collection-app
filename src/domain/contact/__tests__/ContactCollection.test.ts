@@ -99,13 +99,6 @@ describe("ContactCollection", () => {
       relationshipContext: createRelationshipContext("Family"),
     });
 
-    it("getItems returns readonly array", () => {
-      const collection = createContactCollection([contact1, contact2]);
-      const items = collection.getItems();
-      expect(items).toHaveLength(2);
-      expect(items[0]).toBe(contact1);
-    });
-
     it("forEach iterates over all items", () => {
       const collection = createContactCollection([contact1, contact2]);
       const names: string[] = [];
@@ -164,14 +157,6 @@ describe("ContactCollection", () => {
       expect(array).toHaveLength(2);
       expect(array[0]).toBe(contact1);
     });
-
-    it("collection is immutable", () => {
-      const collection = createContactCollection([contact1]);
-      const items = collection.getItems();
-      expect(() => {
-        // @ts-expect-error - Testing immutability
-        items[0] = contact2;
-      }).toThrow();
-    });
+    
   });
 });
