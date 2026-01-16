@@ -69,23 +69,26 @@ src/
 
 ## Phase 2: Domain Model (TDD)
 
-### 2.1 Contact Domain
-- [ ] Test & implement `ContactId` value object (UUID wrapper)
-- [ ] Test & implement `PhoneNumber` value object with validation
-- [ ] Test & implement `EmailAddress` value object with validation
-- [ ] Test & implement `Location` value object with timezone
-- [ ] Test & implement `RelationshipContext` value object
-- [ ] Test & implement `ImportantDate` value object
-- [ ] Test & implement `Contact` entity (immutable)
-- [ ] Test & implement `ContactRepository` interface
+### 2.1 Contact Domain ✅ COMPLETE
+- [x] Test & implement `ContactId` value object (UUID wrapper)
+- [x] Test & implement `PhoneNumber` value object with validation
+- [x] Test & implement `EmailAddress` value object with validation
+- [x] Test & implement `Location` value object with timezone
+- [x] Test & implement `RelationshipContext` value object
+- [x] Test & implement `ImportantDate` value object
+- [x] Test & implement `Contact` entity (immutable)
+- [x] Test & implement `ContactRepository` interface
+- [x] Test & implement `ContactCollection` and `ImportantDateCollection` (with BaseCollection)
+- [x] Add equality methods to all value objects and Contact entity
+- [x] Document validation strategy in .claude/rules.md
 
-### 2.2 Category Domain
-- [ ] Test & implement `CategoryId` value object (UUID wrapper)
-- [ ] Test & implement `CategoryName` value object with validation
-- [ ] Test & implement `CheckInFrequency` value object (days/weeks/months)
-- [ ] Test & implement `Category` entity (immutable)
-- [ ] Test & implement `CategoryRepository` interface
-- [ ] Create default categories factory
+### 2.2 Category Domain ✅ COMPLETE
+- [x] Test & implement `CategoryId` value object (UUID wrapper)
+- [x] Test & implement `CategoryName` value object with validation
+- [x] Test & implement `CheckInFrequency` value object (days/weeks/months)
+- [x] Test & implement `Category` entity (immutable)
+- [x] Test & implement `CategoryRepository` interface
+- [x] Create default categories factory
 
 ### 2.3 Check-in Domain
 - [ ] Test & implement `CheckInId` value object (UUID wrapper)
