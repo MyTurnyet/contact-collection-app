@@ -15,7 +15,15 @@ export {
   type FrequencyUnit,
   createCheckInFrequency,
   checkInFrequencyEquals,
+  compareFrequencies,
+  formatFrequency,
 } from './CheckInFrequency'
+
+// Collections
+export {
+  default as CategoryCollection,
+  createCategoryCollection,
+} from './collections/CategoryCollection'
 
 // Entity
 export { type Category, createCategory, categoryEquals } from './Category'

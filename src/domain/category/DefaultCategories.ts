@@ -1,54 +1,38 @@
 import { type Category, createCategory } from './Category'
 import { createCategoryId } from './CategoryId'
 import { createCategoryName } from './CategoryName'
-import { createCheckInFrequency } from './CheckInFrequency'
+import {
+  createCheckInFrequency,
+  type FrequencyUnit,
+} from './CheckInFrequency'
+
+interface DefaultCategoryConfig {
+  name: string
+  value: number
+  unit: FrequencyUnit
+}
+
+const DEFAULT_CATEGORY_CONFIGS: DefaultCategoryConfig[] = [
+  { name: 'Family', value: 1, unit: 'weeks' },
+  { name: 'Close Friends', value: 2, unit: 'weeks' },
+  { name: 'Friends', value: 1, unit: 'months' },
+  { name: 'Colleagues', value: 2, unit: 'months' },
+  { name: 'Acquaintances', value: 3, unit: 'months' },
+]
 
 export function createDefaultCategories(): Category[] {
-  return [
-    createFamilyCategory(),
-    createCloseFriendsCategory(),
-    createFriendsCategory(),
-    createColleaguesCategory(),
-    createAcquaintancesCategory(),
-  ]
+  return DEFAULT_CATEGORY_CONFIGS.map(createCategoryFromConfig)
 }
 
-function createFamilyCategory(): Category {
+function createCategoryFromConfig(
+  config: DefaultCategoryConfig
+): Category {
   return createCategory({
     id: createCategoryId(),
-    name: createCategoryName('Family'),
-    frequency: createCheckInFrequency({ value: 1, unit: 'weeks' }),
-  })
-}
-
-function createCloseFriendsCategory(): Category {
-  return createCategory({
-    id: createCategoryId(),
-    name: createCategoryName('Close Friends'),
-    frequency: createCheckInFrequency({ value: 2, unit: 'weeks' }),
-  })
-}
-
-function createFriendsCategory(): Category {
-  return createCategory({
-    id: createCategoryId(),
-    name: createCategoryName('Friends'),
-    frequency: createCheckInFrequency({ value: 1, unit: 'months' }),
-  })
-}
-
-function createColleaguesCategory(): Category {
-  return createCategory({
-    id: createCategoryId(),
-    name: createCategoryName('Colleagues'),
-    frequency: createCheckInFrequency({ value: 2, unit: 'months' }),
-  })
-}
-
-function createAcquaintancesCategory(): Category {
-  return createCategory({
-    id: createCategoryId(),
-    name: createCategoryName('Acquaintances'),
-    frequency: createCheckInFrequency({ value: 3, unit: 'months' }),
+    name: createCategoryName(config.name),
+    frequency: createCheckInFrequency({
+      value: config.value,
+      unit: config.unit,
+    }),
   })
 }

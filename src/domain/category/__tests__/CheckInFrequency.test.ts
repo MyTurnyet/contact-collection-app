@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import {
   createCheckInFrequency,
   checkInFrequencyEquals,
+  compareFrequencies,
+  formatFrequency,
 } from '../CheckInFrequency'
 
 describe('CheckInFrequency', () => {
@@ -90,6 +92,88 @@ describe('CheckInFrequency', () => {
       const freq2 = createCheckInFrequency({ value: 1, unit: 'months' })
 
       expect(checkInFrequencyEquals(freq1, freq2)).toBe(false)
+    })
+  })
+
+  describe('compareFrequencies', () => {
+    it('should return 0 for equal frequencies with same unit', () => {
+      const freq1 = createCheckInFrequency({ value: 7, unit: 'days' })
+      const freq2 = createCheckInFrequency({ value: 7, unit: 'days' })
+
+      expect(compareFrequencies(freq1, freq2)).toBe(0)
+    })
+
+    it('should return negative when first frequency is less than second', () => {
+      const freq1 = createCheckInFrequency({ value: 7, unit: 'days' })
+      const freq2 = createCheckInFrequency({ value: 14, unit: 'days' })
+
+      expect(compareFrequencies(freq1, freq2)).toBeLessThan(0)
+    })
+
+    it('should return positive when first frequency is greater than second', () => {
+      const freq1 = createCheckInFrequency({ value: 14, unit: 'days' })
+      const freq2 = createCheckInFrequency({ value: 7, unit: 'days' })
+
+      expect(compareFrequencies(freq1, freq2)).toBeGreaterThan(0)
+    })
+
+    it('should compare different units (1 week = 7 days)', () => {
+      const freq1 = createCheckInFrequency({ value: 1, unit: 'weeks' })
+      const freq2 = createCheckInFrequency({ value: 7, unit: 'days' })
+
+      expect(compareFrequencies(freq1, freq2)).toBe(0)
+    })
+
+    it('should compare different units (1 week < 14 days)', () => {
+      const freq1 = createCheckInFrequency({ value: 1, unit: 'weeks' })
+      const freq2 = createCheckInFrequency({ value: 14, unit: 'days' })
+
+      expect(compareFrequencies(freq1, freq2)).toBeLessThan(0)
+    })
+
+    it('should compare different units (1 month > 2 weeks)', () => {
+      const freq1 = createCheckInFrequency({ value: 1, unit: 'months' })
+      const freq2 = createCheckInFrequency({ value: 2, unit: 'weeks' })
+
+      expect(compareFrequencies(freq1, freq2)).toBeGreaterThan(0)
+    })
+  })
+
+  describe('formatFrequency', () => {
+    it('should format singular day', () => {
+      const frequency = createCheckInFrequency({ value: 1, unit: 'days' })
+
+      expect(formatFrequency(frequency)).toBe('Every 1 day')
+    })
+
+    it('should format plural days', () => {
+      const frequency = createCheckInFrequency({ value: 7, unit: 'days' })
+
+      expect(formatFrequency(frequency)).toBe('Every 7 days')
+    })
+
+    it('should format singular week', () => {
+      const frequency = createCheckInFrequency({ value: 1, unit: 'weeks' })
+
+      expect(formatFrequency(frequency)).toBe('Every 1 week')
+    })
+
+    it('should format plural weeks', () => {
+      const frequency = createCheckInFrequency({ value: 2, unit: 'weeks' })
+
+      expect(formatFrequency(frequency)).toBe('Every 2 weeks')
+    })
+
+    it('should format singular month', () => {
+      const frequency = createCheckInFrequency({ value: 1, unit: 'months' })
+
+      expect(formatFrequency(frequency)).toBe('Every 1 month')
+    })
+
+    it('should format plural months', () => {
+      const frequency = createCheckInFrequency({ value: 3, unit: 'months' })
+
+      expect(formatFrequency(frequency)).toBe('Every 3 months')
     })
   })
 })

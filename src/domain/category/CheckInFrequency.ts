@@ -48,3 +48,27 @@ export function checkInFrequencyEquals(
 ): boolean {
   return a.value === b.value && a.unit === b.unit
 }
+
+function frequencyToDays(frequency: CheckInFrequency): number {
+  switch (frequency.unit) {
+    case 'days':
+      return frequency.value
+    case 'weeks':
+      return frequency.value * 7
+    case 'months':
+      return frequency.value * 30
+  }
+}
+
+export function compareFrequencies(
+  a: CheckInFrequency,
+  b: CheckInFrequency
+): number {
+  return frequencyToDays(a) - frequencyToDays(b)
+}
+
+export function formatFrequency(frequency: CheckInFrequency): string {
+  const value = frequency.value
+  const unit = value === 1 ? frequency.unit.slice(0, -1) : frequency.unit
+  return `Every ${value} ${unit}`
+}

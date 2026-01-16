@@ -1,22 +1,19 @@
-import { v4 as uuidv4, validate as validateUuid } from 'uuid'
+import {
+  createUuidValueObject,
+  uuidValueObjectFromString,
+  uuidValueObjectEquals,
+} from '../shared/UuidValueObject'
 
 export type ContactId = string & { readonly __brand: 'ContactId' }
 
 export function createContactId(): ContactId {
-  return uuidv4() as ContactId
+  return createUuidValueObject<ContactId>()
 }
 
 export function contactIdFromString(value: string): ContactId {
-  if (!isValidUuid(value)) {
-    throw new Error('Invalid ContactId format')
-  }
-  return value as ContactId
-}
-
-function isValidUuid(value: string): boolean {
-  return value.length > 0 && validateUuid(value)
+  return uuidValueObjectFromString<ContactId>(value, 'ContactId')
 }
 
 export function contactIdEquals(a: ContactId, b: ContactId): boolean {
-  return a === b
+  return uuidValueObjectEquals(a, b)
 }
