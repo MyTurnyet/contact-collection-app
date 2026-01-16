@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createContactId, contactIdFromString } from './ContactId'
+import { createContactId, contactIdFromString } from '../ContactId'
 
 describe('ContactId', () => {
   describe('createContactId', () => {

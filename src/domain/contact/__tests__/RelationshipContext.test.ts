@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createRelationshipContext } from './RelationshipContext'
+import { createRelationshipContext } from '../RelationshipContext'
 
 describe('RelationshipContext', () => {
   describe('createRelationshipContext', () => {

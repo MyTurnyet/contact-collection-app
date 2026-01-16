@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { createContact } from './Contact'
-import { createContactId } from './ContactId'
-import { createPhoneNumber } from './PhoneNumber'
-import { createEmailAddress } from './EmailAddress'
-import { createLocation } from './Location'
-import { createRelationshipContext } from './RelationshipContext'
-import { createImportantDate } from './ImportantDate'
+import { createContact } from '../Contact'
+import { createContactId } from '../ContactId'
+import { createPhoneNumber } from '../PhoneNumber'
+import { createEmailAddress } from '../EmailAddress'
+import { createLocation } from '../Location'
+import { createRelationshipContext } from '../RelationshipContext'
+import { createImportantDate } from '../ImportantDate'
 
 describe('Contact', () => {
   describe('createContact', () => {

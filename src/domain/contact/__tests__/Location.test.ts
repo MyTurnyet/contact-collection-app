@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createLocation } from './Location'
+import { createLocation } from '../Location'
 
 describe('Location', () => {
   describe('createLocation', () => {

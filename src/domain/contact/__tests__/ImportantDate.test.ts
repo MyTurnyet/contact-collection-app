@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createImportantDate } from './ImportantDate'
+import { createImportantDate } from '../ImportantDate'
 
 describe('ImportantDate', () => {
   describe('createImportantDate', () => {

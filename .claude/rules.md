@@ -37,6 +37,9 @@
 - **No mocking frameworks** - Create simple test implementations of interfaces
   - Example: Create `InMemoryContactRepository` for testing
   - Example: Create `FakeNotificationService` that captures calls for assertions
+- **Test file organization**:
+  - All tests must be in a `__tests__` directory within the same module/directory as the code being tested
+  - Example: `src/domain/contact/ContactId.ts` → `src/domain/contact/__tests__/ContactId.test.ts`
 - **Test file naming**: `{FileName}.test.ts` or `{FileName}.test.tsx`
 - **One assertion concept per test method**
 - **Given-When-Then structure** in tests:

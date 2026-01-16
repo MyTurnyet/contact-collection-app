@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createEmailAddress } from './EmailAddress'
+import { createEmailAddress } from '../EmailAddress'
 
 describe('EmailAddress', () => {
   describe('createEmailAddress', () => {

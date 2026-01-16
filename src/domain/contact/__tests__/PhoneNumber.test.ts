@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createPhoneNumber } from './PhoneNumber'
+import { createPhoneNumber } from '../PhoneNumber'
 
 describe('PhoneNumber', () => {
   describe('createPhoneNumber', () => {
