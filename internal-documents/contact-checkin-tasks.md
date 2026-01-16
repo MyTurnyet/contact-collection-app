@@ -100,9 +100,9 @@ src/
 - [ ] Test & implement `CheckInScheduler` service interface
 - [ ] Test & implement `CheckInRepository` interface
 
-### 2.4 Domain Services
-- [ ] Test & implement `DateCalculator` service (next check-in from original date)
-- [ ] Test & implement `OverdueDetector` service (identify overdue check-ins)
+### 2.4 Domain Services ✅ COMPLETE
+- [x] Test & implement `DateCalculator` service (next check-in from original date)
+- [x] Test & implement `OverdueDetector` service (identify overdue check-ins)
 
 ## Phase 3: Application Services (TDD)
 
