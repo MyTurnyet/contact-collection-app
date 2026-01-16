@@ -22,3 +22,15 @@ export function relationshipContextEquals(
 ): boolean {
   return a === b
 }
+
+const NULL_RELATIONSHIP_CONTEXT: RelationshipContext = '' as RelationshipContext
+
+export function createNullRelationshipContext(): RelationshipContext {
+  return NULL_RELATIONSHIP_CONTEXT
+}
+
+export function isNullRelationshipContext(
+  context: RelationshipContext
+): boolean {
+  return context === NULL_RELATIONSHIP_CONTEXT
+}

@@ -24,6 +24,8 @@ export {
   type RelationshipContext,
   createRelationshipContext,
   relationshipContextEquals,
+  createNullRelationshipContext,
+  isNullRelationshipContext,
 } from './RelationshipContext'
 export {
   type ImportantDate,

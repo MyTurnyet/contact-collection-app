@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { createRelationshipContext, relationshipContextEquals } from '../RelationshipContext'
+import {
+  createRelationshipContext,
+  relationshipContextEquals,
+  createNullRelationshipContext,
+  isNullRelationshipContext,
+} from '../RelationshipContext'
 
 describe('RelationshipContext', () => {
   describe('createRelationshipContext', () => {
@@ -65,5 +70,49 @@ describe('RelationshipContext', () => {
       const context2 = createRelationshipContext("Family")
 
       expect(relationshipContextEquals(context1, context2)).toBe(false)
+    })
+  })
+
+  describe('createNullRelationshipContext', () => {
+    it('should return consistent singleton', () => {
+      const null1 = createNullRelationshipContext()
+      const null2 = createNullRelationshipContext()
+
+      expect(null1).toBe(null2)
+    })
+
+    it('should have empty string as display value', () => {
+      const nullContext = createNullRelationshipContext()
+
+      expect(nullContext).toBe('')
+    })
+
+    it('should be equal to other null relationship contexts', () => {
+      const null1 = createNullRelationshipContext()
+      const null2 = createNullRelationshipContext()
+
+      expect(relationshipContextEquals(null1, null2)).toBe(true)
+    })
+  })
+
+  describe('isNullRelationshipContext', () => {
+    it('should return true for null relationship context', () => {
+      const nullContext = createNullRelationshipContext()
+
+      expect(isNullRelationshipContext(nullContext)).toBe(true)
+    })
+
+    it('should return false for real relationship context', () => {
+      const context = createRelationshipContext('Friend')
+
+      expect(isNullRelationshipContext(context)).toBe(false)
+    })
+
+    it('should return false for different real relationship contexts', () => {
+      const context1 = createRelationshipContext('Friend')
+      const context2 = createRelationshipContext('Family')
+
+      expect(isNullRelationshipContext(context1)).toBe(false)
+      expect(isNullRelationshipContext(context2)).toBe(false)
     })
   })
