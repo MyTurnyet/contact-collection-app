@@ -1,20 +1,7 @@
-import type { ImportantDate } from "../ImportantDate.ts";
+import type { ImportantDate } from "../ImportantDate";
+import BaseCollection from "./BaseCollection";
 
-class ImportantDateCollection {
-  get size(): number {
-    return this.items.length;
-  }
-
-  private items: ImportantDate[];
-
-  constructor(items: ImportantDate[]) {
-    this.items = items;
-  }
-
-  isEmpty(): boolean {
-    return this.size == 0;
-  }
-}
+class ImportantDateCollection extends BaseCollection<ImportantDate> {}
 
 export default ImportantDateCollection;
 

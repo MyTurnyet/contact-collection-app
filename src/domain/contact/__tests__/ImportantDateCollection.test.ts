@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import ImportantDateCollection, {
   createImportantDateCollection,
-} from "../collections/ImportantDateCollection.ts";
+} from "../collections/ImportantDateCollection";
 import { createImportantDate } from "../ImportantDate";
 
 describe("ImportantDateCollection", () => {

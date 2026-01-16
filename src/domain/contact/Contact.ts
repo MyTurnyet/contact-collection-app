@@ -3,8 +3,8 @@ import { type PhoneNumber } from './PhoneNumber'
 import { type EmailAddress } from './EmailAddress'
 import { type Location } from './Location'
 import { type RelationshipContext } from './RelationshipContext'
-import type ImportantDateCollection from './collections/ImportantDateCollection.ts'
-import { createImportantDateCollection } from './collections/ImportantDateCollection.ts'
+import type ImportantDateCollection from './collections/ImportantDateCollection'
+import { createImportantDateCollection } from './collections/ImportantDateCollection'
 
 export interface Contact {
   readonly id: ContactId

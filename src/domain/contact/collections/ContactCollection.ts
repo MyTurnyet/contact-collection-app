@@ -1,20 +1,7 @@
 import type { Contact } from "../Contact";
+import BaseCollection from "./BaseCollection";
 
-class ContactCollection {
-  get size(): number {
-    return this.items.length;
-  }
-
-  private items: Contact[];
-
-  constructor(items: Contact[]) {
-    this.items = items;
-  }
-
-  isEmpty(): boolean {
-    return this.size == 0;
-  }
-}
+class ContactCollection extends BaseCollection<Contact> {}
 
 export default ContactCollection;
 

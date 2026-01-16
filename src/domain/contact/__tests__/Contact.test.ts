@@ -6,7 +6,7 @@ import { createEmailAddress } from '../EmailAddress'
 import { createLocation } from '../Location'
 import { createRelationshipContext } from '../RelationshipContext'
 import { createImportantDate } from '../ImportantDate'
-import { createImportantDateCollection } from '../collections/ImportantDateCollection.ts'
+import { createImportantDateCollection } from '../collections/ImportantDateCollection'
 
 describe('Contact', () => {
   describe('createContact', () => {
