@@ -109,22 +109,22 @@ Implement NullObject pattern for domain value objects to replace undefined/null 
 - [ ] Test `isNullCategory()` returns false for real categories
 - [ ] Test null category equality with other null categories
 
-### 6. CheckInFrequency Null Object
+### 6. CheckInFrequency Null Object ✅ COMPLETE
 **File**: `src/domain/category/CheckInFrequency.ts`
 
 **Tasks**:
-- [ ] Create `createNullCheckInFrequency()` factory function
-- [ ] Null frequency represents "Never" or no check-ins
-- [ ] Null frequency has 0 days value or special marker
-- [ ] Add `isNullCheckInFrequency(frequency: CheckInFrequency): boolean` helper
+- [x] Create `createNullCheckInFrequency()` factory function
+- [x] Null frequency represents "Never" or no check-ins
+- [x] Null frequency has 0 days value or special marker
+- [x] Add `isNullCheckInFrequency(frequency: CheckInFrequency): boolean` helper
 
 **Tests** (`src/domain/category/__tests__/CheckInFrequency.test.ts`):
-- [ ] Test `createNullCheckInFrequency()` returns consistent singleton
-- [ ] Test null frequency has 0 or special value for days
-- [ ] Test null frequency display shows "Never" or appropriate text
-- [ ] Test `isNullCheckInFrequency()` returns true for null object
-- [ ] Test `isNullCheckInFrequency()` returns false for real frequencies
-- [ ] Test null frequency equality with other null frequencies
+- [x] Test `createNullCheckInFrequency()` returns consistent singleton
+- [x] Test null frequency has 0 or special value for days
+- [x] Test null frequency display shows "Never" or appropriate text
+- [x] Test `isNullCheckInFrequency()` returns true for null object
+- [x] Test `isNullCheckInFrequency()` returns false for real frequencies
+- [x] Test null frequency equality with other null frequencies
 
 ---
 

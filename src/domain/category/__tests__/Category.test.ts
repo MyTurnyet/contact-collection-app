@@ -1,8 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { createCategory, categoryEquals } from '../Category'
+import {
+  createCategory,
+  categoryEquals,
+  createNullCategory,
+  isNullCategory,
+} from '../Category'
 import { createCategoryId } from '../CategoryId'
 import { createCategoryName } from '../CategoryName'
-import { createCheckInFrequency } from '../CheckInFrequency'
+import { createCheckInFrequency, isNullCheckInFrequency } from '../CheckInFrequency'
 
 describe('Category', () => {
   describe('createCategory', () => {
@@ -118,6 +123,74 @@ describe('Category', () => {
       })
 
       expect(categoryEquals(category1, category2)).toBe(false)
+    })
+  })
+
+  describe('createNullCategory', () => {
+    it('should return consistent singleton', () => {
+      const null1 = createNullCategory()
+      const null2 = createNullCategory()
+
+      expect(null1).toBe(null2)
+    })
+
+    it('should have special null category ID', () => {
+      const nullCategory = createNullCategory()
+
+      expect(nullCategory.id).toBe('00000000-0000-0000-0000-000000000000')
+    })
+
+    it('should have name "Uncategorized"', () => {
+      const nullCategory = createNullCategory()
+
+      expect(nullCategory.name).toBe('Uncategorized')
+    })
+
+    it('should have null frequency', () => {
+      const nullCategory = createNullCategory()
+
+      expect(isNullCheckInFrequency(nullCategory.frequency)).toBe(true)
+    })
+
+    it('should be equal to other null categories', () => {
+      const null1 = createNullCategory()
+      const null2 = createNullCategory()
+
+      expect(categoryEquals(null1, null2)).toBe(true)
+    })
+  })
+
+  describe('isNullCategory', () => {
+    it('should return true for null category', () => {
+      const nullCategory = createNullCategory()
+
+      expect(isNullCategory(nullCategory)).toBe(true)
+    })
+
+    it('should return false for real category', () => {
+      const category = createCategory({
+        id: createCategoryId(),
+        name: createCategoryName('Family'),
+        frequency: createCheckInFrequency({ value: 7, unit: 'days' }),
+      })
+
+      expect(isNullCategory(category)).toBe(false)
+    })
+
+    it('should return false for different real categories', () => {
+      const cat1 = createCategory({
+        id: createCategoryId(),
+        name: createCategoryName('Family'),
+        frequency: createCheckInFrequency({ value: 7, unit: 'days' }),
+      })
+      const cat2 = createCategory({
+        id: createCategoryId(),
+        name: createCategoryName('Friends'),
+        frequency: createCheckInFrequency({ value: 14, unit: 'days' }),
+      })
+
+      expect(isNullCategory(cat1)).toBe(false)
+      expect(isNullCategory(cat2)).toBe(false)
     })
   })
 })
