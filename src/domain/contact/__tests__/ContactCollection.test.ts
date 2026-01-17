@@ -21,8 +21,8 @@ describe("ContactCollection", () => {
       const contact = createContact({
         id: createContactId(),
         name: "John Doe",
-        phoneNumber: createPhoneNumber("555-123-4567"),
-        emailAddress: createEmailAddress("john@example.com"),
+        phone: createPhoneNumber("555-123-4567"),
+        email: createEmailAddress("john@example.com"),
         location: createLocation({
           city: "New York",
           state: "NY",
@@ -43,8 +43,8 @@ describe("ContactCollection", () => {
       const contact1 = createContact({
         id: createContactId(),
         name: "John Doe",
-        phoneNumber: createPhoneNumber("555-123-4567"),
-        emailAddress: createEmailAddress("john@example.com"),
+        phone: createPhoneNumber("555-123-4567"),
+        email: createEmailAddress("john@example.com"),
         location: createLocation({
           city: "New York",
           country: "USA",
@@ -56,8 +56,8 @@ describe("ContactCollection", () => {
       const contact2 = createContact({
         id: createContactId(),
         name: "Jane Smith",
-        phoneNumber: createPhoneNumber("555-987-6543"),
-        emailAddress: createEmailAddress("jane@example.com"),
+        phone: createPhoneNumber("555-987-6543"),
+        email: createEmailAddress("jane@example.com"),
         location: createLocation({
           city: "Seattle",
           country: "USA",
@@ -76,8 +76,8 @@ describe("ContactCollection", () => {
     const contact1 = createContact({
       id: createContactId(),
       name: "Alice",
-      phoneNumber: createPhoneNumber("555-111-1111"),
-      emailAddress: createEmailAddress("alice@example.com"),
+      phone: createPhoneNumber("555-111-1111"),
+      email: createEmailAddress("alice@example.com"),
       location: createLocation({
         city: "Boston",
         country: "USA",
@@ -89,8 +89,8 @@ describe("ContactCollection", () => {
     const contact2 = createContact({
       id: createContactId(),
       name: "Bob",
-      phoneNumber: createPhoneNumber("555-222-2222"),
-      emailAddress: createEmailAddress("bob@example.com"),
+      phone: createPhoneNumber("555-222-2222"),
+      email: createEmailAddress("bob@example.com"),
       location: createLocation({
         city: "Chicago",
         country: "USA",
@@ -130,7 +130,7 @@ describe("ContactCollection", () => {
 
     it("every returns true when all match", () => {
       const collection = createContactCollection([contact1, contact2]);
-      expect(collection.every((c) => c.location.country === "USA")).toBe(true);
+      expect(collection.every((c) => c.location?.country === "USA")).toBe(true);
     });
 
     it("every returns false when not all match", () => {

@@ -3,7 +3,6 @@ import {
   type ContactRepository,
   createContact,
   createContactId,
-  createContactName,
   createPhoneNumber,
   createEmailAddress,
   createLocation,
@@ -16,12 +15,17 @@ export interface CreateContactInput {
   phone?: string
   email?: string
   location?: string
+  country?: string
   timezone?: string
   relationshipContext?: string
 }
 
 export class CreateContact {
-  constructor(private readonly repository: ContactRepository) {}
+  private readonly repository: ContactRepository
+
+  constructor(repository: ContactRepository) {
+    this.repository = repository
+  }
 
   async execute(input: CreateContactInput): Promise<Contact> {
     const contact = this.buildContact(input)
@@ -42,11 +46,12 @@ export class CreateContact {
   }
 
   private buildLocation(input: CreateContactInput) {
-    if (!input.location || !input.timezone) {
+    if (!input.location || !input.timezone || !input.country) {
       return undefined
     }
     return createLocation({
       city: input.location,
+      country: input.country,
       timezone: input.timezone,
     })
   }

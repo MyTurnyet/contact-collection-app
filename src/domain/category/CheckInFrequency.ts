@@ -68,7 +68,25 @@ export function compareFrequencies(
 }
 
 export function formatFrequency(frequency: CheckInFrequency): string {
+  if (isNullCheckInFrequency(frequency)) {
+    return 'Never'
+  }
   const value = frequency.value
   const unit = value === 1 ? frequency.unit.slice(0, -1) : frequency.unit
   return `Every ${value} ${unit}`
+}
+
+const NULL_FREQUENCY = Object.freeze<CheckInFrequency>({
+  value: 0,
+  unit: 'days',
+})
+
+export function createNullCheckInFrequency(): CheckInFrequency {
+  return NULL_FREQUENCY
+}
+
+export function isNullCheckInFrequency(
+  frequency: CheckInFrequency
+): boolean {
+  return frequency === NULL_FREQUENCY
 }

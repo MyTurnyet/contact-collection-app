@@ -4,6 +4,8 @@ import {
   checkInFrequencyEquals,
   compareFrequencies,
   formatFrequency,
+  createNullCheckInFrequency,
+  isNullCheckInFrequency,
 } from '../CheckInFrequency'
 
 describe('CheckInFrequency', () => {
@@ -174,6 +176,57 @@ describe('CheckInFrequency', () => {
       const frequency = createCheckInFrequency({ value: 3, unit: 'months' })
 
       expect(formatFrequency(frequency)).toBe('Every 3 months')
+    })
+  })
+
+  describe('createNullCheckInFrequency', () => {
+    it('should return consistent singleton', () => {
+      const null1 = createNullCheckInFrequency()
+      const null2 = createNullCheckInFrequency()
+
+      expect(null1).toBe(null2)
+    })
+
+    it('should have 0 days as value', () => {
+      const nullFrequency = createNullCheckInFrequency()
+
+      expect(nullFrequency.value).toBe(0)
+      expect(nullFrequency.unit).toBe('days')
+    })
+
+    it('should be equal to other null frequencies', () => {
+      const null1 = createNullCheckInFrequency()
+      const null2 = createNullCheckInFrequency()
+
+      expect(checkInFrequencyEquals(null1, null2)).toBe(true)
+    })
+
+    it('should format as "Never"', () => {
+      const nullFrequency = createNullCheckInFrequency()
+
+      expect(formatFrequency(nullFrequency)).toBe('Never')
+    })
+  })
+
+  describe('isNullCheckInFrequency', () => {
+    it('should return true for null frequency', () => {
+      const nullFrequency = createNullCheckInFrequency()
+
+      expect(isNullCheckInFrequency(nullFrequency)).toBe(true)
+    })
+
+    it('should return false for real frequency', () => {
+      const frequency = createCheckInFrequency({ value: 7, unit: 'days' })
+
+      expect(isNullCheckInFrequency(frequency)).toBe(false)
+    })
+
+    it('should return false for different real frequencies', () => {
+      const freq1 = createCheckInFrequency({ value: 1, unit: 'weeks' })
+      const freq2 = createCheckInFrequency({ value: 1, unit: 'months' })
+
+      expect(isNullCheckInFrequency(freq1)).toBe(false)
+      expect(isNullCheckInFrequency(freq2)).toBe(false)
     })
   })
 })
