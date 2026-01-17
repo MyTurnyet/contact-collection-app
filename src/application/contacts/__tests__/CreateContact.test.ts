@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { CreateContact } from '../CreateContact'
 import { InMemoryContactRepository } from '../test-doubles/InMemoryContactRepository'
+import { isNullPhoneNumber } from '../../../domain/contact/PhoneNumber'
+import { isNullEmailAddress } from '../../../domain/contact/EmailAddress'
+import { isNullLocation } from '../../../domain/contact/Location'
+import { isNullRelationshipContext } from '../../../domain/contact/RelationshipContext'
 
 describe('CreateContact', () => {
   let repository: InMemoryContactRepository
@@ -20,6 +24,10 @@ describe('CreateContact', () => {
 
     expect(contact.name).toBe('John Doe')
     expect(contact.id).toBeDefined()
+    expect(isNullPhoneNumber(contact.phone)).toBe(true)
+    expect(isNullEmailAddress(contact.email)).toBe(true)
+    expect(isNullLocation(contact.location)).toBe(true)
+    expect(isNullRelationshipContext(contact.relationshipContext)).toBe(true)
   })
 
   it('should create a contact with name and phone', async () => {
@@ -72,6 +80,8 @@ describe('CreateContact', () => {
 
     expect(savedContact).toBeDefined()
     expect(savedContact?.name).toBe('Charlie Davis')
+    expect(isNullPhoneNumber(savedContact!.phone)).toBe(true)
+    expect(isNullEmailAddress(savedContact!.email)).toBe(true)
   })
 
   it('should throw error for invalid phone number', async () => {
