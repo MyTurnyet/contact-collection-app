@@ -172,19 +172,19 @@ Implement NullObject pattern for domain value objects to replace undefined/null 
 
 ## Domain Index Exports
 
-### 9. Update Domain Module Exports
+### 9. Update Domain Module Exports ✅ COMPLETE
 **File**: `src/domain/contact/index.ts`
 
 **Tasks**:
-- [ ] Export all null object factory functions
-- [ ] Export all `isNull*()` helper functions
-- [ ] Ensure consistent API across all value objects
+- [x] Export all null object factory functions
+- [x] Export all `isNull*()` helper functions
+- [x] Ensure consistent API across all value objects
 
 **File**: `src/domain/category/index.ts`
 
 **Tasks**:
-- [ ] Export null category and frequency factories
-- [ ] Export `isNull*()` helper functions
+- [x] Export null category and frequency factories
+- [x] Export `isNull*()` helper functions
 
 ---
 
