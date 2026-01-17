@@ -4,9 +4,13 @@ import {
   createContact,
   createContactId,
   createPhoneNumber,
+  createNullPhoneNumber,
   createEmailAddress,
+  createNullEmailAddress,
   createLocation,
+  createNullLocation,
   createRelationshipContext,
+  createNullRelationshipContext,
   createImportantDateCollection,
 } from '../../domain/contact'
 
@@ -34,20 +38,45 @@ export class CreateContact {
   }
 
   private buildContact(input: CreateContactInput): Contact {
-    return createContact({
+    const contactInput = this.buildContactInput(input)
+    return createContact(contactInput)
+  }
+
+  private buildContactInput(input: CreateContactInput) {
+    return {
       id: createContactId(),
       name: input.name,
-      phone: input.phone ? createPhoneNumber(input.phone) : undefined,
-      email: input.email ? createEmailAddress(input.email) : undefined,
+      ...this.buildContactFields(input),
+      importantDates: createImportantDateCollection([]),
+    }
+  }
+
+  private buildContactFields(input: CreateContactInput) {
+    return {
+      phone: this.buildPhone(input),
+      email: this.buildEmail(input),
       location: this.buildLocation(input),
       relationshipContext: this.buildRelationshipContext(input),
-      importantDates: createImportantDateCollection([]),
-    })
+    }
+  }
+
+  private buildPhone(input: CreateContactInput) {
+    if (!input.phone) {
+      return createNullPhoneNumber()
+    }
+    return createPhoneNumber(input.phone)
+  }
+
+  private buildEmail(input: CreateContactInput) {
+    if (!input.email) {
+      return createNullEmailAddress()
+    }
+    return createEmailAddress(input.email)
   }
 
   private buildLocation(input: CreateContactInput) {
     if (!input.location || !input.timezone || !input.country) {
-      return undefined
+      return createNullLocation()
     }
     return createLocation({
       city: input.location,
@@ -58,7 +87,7 @@ export class CreateContact {
 
   private buildRelationshipContext(input: CreateContactInput) {
     if (!input.relationshipContext) {
-      return undefined
+      return createNullRelationshipContext()
     }
     return createRelationshipContext(input.relationshipContext)
   }
