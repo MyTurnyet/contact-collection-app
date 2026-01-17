@@ -1,10 +1,19 @@
 import { describe, it, expect } from 'vitest'
 import { createContact, contactEquals } from '../Contact'
 import { createContactId } from '../ContactId'
-import { createPhoneNumber } from '../PhoneNumber'
-import { createEmailAddress } from '../EmailAddress'
-import { createLocation } from '../Location'
-import { createRelationshipContext } from '../RelationshipContext'
+import {
+  createPhoneNumber,
+  isNullPhoneNumber,
+} from '../PhoneNumber'
+import {
+  createEmailAddress,
+  isNullEmailAddress,
+} from '../EmailAddress'
+import { createLocation, isNullLocation } from '../Location'
+import {
+  createRelationshipContext,
+  isNullRelationshipContext,
+} from '../RelationshipContext'
 import { createImportantDate } from '../ImportantDate'
 import { createImportantDateCollection } from '../collections/ImportantDateCollection'
 
@@ -18,8 +27,10 @@ describe('Contact', () => {
 
       expect(contact).toBeDefined()
       expect(contact.name).toBe('John Doe')
-      expect(contact.phone).toBeUndefined()
-      expect(contact.email).toBeUndefined()
+      expect(isNullPhoneNumber(contact.phone)).toBe(true)
+      expect(isNullEmailAddress(contact.email)).toBe(true)
+      expect(isNullLocation(contact.location)).toBe(true)
+      expect(isNullRelationshipContext(contact.relationshipContext)).toBe(true)
     })
 
     it('should create Contact with all fields', () => {
@@ -112,79 +123,95 @@ describe('Contact', () => {
   })
 })
 
-  describe("contactEquals", () => {
-    it("should return true for same contacts with all fields", () => {
+  describe('contactEquals', () => {
+    it('should return true for same contacts with all fields', () => {
       const id = createContactId()
+      const phone = createPhoneNumber('555-123-4567')
+      const email = createEmailAddress('john@example.com')
+      const location = createLocation({
+        city: 'New York',
+        country: 'USA',
+        timezone: 'America/New_York',
+      })
+      const relationshipContext = createRelationshipContext('Friend')
       const importantDates = createImportantDateCollection([])
+
       const contact1 = createContact({
         id,
-        name: "John Doe",
-        phone: createPhoneNumber("555-123-4567"),
-        email: createEmailAddress("john@example.com"),
-        location: createLocation({
-          city: "New York",
-          country: "USA",
-          timezone: "America/New_York",
-        }),
-        relationshipContext: createRelationshipContext("Friend"),
+        name: 'John Doe',
+        phone,
+        email,
+        location,
+        relationshipContext,
         importantDates,
       })
       const contact2 = createContact({
         id,
-        name: "John Doe",
-        phone: createPhoneNumber("555-123-4567"),
-        email: createEmailAddress("john@example.com"),
-        location: createLocation({
-          city: "New York",
-          country: "USA",
-          timezone: "America/New_York",
-        }),
-        relationshipContext: createRelationshipContext("Friend"),
+        name: 'John Doe',
+        phone,
+        email,
+        location,
+        relationshipContext,
         importantDates,
       })
 
       expect(contactEquals(contact1, contact2)).toBe(true)
     })
 
-    it("should return true for same contacts with only name", () => {
+    it('should return true for same contacts with only name', () => {
       const id = createContactId()
       const importantDates = createImportantDateCollection([])
       const contact1 = createContact({
         id,
-        name: "John Doe",
+        name: 'John Doe',
         importantDates,
       })
       const contact2 = createContact({
         id,
-        name: "John Doe",
+        name: 'John Doe',
         importantDates,
       })
 
       expect(contactEquals(contact1, contact2)).toBe(true)
     })
 
-    it("should return false for different contact names", () => {
+    it('should return false for different contact names', () => {
       const id = createContactId()
       const contact1 = createContact({
         id,
-        name: "John Doe",
+        name: 'John Doe',
       })
       const contact2 = createContact({
         id,
-        name: "Jane Doe",
+        name: 'Jane Doe',
       })
 
       expect(contactEquals(contact1, contact2)).toBe(false)
     })
 
-    it("should return false for different contact IDs", () => {
+    it('should return false for different contact IDs', () => {
       const contact1 = createContact({
         id: createContactId(),
-        name: "John Doe",
+        name: 'John Doe',
       })
       const contact2 = createContact({
         id: createContactId(),
-        name: "John Doe",
+        name: 'John Doe',
+      })
+
+      expect(contactEquals(contact1, contact2)).toBe(false)
+    })
+
+    it('should return false when one has real phone and other has null', () => {
+      const id = createContactId()
+      const contact1 = createContact({
+        id,
+        name: 'John Doe',
+        phone: createPhoneNumber('555-123-4567'),
+      })
+      const contact2 = createContact({
+        id,
+        name: 'John Doe',
       })
 
       expect(contactEquals(contact1, contact2)).toBe(false)

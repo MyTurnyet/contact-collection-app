@@ -89,25 +89,25 @@ Implement NullObject pattern for domain value objects to replace undefined/null 
 
 ## Category Domain - Value Objects
 
-### 5. Category Null Object
+### 5. Category Null Object ✅ COMPLETE
 **File**: `src/domain/category/Category.ts`
 
 **Tasks**:
-- [ ] Create `createNullCategory()` factory function
-- [ ] Null category represents "Uncategorized" or "No Category"
-- [ ] Null category should have a special CategoryId (e.g., "00000000-0000-0000-0000-000000000000")
-- [ ] Null category name: "Uncategorized"
-- [ ] Null category frequency: create a NullCheckInFrequency (never checks in)
-- [ ] Add `isNullCategory(category: Category): boolean` helper
+- [x] Create `createNullCategory()` factory function
+- [x] Null category represents "Uncategorized" or "No Category"
+- [x] Null category should have a special CategoryId (e.g., "00000000-0000-0000-0000-000000000000")
+- [x] Null category name: "Uncategorized"
+- [x] Null category frequency: create a NullCheckInFrequency (never checks in)
+- [x] Add `isNullCategory(category: Category): boolean` helper
 
 **Tests** (`src/domain/category/__tests__/Category.test.ts`):
-- [ ] Test `createNullCategory()` returns consistent singleton
-- [ ] Test null category has special ID
-- [ ] Test null category name is "Uncategorized"
-- [ ] Test null category has null frequency
-- [ ] Test `isNullCategory()` returns true for null object
-- [ ] Test `isNullCategory()` returns false for real categories
-- [ ] Test null category equality with other null categories
+- [x] Test `createNullCategory()` returns consistent singleton
+- [x] Test null category has special ID
+- [x] Test null category name is "Uncategorized"
+- [x] Test null category has null frequency
+- [x] Test `isNullCategory()` returns true for null object
+- [x] Test `isNullCategory()` returns false for real categories
+- [x] Test null category equality with other null categories
 
 ### 6. CheckInFrequency Null Object ✅ COMPLETE
 **File**: `src/domain/category/CheckInFrequency.ts`
