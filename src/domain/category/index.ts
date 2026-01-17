@@ -17,6 +17,8 @@ export {
   checkInFrequencyEquals,
   compareFrequencies,
   formatFrequency,
+  createNullCheckInFrequency,
+  isNullCheckInFrequency,
 } from './CheckInFrequency'
 
 // Collections
@@ -26,7 +28,13 @@ export {
 } from './collections/CategoryCollection'
 
 // Entity
-export { type Category, createCategory, categoryEquals } from './Category'
+export {
+  type Category,
+  createCategory,
+  categoryEquals,
+  createNullCategory,
+  isNullCategory,
+} from './Category'
 
 // Repository Interface
 export { type CategoryRepository } from './CategoryRepository'

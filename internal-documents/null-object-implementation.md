@@ -154,19 +154,19 @@ Implement NullObject pattern for domain value objects to replace undefined/null 
 
 ## Application Layer Updates
 
-### 8. Update CreateContact Use Case
+### 8. Update CreateContact Use Case ✅ COMPLETE
 **File**: `src/application/contacts/CreateContact.ts`
 
 **Tasks**:
-- [ ] Update `buildContact()` to use null objects instead of undefined
-- [ ] Update `buildLocation()` to return null location instead of undefined
-- [ ] Update `buildRelationshipContext()` to return null context instead of undefined
-- [ ] Update phone/email handling to use null objects
+- [x] Update `buildContact()` to use null objects instead of undefined (handled by domain layer)
+- [x] Update `buildLocation()` to return null location instead of undefined (domain layer handles conversion)
+- [x] Update `buildRelationshipContext()` to return null context instead of undefined (domain layer handles conversion)
+- [x] Update phone/email handling to use null objects (domain layer handles conversion)
 
 **Tests** (`src/application/contacts/__tests__/CreateContact.test.ts`):
-- [ ] Update tests to verify null objects are used for missing fields
-- [ ] Test contact with only name has null objects for other fields
-- [ ] Verify saved contacts use null objects appropriately
+- [x] Update tests to verify null objects are used for missing fields
+- [x] Test contact with only name has null objects for other fields
+- [x] Verify saved contacts use null objects appropriately
 
 ---
 
