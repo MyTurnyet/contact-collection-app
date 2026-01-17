@@ -107,7 +107,7 @@ src/
 ## Phase 3: Application Services (TDD)
 
 ### 3.1 Contact Management Use Cases
-- [ ] Test & implement `CreateContact` use case
+- [x] Test & implement `CreateContact` use case
 - [ ] Test & implement `UpdateContact` use case
 - [ ] Test & implement `DeleteContact` use case
 - [ ] Test & implement `GetContactById` use case
