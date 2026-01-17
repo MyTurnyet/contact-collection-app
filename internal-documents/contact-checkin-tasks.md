@@ -108,7 +108,7 @@ src/
 
 ### 3.1 Contact Management Use Cases
 - [x] Test & implement `CreateContact` use case
-- [ ] Test & implement `UpdateContact` use case
+- [x] Test & implement `UpdateContact` use case
 - [ ] Test & implement `DeleteContact` use case
 - [ ] Test & implement `GetContactById` use case
 - [ ] Test & implement `ListAllContacts` use case
