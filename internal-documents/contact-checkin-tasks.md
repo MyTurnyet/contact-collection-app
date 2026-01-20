@@ -2,8 +2,8 @@
 ## React + TypeScript (Vite) with Local Storage
 
 **Last Updated:** 2026-01-20
-**Current Phase:** Phase 3 (Application Services) - IN PROGRESS
-**Test Status:** ✅ 261 tests passing across 25 test files
+**Current Phase:** Phase 2 & 3 - IN PROGRESS
+**Test Status:** ✅ 335 tests passing across 33 test files
 **Code Quality:** All code follows TDD with 8-line method limit and complexity ≤4
 
 ## Project Overview
@@ -11,10 +11,10 @@ A single-page web application to track personal contacts and schedule regular ch
 
 ## Current Implementation Status Summary
 - ✅ **Phase 1:** Project Setup & Infrastructure - COMPLETE
-- ⚠️ **Phase 2:** Domain Model - MOSTLY COMPLETE (3/4 subsections)
-  - ✅ Contact Domain (100%) - 9 value objects + Contact entity + collections
+- ✅ **Phase 2:** Domain Model - COMPLETE (4/4 subsections)
+  - ✅ Contact Domain (100%) - 9 value objects + Contact entity + collections + NullContact
   - ✅ Category Domain (100%) - 3 value objects + Category entity + collections
-  - ❌ Check-in Domain (0% - not started)
+  - ✅ Check-in Domain (100%) - 5 value objects + CheckIn entity + CheckInStatus enum + CheckInCollection + repository interface
   - ✅ Domain Services (100%) - DateCalculator + OverdueDetector
 - ⚠️ **Phase 3:** Application Services - IN PROGRESS (6/22 use cases)
   - ✅ Contact Use Cases (100% - 6/6 complete: CreateContact, UpdateContact, GetContactById, ListAllContacts, DeleteContact, SearchContacts)
@@ -88,7 +88,7 @@ src/
 - [x] Create initial commit
 - [x] Create `.claude/rules.md` with comprehensive development rules
 
-## Phase 2: Domain Model (TDD) - IN PROGRESS
+## Phase 2: Domain Model (TDD) ✅ COMPLETE
 
 ### 2.1 Contact Domain ✅ COMPLETE
 - [x] Test & implement `ContactId` value object (UUID wrapper)
@@ -114,15 +114,15 @@ src/
 - [x] Test & implement `CategoryCollection`
 - [x] Create default categories factory
 
-### 2.3 Check-in Domain
-- [ ] Test & implement `CheckInId` value object (UUID wrapper)
-- [ ] Test & implement `ScheduledDate` value object
-- [ ] Test & implement `CompletionDate` value object
-- [ ] Test & implement `CheckInNotes` value object
-- [ ] Test & implement `CheckIn` entity (immutable)
-- [ ] Test & implement `CheckInStatus` enum (Scheduled, Completed, Overdue)
-- [ ] Test & implement `CheckInScheduler` service interface
-- [ ] Test & implement `CheckInRepository` interface
+### 2.3 Check-in Domain ✅ COMPLETE
+- [x] Test & implement `CheckInId` value object (UUID wrapper) ✅
+- [x] Test & implement `ScheduledDate` value object with null object pattern ✅
+- [x] Test & implement `CompletionDate` value object with null object pattern ✅
+- [x] Test & implement `CheckInNotes` value object with null object pattern ✅
+- [x] Test & implement `CheckIn` entity (immutable) with null object pattern ✅
+- [x] Test & implement `CheckInStatus` enum (Scheduled, Completed, Overdue) ✅
+- [x] Test & implement `CheckInCollection` ✅
+- [x] Test & implement `CheckInRepository` interface ✅
 
 ### 2.4 Domain Services ✅ COMPLETE
 - [x] Test & implement `DateCalculator` service (next check-in from original date)
@@ -455,23 +455,22 @@ Choose one:
 
 Based on current progress, the recommended next steps are:
 
-1. **Implement Check-in Domain** (Phase 2.3) ⬅️ PRIORITY
-   - Core domain for check-ins is needed before progressing further
-   - Value objects: CheckInId, ScheduledDate, CompletionDate, CheckInNotes
-   - Entity: CheckIn
-   - Repository interface: CheckInRepository
-
-2. **Implement Category Use Cases** (Phase 3.2)
+1. **Implement Category Use Cases** (Phase 3.2) ⬅️ PRIORITY
    - Use cases for category management
    - CreateCategory, UpdateCategory, DeleteCategory, ListCategories, GetDefaultCategories, AssignContactToCategory
 
-3. **Implement Check-in Use Cases** (Phase 3.3)
+2. **Implement Check-in Use Cases** (Phase 3.3)
    - Core functionality for scheduling and completing check-ins
-   - Requires check-in domain to be complete first
+   - ScheduleInitialCheckIn, CompleteCheckIn, RescheduleCheckIn, GetUpcomingCheckIns, GetOverdueCheckIns, GetCheckInHistory
 
-4. **Implement Dashboard Use Cases** (Phase 3.4)
+3. **Implement Dashboard Use Cases** (Phase 3.4)
    - GetDashboardSummary and GetTodayCheckIns
-   - Requires check-in use cases to be complete
+   - Provides overview of check-ins and contacts
+
+4. **Implement Infrastructure Layer** (Phase 4)
+   - LocalStorage repositories for persistence
+   - Browser notifications service
+   - Background scheduler for overdue detection
 
 ---
 
