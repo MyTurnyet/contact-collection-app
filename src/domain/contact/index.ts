@@ -48,7 +48,13 @@ export {
 } from './collections/ContactCollection'
 
 // Entity
-export { type Contact, createContact, contactEquals } from './Contact'
+export {
+  type Contact,
+  createContact,
+  contactEquals,
+  createNullContact,
+  isNullContact,
+} from './Contact'
 
 // Repository Interface
 export { type ContactRepository } from './ContactRepository'

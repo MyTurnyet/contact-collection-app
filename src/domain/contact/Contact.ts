@@ -1,4 +1,8 @@
-import { type ContactId, contactIdEquals } from './ContactId'
+import {
+  type ContactId,
+  contactIdEquals,
+  contactIdFromString,
+} from './ContactId'
 import {
   type PhoneNumber,
   phoneNumberEquals,
@@ -84,4 +88,22 @@ export function contactEquals(a: Contact, b: Contact): boolean {
     relationshipContextEquals(a.relationshipContext, b.relationshipContext) &&
     a.importantDates === b.importantDates
   )
+}
+
+const NULL_CONTACT: Contact = Object.freeze({
+  id: contactIdFromString('00000000-0000-0000-0000-000000000000'),
+  name: '',
+  phone: createNullPhoneNumber(),
+  email: createNullEmailAddress(),
+  location: createNullLocation(),
+  relationshipContext: createNullRelationshipContext(),
+  importantDates: createImportantDateCollection([]),
+})
+
+export function createNullContact(): Contact {
+  return NULL_CONTACT
+}
+
+export function isNullContact(contact: Contact): boolean {
+  return contact === NULL_CONTACT
 }

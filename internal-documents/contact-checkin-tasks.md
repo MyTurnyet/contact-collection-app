@@ -1,8 +1,29 @@
 # Contact Check-in Application - Development Checklist
 ## React + TypeScript (Vite) with Local Storage
 
+**Last Updated:** 2026-01-20
+**Current Phase:** Phase 3 (Application Services) - IN PROGRESS
+**Test Status:** ✅ 261 tests passing across 25 test files
+**Code Quality:** All code follows TDD with 8-line method limit and complexity ≤4
+
 ## Project Overview
 A single-page web application to track personal contacts and schedule regular check-in calls using React + TypeScript with Vite, following XP/TDD principles with strict OO design patterns.
+
+## Current Implementation Status Summary
+- ✅ **Phase 1:** Project Setup & Infrastructure - COMPLETE
+- ⚠️ **Phase 2:** Domain Model - MOSTLY COMPLETE (3/4 subsections)
+  - ✅ Contact Domain (100%) - 9 value objects + Contact entity + collections
+  - ✅ Category Domain (100%) - 3 value objects + Category entity + collections
+  - ❌ Check-in Domain (0% - not started)
+  - ✅ Domain Services (100%) - DateCalculator + OverdueDetector
+- ⚠️ **Phase 3:** Application Services - IN PROGRESS (6/22 use cases)
+  - ✅ Contact Use Cases (100% - 6/6 complete: CreateContact, UpdateContact, GetContactById, ListAllContacts, DeleteContact, SearchContacts)
+  - ❌ Category Use Cases (0/6)
+  - ❌ Check-in Use Cases (0/6)
+  - ❌ Dashboard Use Cases (0/4)
+- ❌ **Phase 4:** Infrastructure - NOT STARTED (0/4 subsections)
+- ❌ **Phase 5:** Dependency Injection - NOT STARTED (0/2 subsections)
+- ❌ **Phase 6:** React UI Layer - NOT STARTED (0/8 subsections)
 
 ## Architecture Decision
 **Frontend-Only Application with Local Storage**
@@ -67,7 +88,7 @@ src/
 - [x] Create initial commit
 - [x] Create `.claude/rules.md` with comprehensive development rules
 
-## Phase 2: Domain Model (TDD)
+## Phase 2: Domain Model (TDD) - IN PROGRESS
 
 ### 2.1 Contact Domain ✅ COMPLETE
 - [x] Test & implement `ContactId` value object (UUID wrapper)
@@ -79,8 +100,10 @@ src/
 - [x] Test & implement `Contact` entity (immutable)
 - [x] Test & implement `ContactRepository` interface
 - [x] Test & implement `ContactCollection` and `ImportantDateCollection` (with BaseCollection)
+- [x] Test & implement `UuidValueObject` base class (in domain/shared)
 - [x] Add equality methods to all value objects and Contact entity
 - [x] Document validation strategy in .claude/rules.md
+- [x] Create `InMemoryContactRepository` test double
 
 ### 2.2 Category Domain ✅ COMPLETE
 - [x] Test & implement `CategoryId` value object (UUID wrapper)
@@ -88,6 +111,7 @@ src/
 - [x] Test & implement `CheckInFrequency` value object (days/weeks/months)
 - [x] Test & implement `Category` entity (immutable)
 - [x] Test & implement `CategoryRepository` interface
+- [x] Test & implement `CategoryCollection`
 - [x] Create default categories factory
 
 ### 2.3 Check-in Domain
@@ -104,15 +128,15 @@ src/
 - [x] Test & implement `DateCalculator` service (next check-in from original date)
 - [x] Test & implement `OverdueDetector` service (identify overdue check-ins)
 
-## Phase 3: Application Services (TDD)
+## Phase 3: Application Services (TDD) - IN PROGRESS
 
-### 3.1 Contact Management Use Cases
-- [x] Test & implement `CreateContact` use case
-- [x] Test & implement `UpdateContact` use case
-- [ ] Test & implement `DeleteContact` use case
-- [ ] Test & implement `GetContactById` use case
-- [ ] Test & implement `ListAllContacts` use case
-- [ ] Test & implement `SearchContacts` use case
+### 3.1 Contact Management Use Cases ✅ COMPLETE
+- [x] Test & implement `CreateContact` use case ✅
+- [x] Test & implement `UpdateContact` use case ✅
+- [x] Test & implement `GetContactById` use case ✅
+- [x] Test & implement `ListAllContacts` use case ✅
+- [x] Test & implement `DeleteContact` use case ✅
+- [x] Test & implement `SearchContacts` use case ✅
 
 ### 3.2 Category Management Use Cases
 - [ ] Test & implement `CreateCategory` use case
@@ -424,6 +448,30 @@ Choose one:
 - [ ] Install prompt for mobile home screen
 - [ ] Touch gestures for actions
 - [ ] Mobile-optimized layout
+
+---
+
+## Next Immediate Steps
+
+Based on current progress, the recommended next steps are:
+
+1. **Implement Check-in Domain** (Phase 2.3) ⬅️ PRIORITY
+   - Core domain for check-ins is needed before progressing further
+   - Value objects: CheckInId, ScheduledDate, CompletionDate, CheckInNotes
+   - Entity: CheckIn
+   - Repository interface: CheckInRepository
+
+2. **Implement Category Use Cases** (Phase 3.2)
+   - Use cases for category management
+   - CreateCategory, UpdateCategory, DeleteCategory, ListCategories, GetDefaultCategories, AssignContactToCategory
+
+3. **Implement Check-in Use Cases** (Phase 3.3)
+   - Core functionality for scheduling and completing check-ins
+   - Requires check-in domain to be complete first
+
+4. **Implement Dashboard Use Cases** (Phase 3.4)
+   - GetDashboardSummary and GetTodayCheckIns
+   - Requires check-in use cases to be complete
 
 ---
 
