@@ -51,14 +51,20 @@ export class AssignContactToCategory {
     categoryId: CategoryId
   ): Contact {
     return createContact({
+      ...this.extractContactData(contact),
+      categoryId: categoryId,
+    })
+  }
+
+  private extractContactData(contact: Contact) {
+    return {
       id: contact.id,
       name: contact.name,
       phone: contact.phone,
       email: contact.email,
       location: contact.location,
       relationshipContext: contact.relationshipContext,
-      categoryId: categoryId,
       importantDates: contact.importantDates,
-    })
+    }
   }
 }
