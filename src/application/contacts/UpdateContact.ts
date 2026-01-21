@@ -8,6 +8,7 @@ import {
   createLocation,
   createRelationshipContext,
 } from '../../domain/contact'
+import { getEntityOrThrow } from '../shared/RepositoryHelpers'
 
 export interface UpdateContactInput {
   id: ContactId
@@ -28,18 +29,10 @@ export class UpdateContact {
   }
 
   async execute(input: UpdateContactInput): Promise<Contact> {
-    const existingContact = await this.getExistingContact(input.id)
-    const updatedContact = this.buildUpdatedContact(existingContact, input)
-    await this.repository.save(updatedContact)
-    return updatedContact
-  }
-
-  private async getExistingContact(id: ContactId): Promise<Contact> {
-    const contact = await this.repository.findById(id)
-    if (!contact) {
-      throw new Error('Contact not found')
-    }
-    return contact
+    const existing = await getEntityOrThrow(this.repository, input.id, 'Contact')
+    const updated = this.buildUpdatedContact(existing, input)
+    await this.repository.save(updated)
+    return updated
   }
 
   private buildUpdatedContact(

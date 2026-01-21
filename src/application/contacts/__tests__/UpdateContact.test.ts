@@ -7,6 +7,7 @@ import { createPhoneNumber } from '../../../domain/contact/PhoneNumber'
 import { createEmailAddress } from '../../../domain/contact/EmailAddress'
 import { createLocation } from '../../../domain/contact/Location'
 import { createRelationshipContext } from '../../../domain/contact/RelationshipContext'
+import { EntityNotFoundError } from '../../shared/errors/EntityNotFoundError'
 
 describe('UpdateContact', () => {
   let repository: InMemoryContactRepository
@@ -163,7 +164,7 @@ describe('UpdateContact', () => {
         id: nonExistentId,
         name: 'Jane Doe',
       })
-    ).rejects.toThrow('Contact not found')
+    ).rejects.toThrow(EntityNotFoundError)
   })
 
   it('should throw error for invalid phone number', async () => {

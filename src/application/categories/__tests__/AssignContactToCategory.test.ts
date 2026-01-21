@@ -5,6 +5,7 @@ import { InMemoryContactRepository } from '../../contacts/test-doubles/InMemoryC
 import { CreateContact } from '../../contacts/CreateContact'
 import { CreateCategory } from '../CreateCategory'
 import { createContactId, isNullCategoryId } from '../../../domain/contact'
+import { EntityNotFoundError } from '../../shared/errors/EntityNotFoundError'
 
 describe('AssignContactToCategory', () => {
   let categoryRepository: InMemoryCategoryRepository
@@ -93,7 +94,7 @@ describe('AssignContactToCategory', () => {
         contactId: nonExistentContactId,
         categoryId: category.id,
       })
-    ).rejects.toThrow('Contact not found')
+    ).rejects.toThrow(EntityNotFoundError)
   })
 
   it('should throw error if category not found', async () => {
@@ -111,7 +112,7 @@ describe('AssignContactToCategory', () => {
         contactId: contact.id,
         categoryId: nonExistentCategoryId.id,
       })
-    ).rejects.toThrow('Category not found')
+    ).rejects.toThrow(EntityNotFoundError)
   })
 
   it('should allow reassigning to different category', async () => {

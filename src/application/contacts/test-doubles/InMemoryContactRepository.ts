@@ -5,38 +5,27 @@ import {
   type ContactCollection,
   createContactCollection,
 } from '../../../domain/contact'
+import { BaseInMemoryRepository } from '../../test-doubles/BaseInMemoryRepository'
 
-export class InMemoryContactRepository implements ContactRepository {
-  private contacts: Map<string, Contact> = new Map()
-
-  async save(contact: Contact): Promise<void> {
-    this.contacts.set(contact.id, contact)
+export class InMemoryContactRepository
+  extends BaseInMemoryRepository<Contact, ContactId, ContactCollection>
+  implements ContactRepository
+{
+  protected extractId(entity: Contact): string {
+    return entity.id
   }
 
-  async findById(id: ContactId): Promise<Contact | null> {
-    return this.contacts.get(id) || null
-  }
-
-  async findAll(): Promise<ContactCollection> {
-    const allContacts = Array.from(this.contacts.values())
-    return createContactCollection(allContacts)
-  }
-
-  async delete(id: ContactId): Promise<void> {
-    this.contacts.delete(id)
+  protected createCollection(entities: Contact[]): ContactCollection {
+    return createContactCollection(entities)
   }
 
   async search(query: string): Promise<ContactCollection> {
     const lowerQuery = query.toLowerCase()
-    const matches = Array.from(this.contacts.values()).filter(
+    const matches = Array.from(this.entities.values()).filter(
       (contact) =>
         contact.name.toLowerCase().includes(lowerQuery) ||
         (contact.email?.toLowerCase().includes(lowerQuery) ?? false)
     )
     return createContactCollection(matches)
-  }
-
-  clear(): void {
-    this.contacts.clear()
   }
 }

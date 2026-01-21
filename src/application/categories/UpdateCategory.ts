@@ -7,6 +7,7 @@ import {
   createCategoryName,
   createCheckInFrequency,
 } from '../../domain/category'
+import { getEntityOrThrow } from '../shared/RepositoryHelpers'
 
 export interface UpdateCategoryInput {
   id: CategoryId
@@ -23,18 +24,10 @@ export class UpdateCategory {
   }
 
   async execute(input: UpdateCategoryInput): Promise<Category> {
-    const existingCategory = await this.getExistingCategory(input.id)
-    const updatedCategory = this.buildUpdatedCategory(existingCategory, input)
-    await this.repository.save(updatedCategory)
-    return updatedCategory
-  }
-
-  private async getExistingCategory(id: CategoryId): Promise<Category> {
-    const category = await this.repository.findById(id)
-    if (!category) {
-      throw new Error('Category not found')
-    }
-    return category
+    const existing = await getEntityOrThrow(this.repository, input.id, 'Category')
+    const updated = this.buildUpdatedCategory(existing, input)
+    await this.repository.save(updated)
+    return updated
   }
 
   private buildUpdatedCategory(

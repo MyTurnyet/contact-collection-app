@@ -5,6 +5,7 @@ import { createCategory } from '../../../domain/category/Category'
 import { createCategoryId } from '../../../domain/category/CategoryId'
 import { createCategoryName } from '../../../domain/category/CategoryName'
 import { createCheckInFrequency } from '../../../domain/category/CheckInFrequency'
+import { EntityNotFoundError } from '../../shared/errors/EntityNotFoundError'
 
 describe('UpdateCategory', () => {
   let repository: InMemoryCategoryRepository
@@ -95,7 +96,7 @@ describe('UpdateCategory', () => {
         id: nonExistentId,
         name: 'Test',
       })
-    ).rejects.toThrow('Category not found')
+    ).rejects.toThrow(EntityNotFoundError)
   })
 
   it('should throw error for invalid name', async () => {

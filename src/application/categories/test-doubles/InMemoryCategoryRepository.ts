@@ -5,28 +5,17 @@ import {
   type CategoryCollection,
   createCategoryCollection,
 } from '../../../domain/category'
+import { BaseInMemoryRepository } from '../../test-doubles/BaseInMemoryRepository'
 
-export class InMemoryCategoryRepository implements CategoryRepository {
-  private categories: Map<string, Category> = new Map()
-
-  async save(category: Category): Promise<void> {
-    this.categories.set(category.id, category)
+export class InMemoryCategoryRepository
+  extends BaseInMemoryRepository<Category, CategoryId, CategoryCollection>
+  implements CategoryRepository
+{
+  protected extractId(entity: Category): string {
+    return entity.id
   }
 
-  async findById(id: CategoryId): Promise<Category | null> {
-    return this.categories.get(id) || null
-  }
-
-  async findAll(): Promise<CategoryCollection> {
-    const allCategories = Array.from(this.categories.values())
-    return createCategoryCollection(allCategories)
-  }
-
-  async delete(id: CategoryId): Promise<void> {
-    this.categories.delete(id)
-  }
-
-  clear(): void {
-    this.categories.clear()
+  protected createCollection(entities: Category[]): CategoryCollection {
+    return createCategoryCollection(entities)
   }
 }
