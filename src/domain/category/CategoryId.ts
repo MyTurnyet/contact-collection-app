@@ -17,3 +17,15 @@ export function categoryIdFromString(value: string): CategoryId {
 export function categoryIdEquals(a: CategoryId, b: CategoryId): boolean {
   return uuidValueObjectEquals(a, b)
 }
+
+const NULL_CATEGORY_ID = categoryIdFromString(
+  '00000000-0000-0000-0000-000000000000'
+)
+
+export function createNullCategoryId(): CategoryId {
+  return NULL_CATEGORY_ID
+}
+
+export function isNullCategoryId(categoryId: CategoryId): boolean {
+  return categoryId === NULL_CATEGORY_ID
+}

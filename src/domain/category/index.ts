@@ -4,6 +4,8 @@ export {
   createCategoryId,
   categoryIdFromString,
   categoryIdEquals,
+  createNullCategoryId,
+  isNullCategoryId,
 } from './CategoryId'
 export {
   type CategoryName,

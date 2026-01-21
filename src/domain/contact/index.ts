@@ -47,6 +47,16 @@ export {
   createContactCollection,
 } from './collections/ContactCollection'
 
+// Category (from category domain)
+export {
+  type CategoryId,
+  createCategoryId,
+  categoryIdFromString,
+  categoryIdEquals,
+  createNullCategoryId,
+  isNullCategoryId,
+} from '../category/CategoryId'
+
 // Entity
 export {
   type Contact,

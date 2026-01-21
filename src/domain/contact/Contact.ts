@@ -21,6 +21,11 @@ import {
 } from './RelationshipContext'
 import type ImportantDateCollection from './collections/ImportantDateCollection'
 import { createImportantDateCollection } from './collections/ImportantDateCollection'
+import {
+  type CategoryId,
+  categoryIdEquals,
+  createNullCategoryId,
+} from '../category/CategoryId'
 
 export interface Contact {
   readonly id: ContactId
@@ -29,6 +34,7 @@ export interface Contact {
   readonly email: EmailAddress
   readonly location: Location
   readonly relationshipContext: RelationshipContext
+  readonly categoryId: CategoryId
   readonly importantDates: ImportantDateCollection
 }
 
@@ -39,6 +45,7 @@ interface ContactInput {
   email?: EmailAddress
   location?: Location
   relationshipContext?: RelationshipContext
+  categoryId?: CategoryId
   importantDates?: ImportantDateCollection
 }
 
@@ -69,6 +76,7 @@ function buildBaseContact(input: ContactInput) {
     email: input.email ?? createNullEmailAddress(),
     location: input.location ?? createNullLocation(),
     relationshipContext: input.relationshipContext ?? createNullRelationshipContext(),
+    categoryId: input.categoryId ?? createNullCategoryId(),
   }
 }
 
@@ -86,6 +94,7 @@ export function contactEquals(a: Contact, b: Contact): boolean {
     emailAddressEquals(a.email, b.email) &&
     locationEquals(a.location, b.location) &&
     relationshipContextEquals(a.relationshipContext, b.relationshipContext) &&
+    categoryIdEquals(a.categoryId, b.categoryId) &&
     a.importantDates === b.importantDates
   )
 }
@@ -97,6 +106,7 @@ const NULL_CONTACT: Contact = Object.freeze({
   email: createNullEmailAddress(),
   location: createNullLocation(),
   relationshipContext: createNullRelationshipContext(),
+  categoryId: createNullCategoryId(),
   importantDates: createImportantDateCollection([]),
 })
 
