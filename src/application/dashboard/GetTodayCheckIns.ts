@@ -1,8 +1,7 @@
 import type { CheckInRepository } from '../../domain/checkin/CheckInRepository';
 import type CheckInCollection from '../../domain/checkin/collections/CheckInCollection';
-import { CheckInStatus } from '../../domain/checkin/CheckInStatus';
 import type { CheckIn } from '../../domain/checkin/CheckIn';
-import { createCheckInCollection } from '../../domain/checkin/collections/CheckInCollection';
+import { createCheckInCollection, isNotCompleted } from '../../domain/checkin';
 import { areSameDay } from '../../domain/services';
 
 export class GetTodayCheckIns {
@@ -26,7 +25,7 @@ export class GetTodayCheckIns {
   }
 
   private isScheduledForToday(checkIn: CheckIn, today: Date): boolean {
-    if (checkIn.status === CheckInStatus.Completed) {
+    if (!isNotCompleted(checkIn)) {
       return false;
     }
     return areSameDay(checkIn.scheduledDate, today);

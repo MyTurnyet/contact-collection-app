@@ -89,7 +89,7 @@ describe('CheckInCollection', () => {
     })
     const collection = createCheckInCollection([checkIn])
 
-    const items = collection.getItems()
+    const items = collection.toArray()
 
     expect(Object.isFrozen(items)).toBe(true)
   })

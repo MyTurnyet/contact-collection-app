@@ -2,12 +2,12 @@ import type { ContactRepository } from '../../domain/contact/ContactRepository';
 import type { CheckInRepository } from '../../domain/checkin/CheckInRepository';
 import type { DashboardSummary } from './DashboardSummary';
 import type { CheckIn } from '../../domain/checkin/CheckIn';
-import { CheckInStatus } from '../../domain/checkin/CheckInStatus';
 import type ContactCollection from '../../domain/contact/collections/ContactCollection';
 import type CheckInCollection from '../../domain/checkin/collections/CheckInCollection';
 import type { Contact } from '../../domain/contact/Contact';
 import { isNullCategoryId } from '../../domain/category/CategoryId';
 import { isDateBetween, addDaysToDate, isOverdue as isDateOverdue } from '../../domain/services';
+import { isNotCompleted } from '../../domain/checkin';
 
 export class GetDashboardSummary {
   private readonly contactRepository: ContactRepository
@@ -42,7 +42,7 @@ export class GetDashboardSummary {
   }
 
   private isOverdue(checkIn: CheckIn, today: Date): boolean {
-    if (checkIn.status === CheckInStatus.Completed) {
+    if (!isNotCompleted(checkIn)) {
       return false;
     }
     return isDateOverdue(checkIn.scheduledDate, today);
@@ -63,7 +63,7 @@ export class GetDashboardSummary {
     today: Date,
     sevenDaysFromNow: Date
   ): boolean {
-    if (checkIn.status === CheckInStatus.Completed) {
+    if (!isNotCompleted(checkIn)) {
       return false;
     }
     return isDateBetween(checkIn.scheduledDate, today, sevenDaysFromNow);

@@ -43,3 +43,11 @@ export {
   createNullCheckIn,
   isNullCheckIn,
 } from './CheckIn'
+
+// Predicates
+export {
+  isCompleted,
+  isNotCompleted,
+  isScheduled,
+  isOverdue,
+} from './CheckInPredicates'

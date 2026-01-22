@@ -13,10 +13,6 @@ abstract class BaseCollection<T> {
     return this.size == 0;
   }
 
-  getItems(): readonly T[] {
-    return this.items;
-  }
-
   forEach(callback: (item: T) => void): void {
     this.items.forEach(callback);
   }

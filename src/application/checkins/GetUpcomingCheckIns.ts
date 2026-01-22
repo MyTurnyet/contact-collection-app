@@ -2,7 +2,7 @@ import type {
   CheckInRepository,
   CheckInCollection,
 } from '../../domain/checkin'
-import { CheckInStatus, createCheckInCollection } from '../../domain/checkin'
+import { createCheckInCollection, isScheduled } from '../../domain/checkin'
 import { addDays } from 'date-fns'
 
 export interface GetUpcomingCheckInsInput {
@@ -44,9 +44,7 @@ export class GetUpcomingCheckIns {
   }
 
   private filterScheduled(checkIns: CheckInCollection) {
-    const scheduled = checkIns
-      .toArray()
-      .filter((c) => c.status === CheckInStatus.Scheduled)
+    const scheduled = checkIns.toArray().filter(isScheduled)
     return createCheckInCollection(scheduled)
   }
 }

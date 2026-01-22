@@ -63,9 +63,9 @@ describe('CategoryCollection', () => {
       frequency: createCheckInFrequency({ value: 2, unit: 'weeks' }),
     })
 
-    it('getItems returns readonly array', () => {
+    it('toArray returns readonly array', () => {
       const collection = createCategoryCollection([category1, category2])
-      const items = collection.getItems()
+      const items = collection.toArray()
 
       expect(items).toHaveLength(2)
       expect(items[0]).toBe(category1)
@@ -115,7 +115,7 @@ describe('CategoryCollection', () => {
 
     it('collection is immutable', () => {
       const collection = createCategoryCollection([category1])
-      const items = collection.getItems()
+      const items = collection.toArray()
 
       expect(() => {
         // @ts-expect-error - Testing immutability
