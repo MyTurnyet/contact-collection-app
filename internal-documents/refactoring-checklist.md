@@ -85,37 +85,61 @@ This document tracks important refactorings to improve code readability and exte
 
 ## 🟡 Medium Priority Refactorings
 
-### 5. Simplify Collection API - Remove Redundant Method ❌
+### 5. Simplify Collection API - Remove Redundant Method ✅
 
 **Problem**: `BaseCollection.ts` has both `getItems()` and `toArray()` returning the same thing.
 
-**Tasks**:
-- [ ] Remove `getItems()` method from BaseCollection (line 16-18)
-- [ ] Search codebase for any `getItems()` usage and replace with `toArray()`
-- [ ] Update tests if needed
+**Tasks completed**:
+- [x] Remove `getItems()` method from BaseCollection (line 16-18)
+- [x] Search codebase for `getItems()` usage - found 2 test files
+- [x] Replace all `getItems()` calls with `toArray()` in tests
+- [x] Update test names to reflect new method
 
-**Recommendation**: Keep `toArray()` as it's the standard collection method name.
+**Files refactored**:
+- `src/domain/contact/collections/BaseCollection.ts` - Removed redundant `getItems()` method
+- `src/domain/category/__tests__/CategoryCollection.test.ts` - Updated 2 usages to `toArray()`
+- `src/domain/checkin/__tests__/CheckInCollection.test.ts` - Updated 1 usage to `toArray()`
 
-**Location**: `src/domain/contact/collections/BaseCollection.ts`
+**Impact**:
+- Simplified collection API with single method for array access
+- `toArray()` is the standard collection method name (consistent with JavaScript conventions)
+- Reduced API surface area - fewer methods to maintain
+
+**Tests**: All 473 tests passing ✅
+**Build**: TypeScript compilation successful ✅
 
 ---
 
-### 6. Create CheckInStatus Filter Helpers in Domain ❌
+### 6. Create CheckInStatus Filter Helpers in Domain ✅
 
 **Problem**: Multiple use cases filter by `CheckInStatus.Completed` with duplicated logic.
 
-**Tasks**:
-- [ ] Create `src/domain/checkin/CheckInPredicates.ts`
-- [ ] Implement `isNotCompleted(checkIn)` and `isCompleted(checkIn)` predicates
-- [ ] Refactor `GetDashboardSummary.ts:44-45` to use predicate
-- [ ] Refactor `GetDashboardSummary.ts:65-66` to use predicate
-- [ ] Refactor `GetTodayCheckIns.ts:32-33` to use predicate
-- [ ] Export from domain checkin index
-- [ ] Verify tests still pass
+**Tasks completed**:
+- [x] Create `src/domain/checkin/CheckInPredicates.ts` with 4 predicates
+- [x] Implement `isCompleted()`, `isNotCompleted()`, `isScheduled()`, `isOverdue()` predicates
+- [x] Write comprehensive tests with 12 test cases
+- [x] Refactor `GetDashboardSummary.ts:44-45` to use `isNotCompleted` predicate
+- [x] Refactor `GetDashboardSummary.ts:65-66` to use `isNotCompleted` predicate
+- [x] Refactor `GetTodayCheckIns.ts:28` to use `isNotCompleted` predicate
+- [x] Refactor `GetUpcomingCheckIns.ts:47` to use `isScheduled` predicate
+- [x] Export all predicates from domain checkin index
 
-**Files affected**:
-- `src/application/dashboard/GetDashboardSummary.ts`
-- `src/application/dashboard/GetTodayCheckIns.ts`
+**Files refactored**:
+- `src/domain/checkin/CheckInPredicates.ts` - New domain predicates with 4 filter functions
+- `src/domain/checkin/__tests__/CheckInPredicates.test.ts` - 12 comprehensive tests
+- `src/domain/checkin/index.ts` - Exports all predicates
+- `src/application/dashboard/GetDashboardSummary.ts` - Uses `isNotCompleted` predicate
+- `src/application/dashboard/GetTodayCheckIns.ts` - Uses `isNotCompleted` predicate
+- `src/application/checkins/GetUpcomingCheckIns.ts` - Uses `isScheduled` predicate
+
+**Impact**:
+- Eliminated duplicate status checking logic across 3 use cases
+- Centralized status filter logic in domain layer following DDD principles
+- Improved code readability with semantic predicate names
+- All status-based filtering now uses consistent, tested predicates
+
+**Tests**: All 473 tests passing (461 original + 12 new CheckInPredicates tests) ✅
+**Build**: TypeScript compilation successful ✅
 
 ---
 
@@ -191,11 +215,11 @@ This document tracks important refactorings to improve code readability and exte
 ## Progress Tracking
 
 **High Priority**: 3/3 complete (100%) 🎉
-**Medium Priority**: 0/3 complete (0%)
+**Medium Priority**: 2/3 complete (67%) 🎯
 **Low Priority**: 0/2 complete (0%)
 
-**Overall**: 3/8 refactorings complete (38%)
+**Overall**: 5/8 refactorings complete (62%)
 
 ---
 
-*Last Updated*: 2026-01-22 - Completed refactorings #1 (Field Visibility), #2 (Date Utilities), and #4 (Use OverdueDetector)
+*Last Updated*: 2026-01-22 - Completed refactorings #1 (Field Visibility), #2 (Date Utilities), #4 (Use OverdueDetector), #5 (Simplify Collection API), and #6 (CheckInStatus Filter Helpers)
