@@ -240,7 +240,7 @@ describe('CompleteCheckIn', () => {
         checkInId: nonExistentId,
         completionDate: createCompletionDate(new Date()),
       })
-    ).rejects.toThrow('Check-in not found')
+    ).rejects.toThrow('CheckIn not found')
   })
 
   it('should throw error when contact not found', async () => {

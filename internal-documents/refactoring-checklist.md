@@ -143,21 +143,43 @@ This document tracks important refactorings to improve code readability and exte
 
 ---
 
-### 7. Consider DateRange Value Object ❌
+### 7. Consider DateRange Value Object ✅
 
 **Problem**: Multiple methods take separate `start` and `end` date parameters.
 
-**Tasks**:
-- [ ] Create `src/domain/shared/DateRange.ts` value object
-- [ ] Implement `createDateRange(start, end)` factory
-- [ ] Implement `isDateInRange(date, range)` helper
-- [ ] Add validation (start must be before end)
-- [ ] Consider refactoring `CheckInRepository.findByDateRange()` to use DateRange
-- [ ] Consider refactoring `GetDashboardSummary.isDateBetween()` to use DateRange
-- [ ] Export from domain shared index
-- [ ] Update tests
+**Tasks completed**:
+- [x] Create `src/domain/shared/DateRange.ts` value object with branded type
+- [x] Implement `createDateRange(start, end)` factory with validation
+- [x] Implement `isDateInRange(date, range)` helper
+- [x] Implement `dateRangeEquals(a, b)` equality helper
+- [x] Add validation (start must be before or equal to end)
+- [x] Write comprehensive tests with 14 test cases
+- [x] Refactor `CheckInRepository.findByDateRange()` to use DateRange
+- [x] Refactor `InMemoryCheckInRepository` to use DateRange and `isDateInRange`
+- [x] Refactor `GetDashboardSummary.isUpcoming()` to use DateRange instead of separate parameters
+- [x] Refactor `GetUpcomingCheckIns.calculateDateRange()` to return DateRange
+- [x] Export from domain shared index
+- [x] All tests passing
 
-**Benefit**: Type-safe date ranges with built-in validation.
+**Files refactored**:
+- `src/domain/shared/DateRange.ts` - New value object with branded type, validation, and immutability
+- `src/domain/shared/__tests__/DateRange.test.ts` - 14 comprehensive tests
+- `src/domain/shared/index.ts` - New index file exporting DateRange types and functions
+- `src/domain/checkin/CheckInRepository.ts` - Updated interface to use DateRange parameter
+- `src/application/checkins/test-doubles/InMemoryCheckInRepository.ts` - Uses DateRange and `isDateInRange`
+- `src/application/checkins/GetUpcomingCheckIns.ts` - Returns DateRange from `calculateDateRange()`
+- `src/application/dashboard/GetDashboardSummary.ts` - Uses DateRange in `countUpcoming()` and `isUpcoming()`
+
+**Impact**:
+- Type-safe date ranges with built-in validation ensuring start ≤ end
+- Eliminated passing separate start/end parameters across method boundaries
+- All dates normalized to start of day for consistent comparisons
+- Immutable value object following DDD principles
+- Repository interface now more expressive with single DateRange parameter
+- Kept `isDateBetween` in DateService for lightweight one-off checks
+
+**Tests**: All 487 tests passing (473 original + 14 new DateRange tests) ✅
+**Build**: TypeScript compilation successful ✅
 
 ---
 
@@ -168,13 +190,13 @@ This document tracks important refactorings to improve code readability and exte
 **Problem**: Some use cases throw generic `Error` instead of `EntityNotFoundError`.
 
 **Tasks**:
-- [ ] Audit all use cases for `throw new Error(...)` patterns
-- [ ] Replace with `EntityNotFoundError` where appropriate
-- [ ] Specifically fix `CompleteCheckIn.ts:61, 69, 77`
-- [ ] Update tests to expect EntityNotFoundError
+- [x] Audit all use cases for `throw new Error(...)` patterns
+- [x] Replace with `EntityNotFoundError` where appropriate
+- [x] Specifically fix `CompleteCheckIn.ts:61, 69, 77`
+- [x] Update tests to expect EntityNotFoundError
 
-**Files known to need fixes**:
-- `src/application/checkins/CompleteCheckIn.ts:58-80`
+**Files refactored**:
+- `src/application/checkins/CompleteCheckIn.ts:58-80` - updated lines 61, 69, 77
 
 ---
 
@@ -215,11 +237,11 @@ This document tracks important refactorings to improve code readability and exte
 ## Progress Tracking
 
 **High Priority**: 3/3 complete (100%) 🎉
-**Medium Priority**: 2/3 complete (67%) 🎯
+**Medium Priority**: 3/3 complete (100%) 🎉
 **Low Priority**: 0/2 complete (0%)
 
-**Overall**: 5/8 refactorings complete (62%)
+**Overall**: 6/8 refactorings complete (75%)
 
 ---
 
-*Last Updated*: 2026-01-22 - Completed refactorings #1 (Field Visibility), #2 (Date Utilities), #4 (Use OverdueDetector), #5 (Simplify Collection API), and #6 (CheckInStatus Filter Helpers)
+*Last Updated*: 2026-01-22 - Completed refactorings #1 (Field Visibility), #2 (Date Utilities), #4 (Use OverdueDetector), #5 (Simplify Collection API), #6 (CheckInStatus Filter Helpers), and #7 (DateRange Value Object)

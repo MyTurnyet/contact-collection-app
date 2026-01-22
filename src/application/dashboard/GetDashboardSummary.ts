@@ -6,8 +6,9 @@ import type ContactCollection from '../../domain/contact/collections/ContactColl
 import type CheckInCollection from '../../domain/checkin/collections/CheckInCollection';
 import type { Contact } from '../../domain/contact/Contact';
 import { isNullCategoryId } from '../../domain/category/CategoryId';
-import { isDateBetween, addDaysToDate, isOverdue as isDateOverdue } from '../../domain/services';
+import { addDaysToDate, isOverdue as isDateOverdue } from '../../domain/services';
 import { isNotCompleted } from '../../domain/checkin';
+import { createDateRange, isDateInRange } from '../../domain/shared';
 
 export class GetDashboardSummary {
   private readonly contactRepository: ContactRepository
@@ -50,23 +51,21 @@ export class GetDashboardSummary {
 
   private countUpcoming(checkIns: CheckInCollection, today: Date): number {
     const sevenDaysFromNow = addDaysToDate(today, 7);
+    const upcomingRange = createDateRange(today, sevenDaysFromNow);
     const upcoming = checkIns
       .toArray()
-      .filter((checkIn: CheckIn) =>
-        this.isUpcoming(checkIn, today, sevenDaysFromNow)
-      );
+      .filter((checkIn: CheckIn) => this.isUpcoming(checkIn, upcomingRange));
     return upcoming.length;
   }
 
   private isUpcoming(
     checkIn: CheckIn,
-    today: Date,
-    sevenDaysFromNow: Date
+    range: ReturnType<typeof createDateRange>
   ): boolean {
     if (!isNotCompleted(checkIn)) {
       return false;
     }
-    return isDateBetween(checkIn.scheduledDate, today, sevenDaysFromNow);
+    return isDateInRange(checkIn.scheduledDate, range);
   }
 
   private groupContactsByCategory(

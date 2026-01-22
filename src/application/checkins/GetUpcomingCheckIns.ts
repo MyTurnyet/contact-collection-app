@@ -4,6 +4,7 @@ import type {
 } from '../../domain/checkin'
 import { createCheckInCollection, isScheduled } from '../../domain/checkin'
 import { addDays } from 'date-fns'
+import { createDateRange } from '../../domain/shared'
 
 export interface GetUpcomingCheckInsInput {
   days?: number
@@ -30,17 +31,11 @@ export class GetUpcomingCheckIns {
   private calculateDateRange(days: number) {
     const startDate = new Date()
     const endDate = addDays(startDate, days)
-    return { startDate, endDate }
+    return createDateRange(startDate, endDate)
   }
 
-  private async fetchCheckIns(dateRange: {
-    startDate: Date
-    endDate: Date
-  }) {
-    return this.repository.findByDateRange(
-      dateRange.startDate,
-      dateRange.endDate
-    )
+  private async fetchCheckIns(dateRange: ReturnType<typeof createDateRange>) {
+    return this.repository.findByDateRange(dateRange)
   }
 
   private filterScheduled(checkIns: CheckInCollection) {

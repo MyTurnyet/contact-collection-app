@@ -7,6 +7,7 @@ import type {
 import { createCheckInCollection, CheckInStatus } from '../../../domain/checkin'
 import type { ContactId } from '../../../domain/contact'
 import { BaseInMemoryRepository } from '../../test-doubles/BaseInMemoryRepository'
+import { type DateRange, isDateInRange } from '../../../domain/shared'
 
 export class InMemoryCheckInRepository
   extends BaseInMemoryRepository<CheckIn, CheckInId, CheckInCollection>
@@ -34,13 +35,9 @@ export class InMemoryCheckInRepository
     return createCheckInCollection(matches)
   }
 
-  async findByDateRange(
-    startDate: Date,
-    endDate: Date
-  ): Promise<CheckInCollection> {
-    const matches = Array.from(this.entities.values()).filter(
-      (checkIn) =>
-        checkIn.scheduledDate >= startDate && checkIn.scheduledDate <= endDate
+  async findByDateRange(range: DateRange): Promise<CheckInCollection> {
+    const matches = Array.from(this.entities.values()).filter((checkIn) =>
+      isDateInRange(checkIn.scheduledDate, range)
     )
     return createCheckInCollection(matches)
   }

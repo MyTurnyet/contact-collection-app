@@ -18,6 +18,7 @@ import type {
   CheckInFrequency,
 } from '../../domain/category'
 import { calculateNextCheckIn } from '../../domain/services/DateCalculator'
+import {EntityNotFoundError} from "../shared/errors/EntityNotFoundError.ts";
 
 export interface CompleteCheckInInput {
   checkInId: CheckInId
@@ -58,7 +59,7 @@ export class CompleteCheckIn {
   private async findCheckIn(checkInId: CheckInId): Promise<CheckIn> {
     const checkIn = await this.checkInRepository.findById(checkInId)
     if (!checkIn) {
-      throw new Error('Check-in not found')
+      throw new EntityNotFoundError('CheckIn', checkInId)
     }
     return checkIn
   }
@@ -66,7 +67,8 @@ export class CompleteCheckIn {
   private async findContact(contactId: ContactId) {
     const contact = await this.contactRepository.findById(contactId)
     if (!contact) {
-      throw new Error('Contact not found')
+      throw new EntityNotFoundError('Contact', contactId.toString())
+
     }
     return contact
   }
@@ -74,7 +76,8 @@ export class CompleteCheckIn {
   private async findCategory(categoryId: CategoryId) {
     const category = await this.categoryRepository.findById(categoryId)
     if (!category) {
-      throw new Error('Category not found')
+      throw new EntityNotFoundError('Category', categoryId.toString())
+
     }
     return category
   }
