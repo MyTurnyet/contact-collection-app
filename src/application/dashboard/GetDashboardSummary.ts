@@ -7,7 +7,7 @@ import type ContactCollection from '../../domain/contact/collections/ContactColl
 import type CheckInCollection from '../../domain/checkin/collections/CheckInCollection';
 import type { Contact } from '../../domain/contact/Contact';
 import { isNullCategoryId } from '../../domain/category/CategoryId';
-import { isDateBefore, isDateBetween, addDaysToDate } from '../../domain/services';
+import { isDateBetween, addDaysToDate, isOverdue as isDateOverdue } from '../../domain/services';
 
 export class GetDashboardSummary {
   private readonly contactRepository: ContactRepository
@@ -45,7 +45,7 @@ export class GetDashboardSummary {
     if (checkIn.status === CheckInStatus.Completed) {
       return false;
     }
-    return isDateBefore(checkIn.scheduledDate, today);
+    return isDateOverdue(checkIn.scheduledDate, today);
   }
 
   private countUpcoming(checkIns: CheckInCollection, today: Date): number {
