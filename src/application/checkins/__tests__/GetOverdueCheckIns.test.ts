@@ -5,6 +5,8 @@ import {
   createCheckIn,
   createCheckInId,
   CheckInStatus,
+  createScheduledDate,
+  createCompletionDate,
 } from '../../../domain/checkin'
 import { createContactId } from '../../../domain/contact'
 import { addDays } from 'date-fns'
@@ -26,12 +28,12 @@ describe('GetOverdueCheckIns', () => {
     const overdueCheckIn1 = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: yesterday,
+      scheduledDate: createScheduledDate(yesterday),
     })
     const overdueCheckIn2 = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: lastWeek,
+      scheduledDate: createScheduledDate(lastWeek),
     })
 
     await repository.save(overdueCheckIn1)
@@ -53,12 +55,12 @@ describe('GetOverdueCheckIns', () => {
     const overdueCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: yesterday,
+      scheduledDate: createScheduledDate(yesterday),
     })
     const scheduledCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: tomorrow,
+      scheduledDate: createScheduledDate(tomorrow),
     })
 
     await repository.save(overdueCheckIn)
@@ -78,13 +80,13 @@ describe('GetOverdueCheckIns', () => {
     const completedCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: yesterday,
-      completionDate: today,
+      scheduledDate: createScheduledDate(yesterday),
+      completionDate: createCompletionDate(today),
     })
     const overdueCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: yesterday,
+      scheduledDate: createScheduledDate(yesterday),
     })
 
     await repository.save(completedCheckIn)
@@ -103,7 +105,7 @@ describe('GetOverdueCheckIns', () => {
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: tomorrow,
+      scheduledDate: createScheduledDate(tomorrow),
     })
 
     await repository.save(checkIn)
@@ -121,12 +123,12 @@ describe('GetOverdueCheckIns', () => {
     const recentOverdue = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: oneMonthAgo,
+      scheduledDate: createScheduledDate(oneMonthAgo),
     })
     const oldOverdue = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: sixMonthsAgo,
+      scheduledDate: createScheduledDate(sixMonthsAgo),
     })
 
     await repository.save(recentOverdue)

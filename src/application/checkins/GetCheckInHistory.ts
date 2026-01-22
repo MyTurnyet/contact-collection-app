@@ -1,17 +1,21 @@
-import {
-  type CheckIn,
-  type CheckInRepository,
-  type CheckInCollection,
-  createCheckInCollection,
+import type {
+  CheckIn,
+  CheckInRepository,
+  CheckInCollection,
 } from '../../domain/checkin'
-import { type ContactId } from '../../domain/contact'
+import { createCheckInCollection } from '../../domain/checkin'
+import type { ContactId } from '../../domain/contact'
 
 export interface GetCheckInHistoryInput {
   contactId: ContactId
 }
 
 export class GetCheckInHistory {
-  constructor(private readonly repository: CheckInRepository) {}
+  readonly repository: CheckInRepository
+
+  constructor(repository: CheckInRepository) {
+    this.repository = repository
+  }
 
   async execute(input: GetCheckInHistoryInput): Promise<CheckInCollection> {
     const checkIns = await this.fetchCheckIns(input.contactId)

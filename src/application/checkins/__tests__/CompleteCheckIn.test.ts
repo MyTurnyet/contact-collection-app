@@ -8,6 +8,9 @@ import {
   createCheckInId,
   CheckInStatus,
   isNullCheckInNotes,
+  createScheduledDate,
+  createCompletionDate,
+  createCheckInNotes,
 } from '../../../domain/checkin'
 import {
   createContact,
@@ -57,7 +60,7 @@ describe('CompleteCheckIn', () => {
     })
     await contactRepository.save(contact)
 
-    const scheduledDate = new Date('2026-02-01')
+    const scheduledDate = createScheduledDate(new Date('2026-02-01'))
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId,
@@ -65,8 +68,8 @@ describe('CompleteCheckIn', () => {
     })
     await checkInRepository.save(checkIn)
 
-    const completionDate = new Date('2026-02-02')
-    const notes = 'Great conversation about vacation plans'
+    const completionDate = createCompletionDate(new Date('2026-02-02'))
+    const notes = createCheckInNotes('Great conversation about vacation plans')
 
     const result = await completeCheckIn.execute({
       checkInId: checkIn.id,
@@ -97,7 +100,7 @@ describe('CompleteCheckIn', () => {
     })
     await contactRepository.save(contact)
 
-    const scheduledDate = new Date('2026-02-01')
+    const scheduledDate = createScheduledDate(new Date('2026-02-01'))
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId,
@@ -105,7 +108,7 @@ describe('CompleteCheckIn', () => {
     })
     await checkInRepository.save(checkIn)
 
-    const completionDate = new Date('2026-02-05')
+    const completionDate = createCompletionDate(new Date('2026-02-05'))
     const expectedNextDate = addWeeks(scheduledDate, 1)
 
     const result = await completeCheckIn.execute({
@@ -136,7 +139,7 @@ describe('CompleteCheckIn', () => {
     })
     await contactRepository.save(contact)
 
-    const scheduledDate = new Date('2026-02-15')
+    const scheduledDate = createScheduledDate(new Date('2026-02-15'))
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId,
@@ -148,7 +151,7 @@ describe('CompleteCheckIn', () => {
 
     const result = await completeCheckIn.execute({
       checkInId: checkIn.id,
-      completionDate: new Date('2026-02-20'),
+      completionDate: createCompletionDate(new Date('2026-02-20')),
     })
 
     expect(result.nextCheckIn.scheduledDate).toEqual(expectedNextDate)
@@ -175,13 +178,13 @@ describe('CompleteCheckIn', () => {
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: new Date('2026-02-01'),
+      scheduledDate: createScheduledDate(new Date('2026-02-01')),
     })
     await checkInRepository.save(checkIn)
 
     const result = await completeCheckIn.execute({
       checkInId: checkIn.id,
-      completionDate: new Date('2026-02-01'),
+      completionDate: createCompletionDate(new Date('2026-02-01')),
     })
 
     expect(result.completedCheckIn.status).toBe(CheckInStatus.Completed)
@@ -209,13 +212,13 @@ describe('CompleteCheckIn', () => {
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: new Date('2026-02-01'),
+      scheduledDate: createScheduledDate(new Date('2026-02-01')),
     })
     await checkInRepository.save(checkIn)
 
     const result = await completeCheckIn.execute({
       checkInId: checkIn.id,
-      completionDate: new Date('2026-02-01'),
+      completionDate: createCompletionDate(new Date('2026-02-01')),
     })
 
     const savedCompleted = await checkInRepository.findById(
@@ -235,7 +238,7 @@ describe('CompleteCheckIn', () => {
     await expect(
       completeCheckIn.execute({
         checkInId: nonExistentId,
-        completionDate: new Date(),
+        completionDate: createCompletionDate(new Date()),
       })
     ).rejects.toThrow('Check-in not found')
   })
@@ -245,14 +248,14 @@ describe('CompleteCheckIn', () => {
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId: nonExistentContactId,
-      scheduledDate: new Date('2026-02-01'),
+      scheduledDate: createScheduledDate(new Date('2026-02-01')),
     })
     await checkInRepository.save(checkIn)
 
     await expect(
       completeCheckIn.execute({
         checkInId: checkIn.id,
-        completionDate: new Date(),
+        completionDate: createCompletionDate(new Date()),
       })
     ).rejects.toThrow('Contact not found')
   })
@@ -271,14 +274,14 @@ describe('CompleteCheckIn', () => {
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: new Date('2026-02-01'),
+      scheduledDate: createScheduledDate(new Date('2026-02-01')),
     })
     await checkInRepository.save(checkIn)
 
     await expect(
       completeCheckIn.execute({
         checkInId: checkIn.id,
-        completionDate: new Date(),
+        completionDate: createCompletionDate(new Date()),
       })
     ).rejects.toThrow('Category not found')
   })

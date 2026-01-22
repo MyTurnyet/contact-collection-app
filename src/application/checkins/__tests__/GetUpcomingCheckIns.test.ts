@@ -5,6 +5,8 @@ import {
   createCheckIn,
   createCheckInId,
   CheckInStatus,
+  createScheduledDate,
+  createCompletionDate,
 } from '../../../domain/checkin'
 import { createContactId } from '../../../domain/contact'
 import { addDays } from 'date-fns'
@@ -26,12 +28,12 @@ describe('GetUpcomingCheckIns', () => {
     const checkIn1 = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: in5Days,
+      scheduledDate: createScheduledDate(in5Days),
     })
     const checkIn2 = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: in10Days,
+      scheduledDate: createScheduledDate(in10Days),
     })
 
     await repository.save(checkIn1)
@@ -52,17 +54,17 @@ describe('GetUpcomingCheckIns', () => {
     const checkIn1 = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: in5Days,
+      scheduledDate: createScheduledDate(in5Days),
     })
     const checkIn2 = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: in20Days,
+      scheduledDate: createScheduledDate(in20Days),
     })
     const checkIn3 = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: in40Days,
+      scheduledDate: createScheduledDate(in40Days),
     })
 
     await repository.save(checkIn1)
@@ -86,12 +88,12 @@ describe('GetUpcomingCheckIns', () => {
     const checkIn1 = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: in5Days,
+      scheduledDate: createScheduledDate(in5Days),
     })
     const checkIn2 = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: in10Days,
+      scheduledDate: createScheduledDate(in10Days),
     })
 
     await repository.save(checkIn1)
@@ -110,12 +112,12 @@ describe('GetUpcomingCheckIns', () => {
     const overdueCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: yesterday,
+      scheduledDate: createScheduledDate(yesterday),
     })
     const upcomingCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: tomorrow,
+      scheduledDate: createScheduledDate(tomorrow),
     })
 
     await repository.save(overdueCheckIn)
@@ -134,13 +136,13 @@ describe('GetUpcomingCheckIns', () => {
     const completedCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: tomorrow,
-      completionDate: today,
+      scheduledDate: createScheduledDate(tomorrow),
+      completionDate: createCompletionDate(today),
     })
     const scheduledCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: tomorrow,
+      scheduledDate: createScheduledDate(tomorrow),
     })
 
     await repository.save(completedCheckIn)
@@ -160,7 +162,7 @@ describe('GetUpcomingCheckIns', () => {
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: in40Days,
+      scheduledDate: createScheduledDate(in40Days),
     })
 
     await repository.save(checkIn)
@@ -176,7 +178,7 @@ describe('GetUpcomingCheckIns', () => {
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: today,
+      scheduledDate: createScheduledDate(today),
     })
 
     await repository.save(checkIn)

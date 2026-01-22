@@ -5,6 +5,8 @@ import {
   createCheckIn,
   createCheckInId,
   CheckInStatus,
+  createScheduledDate,
+  createCompletionDate,
 } from '../../../domain/checkin'
 import { createContactId } from '../../../domain/contact'
 import { addDays, addWeeks } from 'date-fns'
@@ -24,18 +26,18 @@ describe('GetCheckInHistory', () => {
     const checkIn1 = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: new Date('2026-01-01'),
+      scheduledDate: createScheduledDate(new Date('2026-01-01')),
     })
     const checkIn2 = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: new Date('2026-01-15'),
-      completionDate: new Date('2026-01-16'),
+      scheduledDate: createScheduledDate(new Date('2026-01-15')),
+      completionDate: createCompletionDate(new Date('2026-01-16')),
     })
     const checkIn3 = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: new Date('2026-02-01'),
+      scheduledDate: createScheduledDate(new Date('2026-02-01')),
     })
 
     await repository.save(checkIn1)
@@ -57,13 +59,13 @@ describe('GetCheckInHistory', () => {
     const completedCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: new Date('2026-01-01'),
-      completionDate: new Date('2026-01-02'),
+      scheduledDate: createScheduledDate(new Date('2026-01-01')),
+      completionDate: createCompletionDate(new Date('2026-01-02')),
     })
     const scheduledCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: new Date('2026-02-01'),
+      scheduledDate: createScheduledDate(new Date('2026-02-01')),
     })
 
     await repository.save(completedCheckIn)
@@ -102,12 +104,12 @@ describe('GetCheckInHistory', () => {
     const checkIn1 = createCheckIn({
       id: createCheckInId(),
       contactId: contactId1,
-      scheduledDate: new Date('2026-01-01'),
+      scheduledDate: createScheduledDate(new Date('2026-01-01')),
     })
     const checkIn2 = createCheckIn({
       id: createCheckInId(),
       contactId: contactId2,
-      scheduledDate: new Date('2026-01-01'),
+      scheduledDate: createScheduledDate(new Date('2026-01-01')),
     })
 
     await repository.save(checkIn1)
@@ -133,17 +135,17 @@ describe('GetCheckInHistory', () => {
     const checkIn1 = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: new Date('2026-03-01'),
+      scheduledDate: createScheduledDate(new Date('2026-03-01')),
     })
     const checkIn2 = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: new Date('2026-01-01'),
+      scheduledDate: createScheduledDate(new Date('2026-01-01')),
     })
     const checkIn3 = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: new Date('2026-02-01'),
+      scheduledDate: createScheduledDate(new Date('2026-02-01')),
     })
 
     await repository.save(checkIn1)
@@ -166,7 +168,7 @@ describe('GetCheckInHistory', () => {
       const checkIn = createCheckIn({
         id: createCheckInId(),
         contactId,
-        scheduledDate: addWeeks(new Date('2026-01-01'), i),
+        scheduledDate: createScheduledDate(addWeeks(new Date('2026-01-01'), i)),
       })
       checkIns.push(checkIn)
       await repository.save(checkIn)

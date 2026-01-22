@@ -1,9 +1,8 @@
-import {
-  type CheckInRepository,
-  type CheckInCollection,
-  CheckInStatus,
-  createCheckInCollection,
+import type {
+  CheckInRepository,
+  CheckInCollection,
 } from '../../domain/checkin'
+import { CheckInStatus, createCheckInCollection } from '../../domain/checkin'
 import { addDays } from 'date-fns'
 
 export interface GetUpcomingCheckInsInput {
@@ -11,7 +10,11 @@ export interface GetUpcomingCheckInsInput {
 }
 
 export class GetUpcomingCheckIns {
-  constructor(private readonly repository: CheckInRepository) {}
+  readonly repository: CheckInRepository
+
+  constructor(repository: CheckInRepository) {
+    this.repository = repository
+  }
 
   async execute(input: GetUpcomingCheckInsInput): Promise<CheckInCollection> {
     const days = this.getDays(input)

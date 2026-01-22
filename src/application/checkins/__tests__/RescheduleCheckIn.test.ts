@@ -5,6 +5,9 @@ import {
   createCheckIn,
   createCheckInId,
   CheckInStatus,
+  createScheduledDate,
+  createCompletionDate,
+  createCheckInNotes,
 } from '../../../domain/checkin'
 import { createContactId } from '../../../domain/contact'
 import { addDays } from 'date-fns'
@@ -19,8 +22,8 @@ describe('RescheduleCheckIn', () => {
   })
 
   it('should update check-in to new scheduled date', async () => {
-    const originalDate = new Date('2026-02-01')
-    const newDate = new Date('2026-02-15')
+    const originalDate = createScheduledDate(new Date('2026-02-01'))
+    const newDate = createScheduledDate(new Date('2026-02-15'))
 
     const checkIn = createCheckIn({
       id: createCheckInId(),
@@ -43,11 +46,11 @@ describe('RescheduleCheckIn', () => {
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: new Date('2026-02-01'),
+      scheduledDate: createScheduledDate(new Date('2026-02-01')),
     })
     await repository.save(checkIn)
 
-    const newDate = new Date('2026-03-01')
+    const newDate = createScheduledDate(new Date('2026-03-01'))
     const result = await rescheduleCheckIn.execute({
       checkInId: checkIn.id,
       newScheduledDate: newDate,
@@ -64,7 +67,7 @@ describe('RescheduleCheckIn', () => {
     const overdueCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: pastDate,
+      scheduledDate: createScheduledDate(pastDate),
     })
     await repository.save(overdueCheckIn)
 
@@ -72,7 +75,7 @@ describe('RescheduleCheckIn', () => {
 
     const result = await rescheduleCheckIn.execute({
       checkInId: overdueCheckIn.id,
-      newScheduledDate: futureDate,
+      newScheduledDate: createScheduledDate(futureDate),
     })
 
     expect(result.status).toBe(CheckInStatus.Scheduled)
@@ -82,11 +85,11 @@ describe('RescheduleCheckIn', () => {
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: new Date('2026-02-01'),
+      scheduledDate: createScheduledDate(new Date('2026-02-01')),
     })
     await repository.save(checkIn)
 
-    const newDate = new Date('2026-02-20')
+    const newDate = createScheduledDate(new Date('2026-02-20'))
     await rescheduleCheckIn.execute({
       checkInId: checkIn.id,
       newScheduledDate: newDate,
@@ -101,11 +104,11 @@ describe('RescheduleCheckIn', () => {
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: new Date('2026-03-15'),
+      scheduledDate: createScheduledDate(new Date('2026-03-15')),
     })
     await repository.save(checkIn)
 
-    const earlierDate = new Date('2026-02-01')
+    const earlierDate = createScheduledDate(new Date('2026-02-01'))
     const result = await rescheduleCheckIn.execute({
       checkInId: checkIn.id,
       newScheduledDate: earlierDate,
@@ -120,25 +123,25 @@ describe('RescheduleCheckIn', () => {
     await expect(
       rescheduleCheckIn.execute({
         checkInId: nonExistentId,
-        newScheduledDate: new Date('2026-02-01'),
+        newScheduledDate: createScheduledDate(new Date('2026-02-01')),
       })
     ).rejects.toThrow('Check-in not found')
   })
 
   it('should not modify completion date or notes when rescheduling', async () => {
-    const completionDate = new Date('2026-02-01')
-    const notes = 'Original notes'
+    const completionDate = createCompletionDate(new Date('2026-02-01'))
+    const notes = createCheckInNotes('Original notes')
 
     const completedCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: new Date('2026-02-01'),
+      scheduledDate: createScheduledDate(new Date('2026-02-01')),
       completionDate,
       notes,
     })
     await repository.save(completedCheckIn)
 
-    const newDate = new Date('2026-03-01')
+    const newDate = createScheduledDate(new Date('2026-03-01'))
     const result = await rescheduleCheckIn.execute({
       checkInId: completedCheckIn.id,
       newScheduledDate: newDate,

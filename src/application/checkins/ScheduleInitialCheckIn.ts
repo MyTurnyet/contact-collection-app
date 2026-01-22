@@ -1,15 +1,17 @@
+import type {
+  CheckIn,
+  CheckInRepository,
+} from '../../domain/checkin'
 import {
-  type CheckIn,
-  type CheckInRepository,
   createCheckIn,
   createCheckInId,
   createScheduledDate,
 } from '../../domain/checkin'
-import { type ContactId, type ContactRepository } from '../../domain/contact'
-import {
-  type CategoryRepository,
-  type CategoryId,
-  type CheckInFrequency,
+import type { ContactId, ContactRepository } from '../../domain/contact'
+import type {
+  CategoryRepository,
+  CategoryId,
+  CheckInFrequency,
 } from '../../domain/category'
 import { calculateNextCheckIn } from '../../domain/services/DateCalculator'
 
@@ -19,11 +21,19 @@ export interface ScheduleInitialCheckInInput {
 }
 
 export class ScheduleInitialCheckIn {
+  readonly checkInRepository: CheckInRepository
+  readonly contactRepository: ContactRepository
+  readonly categoryRepository: CategoryRepository
+
   constructor(
-    private readonly checkInRepository: CheckInRepository,
-    private readonly contactRepository: ContactRepository,
-    private readonly categoryRepository: CategoryRepository
-  ) {}
+    checkInRepository: CheckInRepository,
+    contactRepository: ContactRepository,
+    categoryRepository: CategoryRepository
+  ) {
+    this.checkInRepository = checkInRepository
+    this.contactRepository = contactRepository
+    this.categoryRepository = categoryRepository
+  }
 
   async execute(input: ScheduleInitialCheckInInput): Promise<CheckIn> {
     const contact = await this.findContact(input.contactId)

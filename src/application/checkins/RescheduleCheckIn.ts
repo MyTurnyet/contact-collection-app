@@ -1,10 +1,9 @@
-import {
-  type CheckIn,
-  type CheckInId,
-  type CheckInRepository,
-  createCheckIn,
-  createScheduledDate,
+import type {
+  CheckIn,
+  CheckInId,
+  CheckInRepository,
 } from '../../domain/checkin'
+import { createCheckIn, createScheduledDate } from '../../domain/checkin'
 
 export interface RescheduleCheckInInput {
   checkInId: CheckInId
@@ -12,7 +11,11 @@ export interface RescheduleCheckInInput {
 }
 
 export class RescheduleCheckIn {
-  constructor(private readonly repository: CheckInRepository) {}
+  readonly repository: CheckInRepository
+
+  constructor(repository: CheckInRepository) {
+    this.repository = repository
+  }
 
   async execute(input: RescheduleCheckInInput): Promise<CheckIn> {
     const checkIn = await this.findCheckIn(input.checkInId)

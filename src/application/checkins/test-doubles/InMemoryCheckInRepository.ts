@@ -1,12 +1,11 @@
-import {
-  type CheckIn,
-  type CheckInId,
-  type CheckInRepository,
-  type CheckInCollection,
-  createCheckInCollection,
-  CheckInStatus,
-  type ContactId,
+import type {
+  CheckIn,
+  CheckInId,
+  CheckInRepository,
+  CheckInCollection,
 } from '../../../domain/checkin'
+import { createCheckInCollection, CheckInStatus } from '../../../domain/checkin'
+import type { ContactId } from '../../../domain/contact'
 import { BaseInMemoryRepository } from '../../test-doubles/BaseInMemoryRepository'
 
 export class InMemoryCheckInRepository
