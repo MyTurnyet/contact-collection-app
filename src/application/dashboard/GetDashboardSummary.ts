@@ -7,6 +7,7 @@ import type ContactCollection from '../../domain/contact/collections/ContactColl
 import type CheckInCollection from '../../domain/checkin/collections/CheckInCollection';
 import type { Contact } from '../../domain/contact/Contact';
 import { isNullCategoryId } from '../../domain/category/CategoryId';
+import { isDateBefore, isDateBetween, addDaysToDate } from '../../domain/services';
 
 export class GetDashboardSummary {
   private readonly contactRepository: ContactRepository
@@ -44,11 +45,11 @@ export class GetDashboardSummary {
     if (checkIn.status === CheckInStatus.Completed) {
       return false;
     }
-    return this.isDateBefore(checkIn.scheduledDate, today);
+    return isDateBefore(checkIn.scheduledDate, today);
   }
 
   private countUpcoming(checkIns: CheckInCollection, today: Date): number {
-    const sevenDaysFromNow = this.addDays(today, 7);
+    const sevenDaysFromNow = addDaysToDate(today, 7);
     const upcoming = checkIns
       .toArray()
       .filter((checkIn: CheckIn) =>
@@ -65,34 +66,7 @@ export class GetDashboardSummary {
     if (checkIn.status === CheckInStatus.Completed) {
       return false;
     }
-    return this.isDateBetween(checkIn.scheduledDate, today, sevenDaysFromNow);
-  }
-
-  private addDays(date: Date, days: number): Date {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  }
-
-  private isDateBefore(date: Date, comparison: Date): boolean {
-    return this.getStartOfDay(date) < this.getStartOfDay(comparison);
-  }
-
-  private isDateBetween(
-    date: Date,
-    start: Date,
-    end: Date
-  ): boolean {
-    const dateDay = this.getStartOfDay(date);
-    const startDay = this.getStartOfDay(start);
-    const endDay = this.getStartOfDay(end);
-    return dateDay >= startDay && dateDay <= endDay;
-  }
-
-  private getStartOfDay(date: Date): number {
-    const day = new Date(date);
-    day.setHours(0, 0, 0, 0);
-    return day.getTime();
+    return isDateBetween(checkIn.scheduledDate, today, sevenDaysFromNow);
   }
 
   private groupContactsByCategory(

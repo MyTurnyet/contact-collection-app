@@ -3,6 +3,7 @@ import type CheckInCollection from '../../domain/checkin/collections/CheckInColl
 import { CheckInStatus } from '../../domain/checkin/CheckInStatus';
 import type { CheckIn } from '../../domain/checkin/CheckIn';
 import { createCheckInCollection } from '../../domain/checkin/collections/CheckInCollection';
+import { areSameDay } from '../../domain/services';
 
 export class GetTodayCheckIns {
   private readonly checkInRepository: CheckInRepository
@@ -28,16 +29,6 @@ export class GetTodayCheckIns {
     if (checkIn.status === CheckInStatus.Completed) {
       return false;
     }
-    return this.isSameDay(checkIn.scheduledDate, today);
-  }
-
-  private isSameDay(date1: Date, date2: Date): boolean {
-    return this.getStartOfDay(date1) === this.getStartOfDay(date2);
-  }
-
-  private getStartOfDay(date: Date): number {
-    const day = new Date(date);
-    day.setHours(0, 0, 0, 0);
-    return day.getTime();
+    return areSameDay(checkIn.scheduledDate, today);
   }
 }
