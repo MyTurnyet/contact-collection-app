@@ -5,7 +5,7 @@ import type {
 import { CheckInStatus } from '../../domain/checkin'
 
 export class GetOverdueCheckIns {
-  readonly repository: CheckInRepository
+  private readonly repository: CheckInRepository
 
   constructor(repository: CheckInRepository) {
     this.repository = repository

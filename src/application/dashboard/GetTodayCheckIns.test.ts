@@ -22,7 +22,7 @@ describe('GetTodayCheckIns', () => {
   beforeEach(() => {
     checkInRepository = new InMemoryCheckInRepository();
     contactRepository = new InMemoryContactRepository();
-    useCase = new GetTodayCheckIns(checkInRepository, contactRepository);
+    useCase = new GetTodayCheckIns(checkInRepository);
     today = new Date();
   });
 

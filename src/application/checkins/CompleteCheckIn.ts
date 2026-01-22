@@ -31,9 +31,9 @@ export interface CompleteCheckInResult {
 }
 
 export class CompleteCheckIn {
-  readonly checkInRepository: CheckInRepository
-  readonly contactRepository: ContactRepository
-  readonly categoryRepository: CategoryRepository
+  private readonly checkInRepository: CheckInRepository
+  private readonly contactRepository: ContactRepository
+  private readonly categoryRepository: CategoryRepository
 
   constructor(
     checkInRepository: CheckInRepository,

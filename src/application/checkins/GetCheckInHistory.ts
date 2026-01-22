@@ -11,7 +11,7 @@ export interface GetCheckInHistoryInput {
 }
 
 export class GetCheckInHistory {
-  readonly repository: CheckInRepository
+  private readonly repository: CheckInRepository
 
   constructor(repository: CheckInRepository) {
     this.repository = repository

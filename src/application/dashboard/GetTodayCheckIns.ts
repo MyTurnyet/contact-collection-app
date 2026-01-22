@@ -1,20 +1,16 @@
 import type { CheckInRepository } from '../../domain/checkin/CheckInRepository';
-import type { ContactRepository } from '../../domain/contact/ContactRepository';
 import type CheckInCollection from '../../domain/checkin/collections/CheckInCollection';
 import { CheckInStatus } from '../../domain/checkin/CheckInStatus';
 import type { CheckIn } from '../../domain/checkin/CheckIn';
 import { createCheckInCollection } from '../../domain/checkin/collections/CheckInCollection';
 
 export class GetTodayCheckIns {
-  readonly checkInRepository: CheckInRepository
-  readonly contactRepository: ContactRepository
+  private readonly checkInRepository: CheckInRepository
 
   constructor(
-    checkInRepository: CheckInRepository,
-    contactRepository: ContactRepository
+    checkInRepository: CheckInRepository
   ) {
     this.checkInRepository = checkInRepository
-    this.contactRepository = contactRepository
   }
 
   async execute(): Promise<CheckInCollection> {

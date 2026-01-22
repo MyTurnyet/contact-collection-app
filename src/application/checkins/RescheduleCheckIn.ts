@@ -11,7 +11,7 @@ export interface RescheduleCheckInInput {
 }
 
 export class RescheduleCheckIn {
-  readonly repository: CheckInRepository
+  private readonly repository: CheckInRepository
 
   constructor(repository: CheckInRepository) {
     this.repository = repository

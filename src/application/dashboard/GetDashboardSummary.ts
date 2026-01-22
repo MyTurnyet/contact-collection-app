@@ -9,8 +9,8 @@ import type { Contact } from '../../domain/contact/Contact';
 import { isNullCategoryId } from '../../domain/category/CategoryId';
 
 export class GetDashboardSummary {
-  readonly contactRepository: ContactRepository
-  readonly checkInRepository: CheckInRepository
+  private readonly contactRepository: ContactRepository
+  private readonly checkInRepository: CheckInRepository
 
   constructor(
     contactRepository: ContactRepository,

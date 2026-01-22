@@ -10,7 +10,7 @@ export interface GetUpcomingCheckInsInput {
 }
 
 export class GetUpcomingCheckIns {
-  readonly repository: CheckInRepository
+  private readonly repository: CheckInRepository
 
   constructor(repository: CheckInRepository) {
     this.repository = repository
