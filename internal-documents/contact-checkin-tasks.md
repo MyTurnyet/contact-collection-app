@@ -3,7 +3,7 @@
 
 **Last Updated:** 2026-01-21
 **Current Phase:** Phase 3 - IN PROGRESS
-**Test Status:** ✅ 371 tests passing across 39 test files
+**Test Status:** ✅ 421 tests passing across 47 test files
 **Code Quality:** All code follows TDD with 8-line method limit and complexity ≤4
 
 ## Project Overview
@@ -16,10 +16,10 @@ A single-page web application to track personal contacts and schedule regular ch
   - ✅ Category Domain (100%) - 3 value objects + Category entity + collections
   - ✅ Check-in Domain (100%) - 5 value objects + CheckIn entity + CheckInStatus enum + CheckInCollection + repository interface
   - ✅ Domain Services (100%) - DateCalculator + OverdueDetector
-- ⚠️ **Phase 3:** Application Services - IN PROGRESS (12/22 use cases)
+- ⚠️ **Phase 3:** Application Services - IN PROGRESS (18/22 use cases)
   - ✅ Contact Use Cases (100% - 6/6 complete: CreateContact, UpdateContact, GetContactById, ListAllContacts, DeleteContact, SearchContacts)
   - ✅ Category Use Cases (100% - 6/6 complete: CreateCategory, UpdateCategory, DeleteCategory, ListCategories, GetDefaultCategories, AssignContactToCategory)
-  - ❌ Check-in Use Cases (0/6)
+  - ✅ Check-in Use Cases (100% - 6/6 complete: ScheduleInitialCheckIn, GetUpcomingCheckIns, GetOverdueCheckIns, CompleteCheckIn, RescheduleCheckIn, GetCheckInHistory)
   - ❌ Dashboard Use Cases (0/4)
 - ❌ **Phase 4:** Infrastructure - NOT STARTED (0/4 subsections)
 - ❌ **Phase 5:** Dependency Injection - NOT STARTED (0/2 subsections)
@@ -146,13 +146,13 @@ src/
 - [x] Test & implement `GetDefaultCategories` use case ✅
 - [x] Test & implement `AssignContactToCategory` use case ✅
 
-### 3.3 Check-in Management Use Cases
-- [ ] Test & implement `ScheduleInitialCheckIn` use case
-- [ ] Test & implement `GetUpcomingCheckIns` use case (next 7/30 days)
-- [ ] Test & implement `GetOverdueCheckIns` use case
-- [ ] Test & implement `CompleteCheckIn` use case (with notes, schedules next from original)
-- [ ] Test & implement `RescheduleCheckIn` use case
-- [ ] Test & implement `GetCheckInHistory` use case (for a contact)
+### 3.3 Check-in Management Use Cases ✅ COMPLETE
+- [x] Test & implement `ScheduleInitialCheckIn` use case ✅
+- [x] Test & implement `GetUpcomingCheckIns` use case (next 7/30 days) ✅
+- [x] Test & implement `GetOverdueCheckIns` use case ✅
+- [x] Test & implement `CompleteCheckIn` use case (with notes, schedules next from original) ✅
+- [x] Test & implement `RescheduleCheckIn` use case ✅
+- [x] Test & implement `GetCheckInHistory` use case (for a contact) ✅
 
 ### 3.4 Dashboard Use Cases
 - [ ] Test & implement `GetDashboardSummary` use case
@@ -455,19 +455,12 @@ Choose one:
 
 Based on current progress, the recommended next steps are:
 
-1. **Implement Category Use Cases** (Phase 3.2) ⬅️ PRIORITY
-   - Use cases for category management
-   - CreateCategory, UpdateCategory, DeleteCategory, ListCategories, GetDefaultCategories, AssignContactToCategory
-
-2. **Implement Check-in Use Cases** (Phase 3.3)
-   - Core functionality for scheduling and completing check-ins
-   - ScheduleInitialCheckIn, CompleteCheckIn, RescheduleCheckIn, GetUpcomingCheckIns, GetOverdueCheckIns, GetCheckInHistory
-
-3. **Implement Dashboard Use Cases** (Phase 3.4)
+1. **Implement Dashboard Use Cases** (Phase 3.4) ⬅️ PRIORITY
    - GetDashboardSummary and GetTodayCheckIns
    - Provides overview of check-ins and contacts
+   - Final step to complete Phase 3
 
-4. **Implement Infrastructure Layer** (Phase 4)
+2. **Implement Infrastructure Layer** (Phase 4)
    - LocalStorage repositories for persistence
    - Browser notifications service
    - Background scheduler for overdue detection
