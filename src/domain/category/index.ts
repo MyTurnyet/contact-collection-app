@@ -1,6 +1,12 @@
-// Value Objects
+// Value Objects - Types
+export type { CategoryId } from './CategoryId'
+export type { CategoryName } from './CategoryName'
+export type { CheckInFrequency, FrequencyUnit } from './CheckInFrequency'
+export type { Category } from './Category'
+export type { CategoryRepository } from './CategoryRepository'
+
+// Value Objects - Values
 export {
-  type CategoryId,
   createCategoryId,
   categoryIdFromString,
   categoryIdEquals,
@@ -8,13 +14,10 @@ export {
   isNullCategoryId,
 } from './CategoryId'
 export {
-  type CategoryName,
   createCategoryName,
   categoryNameEquals,
 } from './CategoryName'
 export {
-  type CheckInFrequency,
-  type FrequencyUnit,
   createCheckInFrequency,
   checkInFrequencyEquals,
   compareFrequencies,
@@ -29,17 +32,13 @@ export {
   createCategoryCollection,
 } from './collections/CategoryCollection'
 
-// Entity
+// Entity - Values
 export {
-  type Category,
   createCategory,
   categoryEquals,
   createNullCategory,
   isNullCategory,
 } from './Category'
-
-// Repository Interface
-export { type CategoryRepository } from './CategoryRepository'
 
 // Default Categories Factory
 export { createDefaultCategories } from './DefaultCategories'

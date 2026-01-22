@@ -1,26 +1,30 @@
-// Value Objects
+// Value Objects - Types
+export type { CheckInId } from './CheckInId'
+export type { ScheduledDate } from './ScheduledDate'
+export type { CompletionDate } from './CompletionDate'
+export type { CheckInNotes } from './CheckInNotes'
+export type { CheckIn } from './CheckIn'
+export type { CheckInRepository } from './CheckInRepository'
+
+// Value Objects - Values
 export {
-  type CheckInId,
   createCheckInId,
   checkInIdFromString,
   checkInIdEquals,
 } from './CheckInId'
 export {
-  type ScheduledDate,
   createScheduledDate,
   scheduledDateEquals,
   createNullScheduledDate,
   isNullScheduledDate,
 } from './ScheduledDate'
 export {
-  type CompletionDate,
   createCompletionDate,
   completionDateEquals,
   createNullCompletionDate,
   isNullCompletionDate,
 } from './CompletionDate'
 export {
-  type CheckInNotes,
   createCheckInNotes,
   checkInNotesEquals,
   createNullCheckInNotes,
@@ -32,14 +36,10 @@ export {
   createCheckInCollection,
 } from './collections/CheckInCollection'
 
-// Entity
+// Entity - Values
 export {
-  type CheckIn,
   createCheckIn,
   checkInEquals,
   createNullCheckIn,
   isNullCheckIn,
 } from './CheckIn'
-
-// Repository Interface
-export { type CheckInRepository } from './CheckInRepository'

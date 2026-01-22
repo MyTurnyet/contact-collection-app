@@ -1,40 +1,45 @@
-// Value Objects
+// Value Objects - Types
+export type { ContactId } from './ContactId'
+export type { PhoneNumber } from './PhoneNumber'
+export type { EmailAddress } from './EmailAddress'
+export type { Location } from './Location'
+export type { RelationshipContext } from './RelationshipContext'
+export type { ImportantDate } from './ImportantDate'
+export type { CategoryId } from '../category/CategoryId'
+export type { Contact } from './Contact'
+export type { ContactRepository } from './ContactRepository'
+
+// Value Objects - Values
 export {
-  type ContactId,
   createContactId,
   contactIdFromString,
   contactIdEquals,
 } from './ContactId'
 export {
-  type PhoneNumber,
   createPhoneNumber,
   phoneNumberEquals,
   createNullPhoneNumber,
   isNullPhoneNumber,
 } from './PhoneNumber'
 export {
-  type EmailAddress,
   createEmailAddress,
   emailAddressEquals,
   createNullEmailAddress,
   isNullEmailAddress,
 } from './EmailAddress'
 export {
-  type Location,
   createLocation,
   locationEquals,
   createNullLocation,
   isNullLocation,
 } from './Location'
 export {
-  type RelationshipContext,
   createRelationshipContext,
   relationshipContextEquals,
   createNullRelationshipContext,
   isNullRelationshipContext,
 } from './RelationshipContext'
 export {
-  type ImportantDate,
   createImportantDate,
   importantDateEquals,
 } from './ImportantDate'
@@ -47,9 +52,8 @@ export {
   createContactCollection,
 } from './collections/ContactCollection'
 
-// Category (from category domain)
+// Category (from category domain) - Values
 export {
-  type CategoryId,
   createCategoryId,
   categoryIdFromString,
   categoryIdEquals,
@@ -57,14 +61,10 @@ export {
   isNullCategoryId,
 } from '../category/CategoryId'
 
-// Entity
+// Entity - Values
 export {
-  type Contact,
   createContact,
   contactEquals,
   createNullContact,
   isNullContact,
 } from './Contact'
-
-// Repository Interface
-export { type ContactRepository } from './ContactRepository'
