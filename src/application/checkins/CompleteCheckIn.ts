@@ -6,6 +6,8 @@ import {
   createCheckInId,
   createCheckInNotes,
   createNullCheckInNotes,
+  createScheduledDate,
+  createCompletionDate,
 } from '../../domain/checkin'
 import { type ContactRepository, type ContactId } from '../../domain/contact'
 import {
@@ -72,7 +74,7 @@ export class CompleteCheckIn {
       id: checkIn.id,
       contactId: checkIn.contactId,
       scheduledDate: checkIn.scheduledDate,
-      completionDate: input.completionDate,
+      completionDate: createCompletionDate(input.completionDate),
       notes: this.getNotes(input),
     })
   }
@@ -86,10 +88,11 @@ export class CompleteCheckIn {
 
   private createNext(checkIn: CheckIn, frequency: CheckInFrequency) {
     const nextDate = calculateNextCheckIn(checkIn.scheduledDate, frequency)
+    const scheduledDate = createScheduledDate(nextDate)
     return createCheckIn({
       id: createCheckInId(),
       contactId: checkIn.contactId,
-      scheduledDate: nextDate,
+      scheduledDate,
     })
   }
 

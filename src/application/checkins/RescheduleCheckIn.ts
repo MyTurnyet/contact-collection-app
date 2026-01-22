@@ -3,6 +3,7 @@ import {
   type CheckInId,
   type CheckInRepository,
   createCheckIn,
+  createScheduledDate,
 } from '../../domain/checkin'
 
 export interface RescheduleCheckInInput {
@@ -29,10 +30,11 @@ export class RescheduleCheckIn {
   }
 
   private createRescheduled(checkIn: CheckIn, input: RescheduleCheckInInput) {
+    const scheduledDate = createScheduledDate(input.newScheduledDate)
     return createCheckIn({
       id: checkIn.id,
       contactId: checkIn.contactId,
-      scheduledDate: input.newScheduledDate,
+      scheduledDate,
       completionDate: checkIn.completionDate,
       notes: checkIn.notes,
     })

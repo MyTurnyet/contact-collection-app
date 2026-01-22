@@ -3,6 +3,7 @@ import {
   type CheckInRepository,
   createCheckIn,
   createCheckInId,
+  createScheduledDate,
 } from '../../domain/checkin'
 import { type ContactId, type ContactRepository } from '../../domain/contact'
 import {
@@ -58,7 +59,8 @@ export class ScheduleInitialCheckIn {
     baseDate: Date,
     frequency: CheckInFrequency
   ) {
-    const scheduledDate = calculateNextCheckIn(baseDate, frequency)
+    const nextDate = calculateNextCheckIn(baseDate, frequency)
+    const scheduledDate = createScheduledDate(nextDate)
     return createCheckIn({
       id: createCheckInId(),
       contactId: input.contactId,
