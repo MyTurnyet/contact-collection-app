@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Contact Check-in Application - A single-page web application to track personal contacts and schedule regular check-in calls. Built with React + TypeScript + Vite frontend using LocalStorage for persistence. Follows XP/TDD principles with strict OO design.
 
-**Current Status**: Phase 1 Complete - Project infrastructure and testing configured. Ready to begin domain modeling.
+**Current Status**: Phase 5 Complete - Infrastructure and Dependency Injection implemented. Ready for UI development.
 
 **IMPORTANT**: See `.claude/rules.md` for detailed development rules including:
 - Maximum method size: 8 lines
@@ -41,18 +41,19 @@ Contact Check-in Application - A single-page web application to track personal c
 - **Linting**: ESLint 9.x flat config with TypeScript ESLint, React Hooks, and React Refresh plugins
 - **Target**: ES2022 with DOM APIs, bundler module resolution
 
-### Planned Clean Architecture (per internal-documents/contact-checkin-tasks.md)
+### Implemented Clean Architecture (per internal-documents/contact-checkin-tasks.md)
 
-The codebase will follow Hexagonal/Ports & Adapters architecture:
+The codebase follows Hexagonal/Ports & Adapters architecture:
 
 ```
 src/
-├── domain/           # Domain models and interfaces (no framework dependencies)
-├── application/      # API client interfaces and use case logic
-├── infrastructure/   # HTTP client implementations
-└── ui/
-    ├── components/   # Reusable React components
-    └── pages/        # Page-level components
+├── domain/           # Domain models and interfaces (no framework dependencies) ✅
+├── application/      # Use case logic and repository interfaces ✅
+├── infrastructure/   # LocalStorage, notifications, scheduler implementations ✅
+├── di/              # Dependency injection container and React context ✅
+└── ui/              # React components (Phase 6 - pending)
+    ├── components/
+    └── pages/
 ```
 
 **Dependency Flow**: Always inward toward domain
@@ -156,10 +157,10 @@ Testing:
 
 ### State Management
 
-Planned approach:
-- React Context for Dependency Injection
-- Local state with useState for UI state
-- Custom hooks for domain state management (useContacts, useCategories, useCheckIns)
+Implemented approach:
+- **React Context for Dependency Injection** ✅ - DependencyProvider wraps app, useDependencies hook accesses DIContainer
+- Local state with useState for UI state (pending Phase 6)
+- Custom hooks for domain state management (useContacts, useCategories, useCheckIns - pending Phase 6)
 - Keep state close to where it's used
 - Lift state only when necessary
 

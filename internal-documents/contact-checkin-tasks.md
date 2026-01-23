@@ -2,8 +2,8 @@
 ## React + TypeScript (Vite) with Local Storage
 
 **Last Updated:** 2026-01-23
-**Current Phase:** Phase 4 - COMPLETE (4/4 subsections complete)
-**Test Status:** ✅ 581 tests passing across 61 test files
+**Current Phase:** Phase 5 - COMPLETE (2/2 subsections complete)
+**Test Status:** ✅ 612 tests passing across 63 test files
 **Code Quality:** All code follows TDD with 8-line method limit and complexity ≤4
 
 ## Project Overview
@@ -26,7 +26,9 @@ A single-page web application to track personal contacts and schedule regular ch
   - ✅ Repository Implementations (100% - LocalStorageContactRepository, LocalStorageCategoryRepository, LocalStorageCheckInRepository with 35 tests)
   - ✅ Browser Notification Service (100% - NotificationService interface, BrowserNotificationService, EmailSimulator with 18 tests)
   - ✅ Background Scheduler (100% - SchedulerService interface, IntervalScheduler, OverdueCheckInDetector with 20 tests)
-- ❌ **Phase 5:** Dependency Injection - NOT STARTED (0/2 subsections)
+- ✅ **Phase 5:** Dependency Injection - COMPLETE (2/2 subsections complete)
+  - ✅ DI Setup (100% - DIContainer with all repositories, use cases, and services with 25 tests)
+  - ✅ React Context for DI (100% - DependencyProvider, useDependencies hook, App integration with 5 tests)
 - ❌ **Phase 6:** React UI Layer - NOT STARTED (0/8 subsections)
 
 ## Architecture Decision
@@ -209,20 +211,23 @@ src/
 - [ ] Test & implement `ImportService` interface
 - [ ] Test & implement `JsonImporter` with validation
 
-## Phase 5: Dependency Injection Container
+## Phase 5: Dependency Injection Container ✅ COMPLETE
 
-### 5.1 DI Setup
-- [ ] Create `DIContainer` class
-- [ ] Register all repositories
-- [ ] Register all use cases
-- [ ] Register all services
-- [ ] Create factory functions for building object graphs
+### 5.1 DI Setup ✅
+- [x] Create `DIContainer` class (25 tests passing)
+- [x] Register all repositories (ContactRepository, CategoryRepository, CheckInRepository)
+- [x] Register all 20 use cases (6 contact, 6 category, 6 check-in, 2 dashboard)
+- [x] Register all services (NotificationService, EmailSimulator, SchedulerService)
+- [x] Create factory functions for building object graphs (singleton pattern for shared services)
+- [x] Add scheduler lifecycle management (start/stop methods)
 
-### 5.2 React Context for DI
-- [ ] Create `DependencyContext` React context
-- [ ] Create `DependencyProvider` component
-- [ ] Create `useDependencies` hook
-- [ ] Initialize container in App root
+### 5.2 React Context for DI ✅
+- [x] Create `DependencyContext` React context (5 tests passing)
+- [x] Create `DependencyProvider` component
+- [x] Create `useDependencies` hook
+- [x] Initialize container in App root
+- [x] Separate context object for React Refresh compliance
+- [x] Support custom container injection for testing
 
 ## Phase 6: React UI Layer (TDD where applicable)
 
@@ -459,16 +464,21 @@ Choose one:
 
 Based on current progress, the recommended next steps are:
 
-1. **Implement Infrastructure Layer** (Phase 4) ⬅️ PRIORITY
-   - LocalStorage repositories for persistence
-   - Browser notifications service
-   - Background scheduler for overdue detection
-   - Data export/import functionality
+1. **Implement React UI Layer** (Phase 6) ⬅️ PRIORITY
+   - Custom hooks (useContacts, useCategories, useCheckIns, useDashboard)
+   - Contact Management UI (list, form, detail, search)
+   - Category Management UI (list, form, frequency selector)
+   - Dashboard UI (summary stats, upcoming/overdue check-ins)
+   - Check-in Action UI (complete, reschedule, history)
+   - Settings & Export UI (notifications, data export/import)
+   - Navigation & Layout (routing, sidebar, responsive)
+   - Styling and accessibility
 
-2. **Implement Dependency Injection Container** (Phase 5)
-   - DI container setup
-   - React Context for dependency injection
-   - Wire up all use cases and repositories
+2. **Implement Notifications & Scheduling** (Phase 7)
+   - Browser notification permission flow
+   - Notification dispatch for overdue check-ins
+   - Background scheduler integration
+   - Email simulation enhancement
 
 ---
 
