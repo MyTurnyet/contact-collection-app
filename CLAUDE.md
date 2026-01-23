@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Contact Check-in Application - A single-page web application to track personal contacts and schedule regular check-in calls. Built with React + TypeScript + Vite frontend using LocalStorage for persistence. Follows XP/TDD principles with strict OO design.
 
-**Current Status**: Phase 5 Complete - Infrastructure and Dependency Injection implemented. Ready for UI development.
+**Current Status**: Phase 6 In Progress - Foundation hooks implemented with state management. Ready for UI component development.
 
 **IMPORTANT**: See `.claude/rules.md` for detailed development rules including:
 - Maximum method size: 8 lines
@@ -49,11 +49,21 @@ The codebase follows Hexagonal/Ports & Adapters architecture:
 src/
 ├── domain/           # Domain models and interfaces (no framework dependencies) ✅
 ├── application/      # Use case logic and repository interfaces ✅
+│   └── shared/
+│       └── errors/   # Error hierarchy for UI consumption ✅
 ├── infrastructure/   # LocalStorage, notifications, scheduler implementations ✅
 ├── di/              # Dependency injection container and React context ✅
-└── ui/              # React components (Phase 6 - pending)
-    ├── components/
-    └── pages/
+└── ui/              # React components (Phase 6 - in progress)
+    ├── hooks/        # State management hooks ✅
+    │   ├── useContacts.ts
+    │   ├── useCategories.ts
+    │   ├── useCheckIns.ts
+    │   ├── useDashboard.ts
+    │   └── useAppInitialization.ts
+    ├── helpers/      # Form validation and utilities ✅
+    │   └── validation.ts
+    ├── components/   # UI components (pending)
+    └── pages/        # Page components (pending)
 ```
 
 **Dependency Flow**: Always inward toward domain
@@ -147,20 +157,38 @@ Testing:
 - **React Testing Library** - Component testing
 - **jsdom** - Browser environment simulation
 
-### Form Validation Requirements
+### Form Validation & Error Handling
 
-- PhoneNumber validation (format checking)
-- EmailAddress validation (RFC compliant)
-- Location/timezone selection and validation
-- Category assignment validation
-- Date picker for rescheduling check-ins
+**Error Hierarchy** ✅:
+- `ApplicationError` - Base error class with code and context
+- `ValidationError` - Field-specific validation errors for forms
+- `DomainError` - Domain rule violations
+- Type guards: `isValidationError()`, `isApplicationError()`
+
+**Form Validation Helpers** ✅:
+- `validatePhoneInput()` - Returns `{valid, error?}` for real-time feedback
+- `validateEmailInput()` - Non-throwing validation for email fields
+- `validateLocationInput()` - Validates city, country, timezone requirements
+- `getAvailableTimezones()` - Returns sorted list of common timezones
+- `getFrequencyOptions()` - Returns frequency units (days/weeks/months) with constraints
+
+**App Initialization** ✅:
+- `useAppInitialization()` - Handles first-run setup with state management
+- Seeds default categories on first load
+- Starts background scheduler
+- Persists initialization state to localStorage
+- Provides retry mechanism for failed initialization
 
 ### State Management
 
 Implemented approach:
 - **React Context for Dependency Injection** ✅ - DependencyProvider wraps app, useDependencies hook accesses DIContainer
-- Local state with useState for UI state (pending Phase 6)
-- Custom hooks for domain state management (useContacts, useCategories, useCheckIns - pending Phase 6)
+- **Custom Hooks with State Management** ✅ - All hooks follow `{data, isLoading, error, operations}` pattern:
+  - `useContacts` - Auto-fetches contacts on mount, provides CRUD operations with state refresh
+  - `useCategories` - Category management with create/update/delete and auto-refresh
+  - `useCheckIns` - Manages upcoming/overdue check-ins with complete/reschedule operations
+  - `useDashboard` - Aggregates dashboard summary and today's check-ins
+- Local state with useState for UI state
 - Keep state close to where it's used
 - Lift state only when necessary
 
