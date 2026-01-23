@@ -2,8 +2,8 @@
 ## React + TypeScript (Vite) with Local Storage
 
 **Last Updated:** 2026-01-23
-**Current Phase:** Phase 4 - IN PROGRESS (3/4 subsections complete)
-**Test Status:** ✅ 561 tests passing across 59 test files
+**Current Phase:** Phase 4 - COMPLETE (4/4 subsections complete)
+**Test Status:** ✅ 581 tests passing across 61 test files
 **Code Quality:** All code follows TDD with 8-line method limit and complexity ≤4
 
 ## Project Overview
@@ -21,10 +21,11 @@ A single-page web application to track personal contacts and schedule regular ch
   - ✅ Category Use Cases (100% - 6/6 complete: CreateCategory, UpdateCategory, DeleteCategory, ListCategories, GetDefaultCategories, AssignContactToCategory)
   - ✅ Check-in Use Cases (100% - 6/6 complete: ScheduleInitialCheckIn, GetUpcomingCheckIns, GetOverdueCheckIns, CompleteCheckIn, RescheduleCheckIn, GetCheckInHistory)
   - ✅ Dashboard Use Cases (100% - 4/4 complete: GetDashboardSummary, GetTodayCheckIns)
-- 🔄 **Phase 4:** Infrastructure - IN PROGRESS (3/4 subsections complete)
+- ✅ **Phase 4:** Infrastructure - COMPLETE (4/4 subsections complete)
   - ✅ LocalStorage Abstraction (100% - StorageService interface, LocalStorageAdapter, JsonSerializer with 21 tests)
   - ✅ Repository Implementations (100% - LocalStorageContactRepository, LocalStorageCategoryRepository, LocalStorageCheckInRepository with 35 tests)
   - ✅ Browser Notification Service (100% - NotificationService interface, BrowserNotificationService, EmailSimulator with 18 tests)
+  - ✅ Background Scheduler (100% - SchedulerService interface, IntervalScheduler, OverdueCheckInDetector with 20 tests)
 - ❌ **Phase 5:** Dependency Injection - NOT STARTED (0/2 subsections)
 - ❌ **Phase 6:** React UI Layer - NOT STARTED (0/8 subsections)
 
@@ -195,11 +196,11 @@ src/
     - [x] Handle permission denied (throws descriptive errors)
 - [x] Test & implement `EmailSimulator` (8 tests passing - console.log for MVP, no real email)
 
-### 4.4 Background Scheduler
-- [ ] Test & implement `SchedulerService` interface
-- [ ] Test & implement `IntervalScheduler` (checks every six hours while app open)
-- [ ] Test & implement notification dispatch logic
-- [ ] Test & implement overdue detection on app startup
+### 4.4 Background Scheduler ✅
+- [x] Test & implement `SchedulerService` interface (with ScheduledTask and TimerAPI abstractions)
+- [x] Test & implement `IntervalScheduler` (13 tests passing - checks every 6 hours while app open)
+- [x] Test & implement `OverdueCheckInDetector` (7 tests passing - notification dispatch logic)
+- [x] Overdue detection with notification integration (executes task immediately on start and at intervals)
 
 ### 4.5 Data Export/Import
 - [ ] Test & implement `ExportService` interface
