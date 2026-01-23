@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { renderHook } from '@testing-library/react'
+import { renderHook, waitFor } from '@testing-library/react'
 import { useContacts } from '../useContacts'
 import { DependencyProvider } from '../../../di'
 import { DIContainer } from '../../../di/DIContainer'
@@ -19,13 +19,40 @@ describe('useContacts', () => {
     <DependencyProvider container={container}>{children}</DependencyProvider>
   )
 
-  describe('createContact', () => {
-    it('should create a new contact', async () => {
+  describe('state management', () => {
+    it('should start with loading state', () => {
+      // When
+      const { result } = renderHook(() => useContacts(), { wrapper })
+
+      // Then
+      expect(result.current.isLoading).toBe(true)
+      expect(result.current.contacts).toBeNull()
+      expect(result.current.error).toBeNull()
+    })
+
+    it('should load contacts on mount', async () => {
+      // When
+      const { result } = renderHook(() => useContacts(), { wrapper })
+
+      // Then
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
+
+      expect(result.current.contacts).toEqual([])
+      expect(result.current.error).toBeNull()
+    })
+
+    it('should update state after creating contact', async () => {
       // Given
       const { result } = renderHook(() => useContacts(), { wrapper })
 
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
+
       // When
-      const contact = await result.current.createContact({
+      await result.current.operations.createContact({
         name: 'John Doe',
         phone: '+1-555-123-4567',
         email: 'john@example.com',
@@ -37,16 +64,41 @@ describe('useContacts', () => {
       })
 
       // Then
-      expect(contact.name).toBe('John Doe')
-      expect(contact.phone).toBe('+15551234567')
+      await waitFor(() => {
+        expect(result.current.contacts?.length).toBe(1)
+      })
+
+      expect(result.current.contacts?.[0].name).toBe('John Doe')
+    })
+
+    it('should refresh contacts manually', async () => {
+      // Given
+      const { result } = renderHook(() => useContacts(), { wrapper })
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
+
+      // When
+      await result.current.operations.refresh()
+
+      // Then
+      expect(result.current.contacts).toEqual([])
+      expect(result.current.error).toBeNull()
     })
   })
 
-  describe('getAllContacts', () => {
-    it('should return all contacts', async () => {
+  describe('operations', () => {
+    it('should create a new contact', async () => {
       // Given
       const { result } = renderHook(() => useContacts(), { wrapper })
-      await result.current.createContact({
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
+
+      // When
+      const contact = await result.current.operations.createContact({
         name: 'Jane Doe',
         phone: '+1-555-987-6543',
         email: 'jane@example.com',
@@ -57,43 +109,20 @@ describe('useContacts', () => {
         relationshipContext: 'Work colleague',
       })
 
-      // When
-      const contacts = await result.current.getAllContacts()
-
       // Then
-      expect(contacts.length).toBe(1)
-      expect(contacts[0].name).toBe('Jane Doe')
+      expect(contact.name).toBe('Jane Doe')
+      expect(contact.phone).toBe('+15559876543')
     })
-  })
 
-  describe('getContactById', () => {
-    it('should return contact by id', async () => {
-      // Given
-      const { result } = renderHook(() => useContacts(), { wrapper })
-      const created = await result.current.createContact({
-        name: 'Bob Smith',
-        phone: '+1-555-111-2222',
-        email: 'bob@example.com',
-        city: 'Chicago',
-        state: 'IL',
-        country: 'USA',
-        timezone: 'America/Chicago',
-        relationshipContext: 'Family',
-      })
-
-      // When
-      const found = await result.current.getContactById(created.id)
-
-      // Then
-      expect(found?.name).toBe('Bob Smith')
-    })
-  })
-
-  describe('updateContact', () => {
     it('should update existing contact', async () => {
       // Given
       const { result } = renderHook(() => useContacts(), { wrapper })
-      const created = await result.current.createContact({
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
+
+      const created = await result.current.operations.createContact({
         name: 'Alice Johnson',
         phone: '+1-555-333-4444',
         email: 'alice@example.com',
@@ -105,7 +134,7 @@ describe('useContacts', () => {
       })
 
       // When
-      const updated = await result.current.updateContact(created.id, {
+      const updated = await result.current.operations.updateContact(created.id, {
         name: 'Alice Williams',
       })
 
@@ -113,13 +142,16 @@ describe('useContacts', () => {
       expect(updated.name).toBe('Alice Williams')
       expect(updated.id).toBe(created.id)
     })
-  })
 
-  describe('deleteContact', () => {
     it('should delete contact', async () => {
       // Given
       const { result } = renderHook(() => useContacts(), { wrapper })
-      const created = await result.current.createContact({
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
+
+      const created = await result.current.operations.createContact({
         name: 'Charlie Brown',
         phone: '+1-555-555-6666',
         email: 'charlie@example.com',
@@ -131,19 +163,23 @@ describe('useContacts', () => {
       })
 
       // When
-      await result.current.deleteContact(created.id)
+      await result.current.operations.deleteContact(created.id)
 
       // Then
-      const found = await result.current.getContactById(created.id)
-      expect(found).toBeNull()
+      await waitFor(() => {
+        expect(result.current.contacts?.length).toBe(0)
+      })
     })
-  })
 
-  describe('searchContacts', () => {
     it('should search contacts by query', async () => {
       // Given
       const { result } = renderHook(() => useContacts(), { wrapper })
-      await result.current.createContact({
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
+
+      await result.current.operations.createContact({
         name: 'David Lee',
         phone: '+1-555-777-8888',
         email: 'david@example.com',
@@ -155,7 +191,7 @@ describe('useContacts', () => {
       })
 
       // When
-      const results = await result.current.searchContacts('David')
+      const results = await result.current.operations.searchContacts('David')
 
       // Then
       expect(results.length).toBe(1)
