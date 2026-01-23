@@ -229,7 +229,7 @@ src/
 - [x] Separate context object for React Refresh compliance
 - [x] Support custom container injection for testing
 
-## Phase 6: React UI Layer (TDD where applicable)
+## Phase 6: React UI Layer (TDD)
 
 ### 6.1 Custom Hooks
 - [ ] Create `useContacts` hook (wraps use cases)
