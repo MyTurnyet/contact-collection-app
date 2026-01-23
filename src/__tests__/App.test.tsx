@@ -5,6 +5,11 @@ import App from '../App'
 describe('App', () => {
   it('renders without crashing', () => {
     render(<App />)
-    expect(screen.getByText(/Vite \+ React/i)).toBeInTheDocument()
+    expect(screen.getByText(/Contact Check-in App/i)).toBeInTheDocument()
+  })
+
+  it('renders with dependency injection', () => {
+    render(<App />)
+    expect(screen.getByText(/Dependency Injection Ready/i)).toBeInTheDocument()
   })
 })
