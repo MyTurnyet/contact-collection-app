@@ -19,7 +19,7 @@ describe('useCategories', () => {
   )
 
   describe('state management', () => {
-    it('should start with loading state', () => {
+    it('should start with loading state', async () => {
       // When
       const { result } = renderHook(() => useCategories(), { wrapper })
 
@@ -27,6 +27,11 @@ describe('useCategories', () => {
       expect(result.current.isLoading).toBe(true)
       expect(result.current.categories).toBeNull()
       expect(result.current.error).toBeNull()
+
+      // Wait for async effects to complete
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
     })
 
     it('should load categories on mount', async () => {

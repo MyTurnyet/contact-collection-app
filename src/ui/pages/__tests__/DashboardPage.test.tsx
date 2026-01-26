@@ -18,12 +18,17 @@ describe('DashboardPage', () => {
     <DependencyProvider container={container}>{children}</DependencyProvider>
   )
 
-  it('should display loading state initially', () => {
+  it('should display loading state initially', async () => {
     // When
     render(<DashboardPage />, { wrapper })
 
     // Then
     expect(screen.getByText(/loading/i)).toBeInTheDocument()
+
+    // Wait for async effects to complete
+    await waitFor(() => {
+      expect(screen.getByText('Dashboard')).toBeInTheDocument()
+    })
   })
 
   it('should display dashboard title', async () => {

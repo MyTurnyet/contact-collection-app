@@ -20,7 +20,7 @@ describe('useContacts', () => {
   )
 
   describe('state management', () => {
-    it('should start with loading state', () => {
+    it('should start with loading state', async () => {
       // When
       const { result } = renderHook(() => useContacts(), { wrapper })
 
@@ -28,6 +28,11 @@ describe('useContacts', () => {
       expect(result.current.isLoading).toBe(true)
       expect(result.current.contacts).toBeNull()
       expect(result.current.error).toBeNull()
+
+      // Wait for async effects to complete
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
     })
 
     it('should load contacts on mount', async () => {
