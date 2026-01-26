@@ -62,17 +62,23 @@ src/
     │   └── useAppInitialization.ts
     ├── helpers/      # Form validation and utilities ✅
     │   └── validation.ts
-    ├── components/   # UI components (Contact & Category Management ✅)
+    ├── components/   # UI components (Contact, Category & Dashboard ✅)
     │   ├── ContactCard.tsx
     │   ├── ContactSearchBar.tsx
     │   ├── ContactFormModal.tsx
     │   ├── ContactDetailModal.tsx
     │   ├── CategoryCard.tsx
     │   ├── CategoryFormModal.tsx
-    │   └── FrequencySelector.tsx
-    └── pages/        # Page components (Contact & Category Management ✅, others pending)
+    │   ├── FrequencySelector.tsx
+    │   ├── CheckInCard.tsx
+    │   ├── DashboardStats.tsx
+    │   ├── OverdueCheckIns.tsx
+    │   ├── UpcomingCheckIns.tsx
+    │   └── TodayCheckIns.tsx
+    └── pages/        # Page components (Contact, Category & Dashboard ✅, others pending)
         ├── ContactListPage.tsx
-        └── CategoryListPage.tsx
+        ├── CategoryListPage.tsx
+        └── DashboardPage.tsx
 ```
 
 **Dependency Flow**: Always inward toward domain
