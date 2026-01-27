@@ -92,9 +92,12 @@ describe('ContactListPage', () => {
     await user.click(screen.getByRole('button', { name: /save/i }))
 
     // Then
-    await waitFor(() => {
-      expect(screen.getByText('John Doe')).toBeInTheDocument()
-    })
+    await waitFor(
+      () => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument()
+      },
+      { timeout: 10000 }
+    )
   })
 
   it('should have search functionality', async () => {

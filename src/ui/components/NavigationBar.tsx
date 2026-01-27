@@ -21,7 +21,11 @@ export function NavigationBar() {
 
 function renderTitle() {
   return (
-    <Typography variant="h6" component="div" sx={{ mr: 4 }}>
+    <Typography
+      variant="h6"
+      component="div"
+      sx={{ mr: { xs: 2, sm: 4 }, display: { xs: 'none', sm: 'block' } }}
+    >
       Contact Check-in
     </Typography>
   )
@@ -34,6 +38,10 @@ function renderNavigationLinks() {
       {renderLink('/contacts', 'Contacts', <PeopleIcon />)}
       {renderLink('/categories', 'Categories', <CategoryIcon />)}
       {renderLink('/settings', 'Settings', <SettingsIcon />)}
+      {renderMobileLink('/', <DashboardIcon />, 'Dashboard')}
+      {renderMobileLink('/contacts', <PeopleIcon />, 'Contacts')}
+      {renderMobileLink('/categories', <CategoryIcon />, 'Categories')}
+      {renderMobileLink('/settings', <SettingsIcon />, 'Settings')}
     </Box>
   )
 }
@@ -45,8 +53,27 @@ function renderLink(to: string, label: string, icon: React.ReactElement) {
       component={RouterLink}
       to={to}
       startIcon={icon}
+      sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
     >
       {label}
+    </Button>
+  )
+}
+
+function renderMobileLink(
+  to: string,
+  icon: React.ReactElement,
+  ariaLabel: string
+) {
+  return (
+    <Button
+      color="inherit"
+      component={RouterLink}
+      to={to}
+      aria-label={ariaLabel}
+      sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto' }}
+    >
+      {icon}
     </Button>
   )
 }

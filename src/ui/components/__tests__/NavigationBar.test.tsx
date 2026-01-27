@@ -21,7 +21,8 @@ describe('NavigationBar', () => {
     renderWithRouter(<NavigationBar />)
 
     // Then
-    expect(screen.getByRole('link', { name: /dashboard/i })).toBeInTheDocument()
+    const links = screen.getAllByRole('link', { name: /dashboard/i })
+    expect(links.length).toBeGreaterThan(0)
   })
 
   it('should display contacts link', () => {
@@ -29,7 +30,8 @@ describe('NavigationBar', () => {
     renderWithRouter(<NavigationBar />)
 
     // Then
-    expect(screen.getByRole('link', { name: /contacts/i })).toBeInTheDocument()
+    const links = screen.getAllByRole('link', { name: /contacts/i })
+    expect(links.length).toBeGreaterThan(0)
   })
 
   it('should display categories link', () => {
@@ -37,7 +39,8 @@ describe('NavigationBar', () => {
     renderWithRouter(<NavigationBar />)
 
     // Then
-    expect(screen.getByRole('link', { name: /categories/i })).toBeInTheDocument()
+    const links = screen.getAllByRole('link', { name: /categories/i })
+    expect(links.length).toBeGreaterThan(0)
   })
 
   it('should display settings link', () => {
@@ -45,7 +48,8 @@ describe('NavigationBar', () => {
     renderWithRouter(<NavigationBar />)
 
     // Then
-    expect(screen.getByRole('link', { name: /settings/i })).toBeInTheDocument()
+    const links = screen.getAllByRole('link', { name: /settings/i })
+    expect(links.length).toBeGreaterThan(0)
   })
 
   it('should have correct href for dashboard link', () => {
@@ -53,8 +57,8 @@ describe('NavigationBar', () => {
     renderWithRouter(<NavigationBar />)
 
     // Then
-    const link = screen.getByRole('link', { name: /dashboard/i })
-    expect(link).toHaveAttribute('href', '/')
+    const links = screen.getAllByRole('link', { name: /dashboard/i })
+    expect(links[0]).toHaveAttribute('href', '/')
   })
 
   it('should have correct href for contacts link', () => {
@@ -62,8 +66,8 @@ describe('NavigationBar', () => {
     renderWithRouter(<NavigationBar />)
 
     // Then
-    const link = screen.getByRole('link', { name: /contacts/i })
-    expect(link).toHaveAttribute('href', '/contacts')
+    const links = screen.getAllByRole('link', { name: /contacts/i })
+    expect(links[0]).toHaveAttribute('href', '/contacts')
   })
 
   it('should have correct href for categories link', () => {
@@ -71,8 +75,8 @@ describe('NavigationBar', () => {
     renderWithRouter(<NavigationBar />)
 
     // Then
-    const link = screen.getByRole('link', { name: /categories/i })
-    expect(link).toHaveAttribute('href', '/categories')
+    const links = screen.getAllByRole('link', { name: /categories/i })
+    expect(links[0]).toHaveAttribute('href', '/categories')
   })
 
   it('should have correct href for settings link', () => {
@@ -80,7 +84,7 @@ describe('NavigationBar', () => {
     renderWithRouter(<NavigationBar />)
 
     // Then
-    const link = screen.getByRole('link', { name: /settings/i })
-    expect(link).toHaveAttribute('href', '/settings')
+    const links = screen.getAllByRole('link', { name: /settings/i })
+    expect(links[0]).toHaveAttribute('href', '/settings')
   })
 })

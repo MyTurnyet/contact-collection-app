@@ -41,10 +41,10 @@ describe('AppLayout', () => {
     )
 
     // Then
-    expect(screen.getByRole('link', { name: /dashboard/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /contacts/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /categories/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /settings/i })).toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: /dashboard/i }).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('link', { name: /contacts/i }).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('link', { name: /categories/i }).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('link', { name: /settings/i }).length).toBeGreaterThan(0)
   })
 
   it('should apply proper spacing to content', () => {
