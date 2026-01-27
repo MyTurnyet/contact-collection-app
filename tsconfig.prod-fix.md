@@ -13,31 +13,49 @@ Update `tsconfig.prod.json` to exclude test-only types and enable proper code ge
 
 ```json
 {
-  "extends": "./tsconfig.app.json",
   "compilerOptions": {
-    "types": ["vite/client"],
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Production specific */
     "noEmit": false,
     "declaration": false,
-    "declarationMap": false
-  }
+    "declarationMap": false,
+    "composite": false
+  },
+  "include": ["src"]
 }
 ```
 
 ## Explanation of Changes
 
-1. **Remove test-only types**: Override the `types` array to only include `vite/client`, removing:
-   - `@testing-library/jest-dom` (testing utility)
-   - `vitest/globals` (testing framework globals)
-
-2. **Enable code generation**: Set `noEmit: false` to allow TypeScript to generate JavaScript files for the build
-
-3. **Disable declaration files**: Set `declaration: false` and `declarationMap: false` since we don't need TypeScript declaration files in production
+1. **Remove inheritance**: Use standalone config instead of extending `tsconfig.app.json` to avoid conflicting options
+2. **Remove test-only types**: No `types` array specified, so no test-only type definitions are included
+3. **Enable code generation**: Set `noEmit: false` to allow TypeScript to generate JavaScript files for the build
+4. **Disable composite**: Set `composite: false` to resolve the composite project declaration emit conflict
+5. **Keep essential options**: Maintain all necessary compiler options from the original config
 
 ## Why This Works
 
 - The production build only needs runtime types, not testing types
-- `vite/client` is kept because it provides essential Vite development server types
-- This configuration allows the build process to complete successfully without missing type definition errors
+- Standalone config avoids inheritance conflicts between development and production settings
+- `composite: false` resolves the declaration emit requirement for composite projects
+- This configuration allows the build process to complete successfully without type definition errors
 
 ## After Applying This Fix
 

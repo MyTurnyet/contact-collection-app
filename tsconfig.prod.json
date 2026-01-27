@@ -1,9 +1,28 @@
 {
-  "extends": "./tsconfig.app.json",
   "compilerOptions": {
-    "types": ["vite/client"],
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Production specific */
     "noEmit": false,
     "declaration": false,
-    "declarationMap": false
-  }
+    "declarationMap": false,
+    "composite": false
+  },
+  "include": ["src"]
 }
