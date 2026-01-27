@@ -9,25 +9,34 @@ import { CategoryListPage } from './ui/pages/CategoryListPage'
 import { SettingsPage } from './ui/pages/SettingsPage'
 import { NotFoundPage } from './ui/pages/NotFoundPage'
 import { theme } from './ui/theme/theme'
+import { useBackgroundScheduler } from './ui/hooks/useBackgroundScheduler'
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <DependencyProvider>
-        <BrowserRouter>
-          <AppLayout>
-            <Routes>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/contacts" element={<ContactListPage />} />
-              <Route path="/categories" element={<CategoryListPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </AppLayout>
-        </BrowserRouter>
+        <AppWithScheduler />
       </DependencyProvider>
     </ThemeProvider>
+  )
+}
+
+function AppWithScheduler() {
+  useBackgroundScheduler()
+
+  return (
+    <BrowserRouter>
+      <AppLayout>
+        <Routes>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/contacts" element={<ContactListPage />} />
+          <Route path="/categories" element={<CategoryListPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </AppLayout>
+    </BrowserRouter>
   )
 }
 

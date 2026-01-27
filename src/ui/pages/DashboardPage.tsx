@@ -1,12 +1,14 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect, useState, useCallback } from 'react'
 import { Box, Typography, CircularProgress, Alert, Grid } from '@mui/material'
 import { useDashboard } from '../hooks/useDashboard'
 import { useCheckIns } from '../hooks/useCheckIns'
 import { useContacts } from '../hooks/useContacts'
+import { useNotifications } from '../hooks/useNotifications'
 import { DashboardStats } from '../components/DashboardStats'
 import { OverdueCheckIns } from '../components/OverdueCheckIns'
 import { UpcomingCheckIns } from '../components/UpcomingCheckIns'
 import { TodayCheckIns } from '../components/TodayCheckIns'
+import { NotificationPermissionPrompt } from '../components/NotificationPermissionPrompt'
 import type { ContactId } from '../../domain/contact/ContactId'
 import type { Contact } from '../../domain/contact/Contact'
 import type { DashboardSummary } from '../../application/dashboard/DashboardSummary'
@@ -15,11 +17,38 @@ export function DashboardPage() {
   const dashboard = useDashboard()
   const checkIns = useCheckIns()
   const contacts = useContacts()
+  const notifications = useNotifications()
+  const [promptDismissed, setPromptDismissed] = useState(false)
 
   const contactNames = useMemo(
     () => buildContactNamesMap(contacts.contacts),
     [contacts.contacts]
   )
+
+  const sendNotificationsForCheckIns = useCallback(async () => {
+    if (notifications.permission !== 'granted') return
+
+    const overdueCount = checkIns.overdueCheckIns?.length || 0
+    const todayCount = dashboard.todayCheckIns?.length || 0
+
+    if (overdueCount > 0) {
+      await notifications.sendNotification(
+        'Overdue Check-ins',
+        `You have ${overdueCount} overdue check-in${overdueCount > 1 ? 's' : ''}`
+      )
+    }
+
+    if (todayCount > 0) {
+      await notifications.sendNotification(
+        'Check-ins Due Today',
+        `You have ${todayCount} check-in${todayCount > 1 ? 's' : ''} due today`
+      )
+    }
+  }, [notifications, checkIns.overdueCheckIns, dashboard.todayCheckIns])
+
+  useEffect(() => {
+    sendNotificationsForCheckIns()
+  }, [sendNotificationsForCheckIns])
 
   if (isAnyLoading(dashboard, checkIns, contacts)) {
     return renderLoading()
@@ -34,6 +63,14 @@ export function DashboardPage() {
       <Typography variant="h4" gutterBottom>
         Dashboard
       </Typography>
+
+      {!promptDismissed && (
+        <NotificationPermissionPrompt
+          permission={notifications.permission}
+          onRequestPermission={notifications.requestPermission}
+          onDismiss={() => setPromptDismissed(true)}
+        />
+      )}
 
       <Box sx={{ mb: 4 }}>
         <DashboardStats summary={getSummaryOrDefault(dashboard.summary)} />
