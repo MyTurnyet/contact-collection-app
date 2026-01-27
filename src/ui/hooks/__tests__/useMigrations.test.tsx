@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { useMigrations } from '../useMigrations'
 import { DependencyProvider } from '../../../di'
@@ -18,12 +18,24 @@ describe('useMigrations', () => {
     localStorage.clear()
   })
 
-  it('should start with running state', () => {
+  it('should start with running state', async () => {
     // When
     const { result } = renderHook(() => useMigrations(), { wrapper })
 
     // Then
     expect(result.current.isRunning).toBe(true)
+
+    await waitFor(() => {
+      expect(result.current.isRunning).toBe(false)
+    })
+  })
+
+  it('should finish running state after migrations complete', async () => {
+    const { result } = renderHook(() => useMigrations(), { wrapper })
+
+    await waitFor(() => {
+      expect(result.current.isRunning).toBe(false)
+    })
   })
 
   it('should complete migrations successfully', async () => {
@@ -84,5 +96,35 @@ describe('useMigrations', () => {
 
     expect(result.current.completed).toBe(false)
     expect(result.current.error?.message).toBe('Migration failed')
+  })
+
+  it('should not run migrations again on rerender', async () => {
+    const runMigrations = vi.fn(async () => undefined)
+
+    let currentContainer: DIContainer = {
+      runMigrations,
+    } as unknown as DIContainer
+
+    const dynamicWrapper = ({ children }: { children: React.ReactNode }) => (
+      <DependencyProvider container={currentContainer}>{children}</DependencyProvider>
+    )
+
+    const { result, rerender } = renderHook(() => useMigrations(), {
+      wrapper: dynamicWrapper,
+    })
+
+    await waitFor(() => {
+      expect(result.current.isRunning).toBe(false)
+    })
+
+    expect(runMigrations).toHaveBeenCalledTimes(1)
+
+    currentContainer = {
+      runMigrations,
+    } as unknown as DIContainer
+
+    rerender()
+
+    expect(runMigrations).toHaveBeenCalledTimes(1)
   })
 })

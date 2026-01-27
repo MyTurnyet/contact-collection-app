@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { useAppInitialization } from '../useAppInitialization'
 import { DependencyProvider } from '../../../di'
 import { DIContainer } from '../../../di/DIContainer'
@@ -127,6 +127,81 @@ describe('useAppInitialization', () => {
     unmount()
     deferred.resolve()
     await deferred.promise
+  })
+
+  it('should initialize on first run and mark app as initialized', async () => {
+    const startScheduler = vi.fn()
+
+    const minimalContainer = {
+      ...container,
+      getGetDefaultCategories: () => ({
+        execute: () => [],
+      }),
+      getCreateCategory: () => ({
+        execute: async () => undefined,
+      }),
+      startScheduler,
+    } as unknown as DIContainer
+
+    const minimalWrapper = ({ children }: { children: React.ReactNode }) => (
+      <DependencyProvider container={minimalContainer}>{children}</DependencyProvider>
+    )
+
+    const { result } = renderHook(() => useAppInitialization(), {
+      wrapper: minimalWrapper,
+    })
+
+    await waitFor(() => {
+      expect(result.current.isInitializing).toBe(false)
+    })
+
+    expect(result.current.isInitialized).toBe(true)
+    expect(result.current.error).toBeNull()
+    expect(startScheduler).toHaveBeenCalled()
+    expect(localStorage.getItem('app_initialized')).toBe('true')
+  })
+
+  it('should retry initialization after an error', async () => {
+    const getDefaults = vi
+      .fn<() => { execute: () => unknown[] }>()
+      .mockImplementationOnce(() => {
+        throw new Error('Transient error')
+      })
+      .mockImplementation(() => ({ execute: () => [] }))
+
+    const startScheduler = vi.fn()
+
+    const flakyContainer = {
+      ...container,
+      getGetDefaultCategories: getDefaults,
+      getCreateCategory: () => ({
+        execute: async () => undefined,
+      }),
+      startScheduler,
+    } as unknown as DIContainer
+
+    const flakyWrapper = ({ children }: { children: React.ReactNode }) => (
+      <DependencyProvider container={flakyContainer}>{children}</DependencyProvider>
+    )
+
+    const { result } = renderHook(() => useAppInitialization(), {
+      wrapper: flakyWrapper,
+    })
+
+    await waitFor(() => {
+      expect(result.current.error?.message).toBe('Transient error')
+    })
+
+    await act(async () => {
+      result.current.retry()
+    })
+
+    await waitFor(() => {
+      expect(result.current.isInitialized).toBe(true)
+    })
+
+    expect(startScheduler).toHaveBeenCalled()
+    expect(localStorage.getItem('app_initialized')).toBe('true')
   })
 
   it('should provide retry function', () => {
