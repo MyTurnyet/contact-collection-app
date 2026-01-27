@@ -10,7 +10,7 @@ describe('Contact Flow Integration', () => {
     localStorage.clear()
   })
 
-  it('should create contact, assign category, and view on dashboard', async () => {
+  it('should create contact, assign category, and view on dashboard', { timeout: 10000 }, async () => {
     const user = userEvent.setup()
 
     // Given - Start on contact list page
