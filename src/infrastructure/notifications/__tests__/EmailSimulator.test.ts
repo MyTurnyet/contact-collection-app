@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { EmailSimulator } from '../EmailSimulator'
+import { EmailSimulator, RealConsole } from '../EmailSimulator'
 import type { EmailMessage } from '../EmailSimulator'
 
 // Test double for console
@@ -156,6 +156,25 @@ describe('EmailSimulator', () => {
 
       // Then
       expect(count).toBe(2)
+    })
+  })
+
+  describe('RealConsole', () => {
+    it('should write log output using console.log', () => {
+      const originalLog = console.log
+      const captured: string[] = []
+      console.log = (message: unknown) => {
+        captured.push(String(message))
+      }
+
+      try {
+        const realConsole = new RealConsole()
+        realConsole.log('hello')
+
+        expect(captured).toEqual(['hello'])
+      } finally {
+        console.log = originalLog
+      }
     })
   })
 })

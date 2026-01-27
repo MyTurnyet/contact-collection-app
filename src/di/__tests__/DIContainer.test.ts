@@ -157,6 +157,14 @@ describe('DIContainer', () => {
     })
   })
 
+  describe('Export/Import', () => {
+    it('should provide CsvExporter', () => {
+      const exporter = container.getCsvExporter()
+      expect(exporter).toBeDefined()
+      expect(exporter.exportContacts).toBeDefined()
+    })
+  })
+
   describe('Scheduler Management', () => {
     it('should start scheduler with overdue detector', () => {
       // When

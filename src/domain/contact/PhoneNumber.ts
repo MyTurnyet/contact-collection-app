@@ -24,18 +24,11 @@ function validatePhoneNumber(normalized: string): void {
   if (!isValidLength(normalized)) {
     throw new Error('Invalid phone number format')
   }
-  if (!containsOnlyDigitsAndPlus(normalized)) {
-    throw new Error('Invalid phone number format')
-  }
 }
 
 function isValidLength(value: string): boolean {
   const digits = value.replace(/\D/g, '')
   return digits.length >= 10
-}
-
-function containsOnlyDigitsAndPlus(value: string): boolean {
-  return /^\+\d+$/.test(value)
 }
 
 export function phoneNumberEquals(a: PhoneNumber, b: PhoneNumber): boolean {
