@@ -13,6 +13,7 @@ import { theme } from './ui/theme/theme'
 import { useBackgroundScheduler } from './ui/hooks/useBackgroundScheduler'
 import { useFirstRun } from './ui/hooks/useFirstRun'
 import { useAppInitialization } from './ui/hooks/useAppInitialization'
+import { useMigrations } from './ui/hooks/useMigrations'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
 }
 
 function AppWithScheduler() {
+  const migrations = useMigrations()
   useBackgroundScheduler()
   const firstRun = useFirstRun()
   const appInit = useAppInitialization()
@@ -34,7 +36,9 @@ function AppWithScheduler() {
     firstRun.completeSetup()
   }
 
-  if (firstRun.isLoading || appInit.isInitializing) {
+  const isLoading = migrations.isRunning || firstRun.isLoading || appInit.isInitializing
+
+  if (isLoading) {
     return <LoadingScreen />
   }
 

@@ -51,6 +51,10 @@ import { JsonExporter } from '../infrastructure/export/JsonExporter'
 import { CsvExporter } from '../infrastructure/export/CsvExporter'
 import { JsonImporter } from '../infrastructure/export/JsonImporter'
 
+// Migrations
+import { MigrationManager } from '../infrastructure/migrations/MigrationManager'
+import { migrations } from '../infrastructure/migrations/migrations'
+
 export class DIContainer {
   // Singleton instances
   private storageAdapter = new LocalStorageAdapter()
@@ -65,6 +69,7 @@ export class DIContainer {
   private notificationService = this.createNotificationService()
   private emailSimulator = this.createEmailSimulator()
   private scheduler = this.createScheduler()
+  private migrationManager = this.createMigrationManager()
 
   // Contact Use Cases
   getCreateContact() {
@@ -186,6 +191,10 @@ export class DIContainer {
     this.scheduler.stop()
   }
 
+  async runMigrations(): Promise<void> {
+    await this.migrationManager.migrate()
+  }
+
   // Private factory methods
   private createContactRepository() {
     return new LocalStorageContactRepository(
@@ -223,6 +232,10 @@ export class DIContainer {
       new RealTimerAPI(),
       6 * 60 * 60 * 1000 // 6 hours
     )
+  }
+
+  private createMigrationManager() {
+    return new MigrationManager(localStorage, migrations)
   }
 
   getJsonExporter() {
