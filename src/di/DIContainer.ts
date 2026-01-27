@@ -46,6 +46,11 @@ import { RealConsole, EmailSimulator } from '../infrastructure/notifications/Ema
 import { RealTimerAPI, IntervalScheduler } from '../infrastructure/scheduler/IntervalScheduler'
 import { OverdueCheckInDetector } from '../infrastructure/scheduler/OverdueCheckInDetector'
 
+// Export/Import Services
+import { JsonExporter } from '../infrastructure/export/JsonExporter'
+import { CsvExporter } from '../infrastructure/export/CsvExporter'
+import { JsonImporter } from '../infrastructure/export/JsonImporter'
+
 export class DIContainer {
   // Singleton instances
   private storageAdapter = new LocalStorageAdapter()
@@ -217,6 +222,26 @@ export class DIContainer {
     return new IntervalScheduler(
       new RealTimerAPI(),
       6 * 60 * 60 * 1000 // 6 hours
+    )
+  }
+
+  getJsonExporter() {
+    return new JsonExporter(
+      this.contactRepo,
+      this.categoryRepo,
+      this.checkInRepo
+    )
+  }
+
+  getCsvExporter() {
+    return new CsvExporter(this.contactRepo)
+  }
+
+  getJsonImporter() {
+    return new JsonImporter(
+      this.contactRepo,
+      this.categoryRepo,
+      this.checkInRepo
     )
   }
 }
