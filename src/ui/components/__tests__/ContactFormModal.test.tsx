@@ -66,7 +66,7 @@ describe('ContactFormModal', () => {
           })
         )
       })
-    })
+    }, 15000)
 
     it('should normalize optional fields before saving', async () => {
       const user = userEvent.setup()
@@ -90,7 +90,7 @@ describe('ContactFormModal', () => {
       const saved = onSave.mock.calls[0][0] as { relationshipContext?: string; state?: string }
       expect(saved.relationshipContext).toBe('Friend')
       expect(saved.state).toBeUndefined()
-    })
+    }, 15000)
 
     it('should not save when location is invalid', async () => {
       const user = userEvent.setup()

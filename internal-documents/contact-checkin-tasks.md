@@ -435,11 +435,12 @@ All integration tests use real DIContainer with LocalStorage, providing end-to-e
 
 ### 9.5 Code Quality
 - [x] Run ESLint: `npm run lint`
-- [ ] Verify all methods ≤8 lines
-- [ ] Verify cognitive complexity ≤4
-- [ ] Verify no mocking frameworks used
-- [ ] Verify dependency inversion throughout
-- [ ] Run Prettier for formatting
+- [x] Configure ESLint warnings for max method length (8) and complexity (4)
+- [x] Verify all methods ≤8 lines
+- [x] Verify cognitive complexity ≤4
+- [x] Verify no mocking frameworks used
+- [x] Verify dependency inversion throughout
+- [x] Run formatting fix pass (ESLint): `npm run format`
 
 ## Phase 10: Build & Deployment
 
@@ -459,7 +460,7 @@ Choose one:
     - [ ] Create GitHub repository
     - [ ] Configure GitHub Pages deployment
     - [ ] Push code and deploy
-    - [ ] Access via `https://username.github.io/contact-checkin-app`
+    - [ ] Access via `https://myturnyet.github.io/contact-checkin-app`
 
 - [ ] **Option C: Netlify/Vercel (Free Tier)**
     - [ ] Connect GitHub repository
