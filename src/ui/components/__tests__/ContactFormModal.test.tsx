@@ -60,6 +60,46 @@ describe('ContactFormModal', () => {
       })
     })
 
+    it('should normalize optional fields before saving', async () => {
+      const user = userEvent.setup()
+      const onSave = vi.fn()
+
+      render(<ContactFormModal open onClose={vi.fn()} onSave={onSave} />)
+
+      await user.type(screen.getByLabelText(/name/i), 'Jane Doe')
+      await user.type(screen.getByLabelText(/phone/i), '+15559876543')
+      await user.type(screen.getByLabelText(/email/i), 'jane@example.com')
+      await user.type(screen.getByLabelText(/city/i), 'Boston')
+      await user.type(screen.getByLabelText(/country/i), 'USA')
+      await user.type(screen.getByLabelText(/state\/province/i), '   ')
+      await user.type(screen.getByLabelText(/relationship context/i), '  Friend  ')
+      await user.click(screen.getByRole('button', { name: /save/i }))
+
+      await waitFor(() => {
+        expect(onSave).toHaveBeenCalled()
+      })
+
+      const saved = onSave.mock.calls[0][0] as { relationshipContext?: string; state?: string }
+      expect(saved.relationshipContext).toBe('Friend')
+      expect(saved.state).toBeUndefined()
+    })
+
+    it('should not save when location is invalid', async () => {
+      const user = userEvent.setup()
+      const onSave = vi.fn()
+      render(<ContactFormModal open onClose={vi.fn()} onSave={onSave} />)
+
+      await user.type(screen.getByLabelText(/name/i), 'Jane Doe')
+      await user.type(screen.getByLabelText(/phone/i), '+15559876543')
+      await user.type(screen.getByLabelText(/email/i), 'jane@example.com')
+      await user.type(screen.getByLabelText(/country/i), 'USA')
+      await user.click(screen.getByRole('button', { name: /save/i }))
+
+      await waitFor(() => {
+        expect(onSave).not.toHaveBeenCalled()
+      })
+    })
+
     it('should show validation error for invalid phone', async () => {
       // Given
       const user = userEvent.setup()
@@ -122,6 +162,36 @@ describe('ContactFormModal', () => {
       expect(screen.getByDisplayValue('John Doe')).toBeInTheDocument()
       expect(screen.getByDisplayValue('+15551234567')).toBeInTheDocument()
       expect(screen.getByDisplayValue('john@example.com')).toBeInTheDocument()
+    })
+
+    it('should update form when contact changes while open', () => {
+      const contactA = mockContact
+      const contactB = createContact({
+        id: createContactId(),
+        name: 'Jane Smith',
+        phone: createPhoneNumber('+15550001111'),
+        email: createEmailAddress('jane@smith.com'),
+        location: createLocation({
+          city: 'Boston',
+          country: 'USA',
+          timezone: 'America/New_York',
+        }),
+        categoryId: createCategoryId(),
+      })
+
+      const { rerender } = render(
+        <ContactFormModal open contact={contactA} onClose={vi.fn()} onSave={vi.fn()} />
+      )
+
+      expect(screen.getByDisplayValue('John Doe')).toBeInTheDocument()
+
+      rerender(
+        <ContactFormModal open contact={contactB} onClose={vi.fn()} onSave={vi.fn()} />
+      )
+
+      expect(screen.getByDisplayValue('Jane Smith')).toBeInTheDocument()
+      expect(screen.getByDisplayValue('+15550001111')).toBeInTheDocument()
+      expect(screen.getByDisplayValue('jane@smith.com')).toBeInTheDocument()
     })
   })
 

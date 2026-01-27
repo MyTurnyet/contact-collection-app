@@ -2,11 +2,17 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { useMigrations } from '../useMigrations'
 import { DependencyProvider } from '../../../di'
+import { DIContainer } from '../../../di/DIContainer'
 
 describe('useMigrations', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <DependencyProvider>{children}</DependencyProvider>
   )
+
+  const wrapperWithContainer = (container: DIContainer) =>
+    ({ children }: { children: React.ReactNode }) => (
+      <DependencyProvider container={container}>{children}</DependencyProvider>
+    )
 
   beforeEach(() => {
     localStorage.clear()
@@ -59,5 +65,24 @@ describe('useMigrations', () => {
       expect(result2.current.isRunning).toBe(false)
     })
     expect(result2.current.completed).toBe(true)
+  })
+
+  it('should set error when migrations fail', async () => {
+    const failingContainer = {
+      runMigrations: async () => {
+        throw new Error('Migration failed')
+      },
+    } as unknown as DIContainer
+
+    const { result } = renderHook(() => useMigrations(), {
+      wrapper: wrapperWithContainer(failingContainer),
+    })
+
+    await waitFor(() => {
+      expect(result.current.isRunning).toBe(false)
+    })
+
+    expect(result.current.completed).toBe(false)
+    expect(result.current.error?.message).toBe('Migration failed')
   })
 })

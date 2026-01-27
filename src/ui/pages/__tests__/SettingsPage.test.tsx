@@ -5,6 +5,15 @@ import { SettingsPage } from '../SettingsPage'
 import { DependencyProvider } from '../../../di'
 import { DIContainer } from '../../../di/DIContainer'
 
+function createFileWithText(content: string): File {
+  const file = new File([content], 'import.json', { type: 'application/json' })
+  Object.defineProperty(file, 'text', {
+    configurable: true,
+    value: async () => content,
+  })
+  return file
+}
+
 describe('SettingsPage', () => {
   let container: DIContainer
 
@@ -18,6 +27,19 @@ describe('SettingsPage', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <DependencyProvider container={container}>{children}</DependencyProvider>
   )
+
+  function stubAnchorClick() {
+    const original = HTMLAnchorElement.prototype.click
+    const spy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => undefined)
+    return {
+      restore: () => {
+        spy.mockRestore()
+        HTMLAnchorElement.prototype.click = original
+      },
+    }
+  }
 
   it('should display page title', () => {
     // When
@@ -73,6 +95,7 @@ describe('SettingsPage', () => {
 
     // Given
     const createElementSpy = vi.spyOn(document, 'createElement')
+    const anchorClick = stubAnchorClick()
     render(<SettingsPage />, { wrapper })
 
     // When
@@ -83,6 +106,7 @@ describe('SettingsPage', () => {
       expect(createElementSpy).toHaveBeenCalledWith('a')
     })
 
+    anchorClick.restore()
     createElementSpy.mockRestore()
   })
 
@@ -91,6 +115,7 @@ describe('SettingsPage', () => {
 
     // Given
     const createElementSpy = vi.spyOn(document, 'createElement')
+    const anchorClick = stubAnchorClick()
     render(<SettingsPage />, { wrapper })
 
     // When
@@ -101,6 +126,7 @@ describe('SettingsPage', () => {
       expect(createElementSpy).toHaveBeenCalledWith('a')
     })
 
+    anchorClick.restore()
     createElementSpy.mockRestore()
   })
 
@@ -135,6 +161,7 @@ describe('SettingsPage', () => {
 
     // Given
     const createElementSpy = vi.spyOn(document, 'createElement')
+    const anchorClick = stubAnchorClick()
     render(<SettingsPage />, { wrapper })
 
     // When
@@ -145,6 +172,113 @@ describe('SettingsPage', () => {
       expect(createElementSpy).toHaveBeenCalled()
     })
 
+    anchorClick.restore()
     createElementSpy.mockRestore()
+  })
+
+  it('should show notification toggle after permission is granted', async () => {
+    const user = userEvent.setup()
+
+    const originalNotification = (globalThis as unknown as { Notification?: unknown }).Notification
+
+    class FakeNotification {
+      static requestPermission() {
+        return Promise.resolve('granted' as const)
+      }
+    }
+
+    ;(globalThis as unknown as { Notification?: unknown }).Notification =
+      FakeNotification as unknown
+
+    try {
+      render(<SettingsPage />, { wrapper })
+      await user.click(screen.getByRole('button', { name: /request permission/i }))
+
+      await waitFor(() => {
+        expect(
+          screen.getByLabelText(/enable browser notifications/i)
+        ).toBeInTheDocument()
+      })
+    } finally {
+      ;(globalThis as unknown as { Notification?: unknown }).Notification = originalNotification
+    }
+  })
+
+  it('should toggle notification enabled state when switch clicked', async () => {
+    const user = userEvent.setup()
+
+    const originalNotification = (globalThis as unknown as { Notification?: unknown }).Notification
+
+    class FakeNotification {
+      static requestPermission() {
+        return Promise.resolve('granted' as const)
+      }
+    }
+
+    ;(globalThis as unknown as { Notification?: unknown }).Notification =
+      FakeNotification as unknown
+
+    try {
+      render(<SettingsPage />, { wrapper })
+      await user.click(screen.getByRole('button', { name: /request permission/i }))
+
+      const toggle = await screen.findByLabelText(/enable browser notifications/i)
+
+      expect(toggle).not.toBeChecked()
+      await user.click(toggle)
+      expect(toggle).toBeChecked()
+    } finally {
+      ;(globalThis as unknown as { Notification?: unknown }).Notification = originalNotification
+    }
+  })
+
+  it('should show import success message for valid file', async () => {
+    const user = userEvent.setup()
+    render(<SettingsPage />, { wrapper })
+
+    const fileInput = screen.getByLabelText(/choose file/i)
+    const file = createFileWithText(
+      JSON.stringify({ version: '1.0', contacts: [], categories: [], checkIns: [] })
+    )
+
+    await user.upload(fileInput, file)
+
+    await waitFor(() => {
+      expect(screen.getByText(/import successful!/i)).toBeInTheDocument()
+    })
+  })
+
+  it('should show import error message for invalid file', async () => {
+    const user = userEvent.setup()
+    render(<SettingsPage />, { wrapper })
+
+    const fileInput = screen.getByLabelText(/choose file/i)
+    const file = createFileWithText('not-json')
+
+    await user.upload(fileInput, file)
+
+    await waitFor(() => {
+      expect(screen.getByText(/invalid json format/i)).toBeInTheDocument()
+    })
+  })
+
+  it('should show unknown error message when file read fails with non-Error', async () => {
+    const user = userEvent.setup()
+    render(<SettingsPage />, { wrapper })
+
+    const fileInput = screen.getByLabelText(/choose file/i)
+    const file = createFileWithText('')
+
+    Object.defineProperty(file, 'text', {
+      value: async () => {
+        throw 'nope'
+      },
+    })
+
+    await user.upload(fileInput, file)
+
+    await waitFor(() => {
+      expect(screen.getByText(/an unknown error occurred/i)).toBeInTheDocument()
+    })
   })
 })

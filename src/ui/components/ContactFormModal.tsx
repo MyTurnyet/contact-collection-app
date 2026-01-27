@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Dialog,
   DialogTitle,
@@ -51,6 +51,13 @@ export function ContactFormModal({
     getInitialFormData(contact)
   )
   const [errors, setErrors] = useState<FormErrors>({})
+
+  useEffect(() => {
+    if (open) {
+      setFormData(getInitialFormData(contact))
+      setErrors({})
+    }
+  }, [open, contact])
 
   const isEditMode = Boolean(contact)
   const title = isEditMode ? 'Edit Contact' : 'Create Contact'
@@ -186,8 +193,18 @@ export function ContactFormModal({
       return
     }
 
-    onSave(formData)
+    onSave({
+      ...formData,
+      state: normalizeOptionalString(formData.state),
+      relationshipContext: normalizeOptionalString(formData.relationshipContext),
+    })
   }
+}
+
+function normalizeOptionalString(value?: string): string | undefined {
+  if (!value) return undefined
+  const trimmed = value.trim()
+  return trimmed === '' ? undefined : trimmed
 }
 
 function getInitialFormData(contact?: Contact): ContactFormData {

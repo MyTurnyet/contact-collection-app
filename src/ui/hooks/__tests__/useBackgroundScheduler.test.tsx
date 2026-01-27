@@ -1,15 +1,20 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { renderHook } from '@testing-library/react'
+import { renderHook, waitFor } from '@testing-library/react'
 import { useBackgroundScheduler } from '../useBackgroundScheduler'
 import { DependencyProvider } from '../../../di'
+import { DIContainer } from '../../../di/DIContainer'
 
 describe('useBackgroundScheduler', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <DependencyProvider>{children}</DependencyProvider>
   )
 
+  const wrapperWithContainer = (container: DIContainer) =>
+    ({ children }: { children: React.ReactNode }) => (
+      <DependencyProvider container={container}>{children}</DependencyProvider>
+    )
+
   beforeEach(() => {
-    vi.useFakeTimers()
     vi.clearAllMocks()
   })
 
@@ -61,5 +66,52 @@ describe('useBackgroundScheduler', () => {
 
     // Then - No error thrown even if scheduling fails
     expect(result.current.error).toBeNull()
+  })
+
+  it('should set error when scheduler fails to start', async () => {
+    const failingContainer = {
+      startScheduler: () => {
+        throw new Error('Start failed')
+      },
+      stopScheduler: () => undefined,
+    } as unknown as DIContainer
+
+    const { result } = renderHook(() => useBackgroundScheduler(), {
+      wrapper: wrapperWithContainer(failingContainer),
+    })
+
+    await waitFor(() => {
+      expect(result.current.error?.message).toBe('Start failed')
+    })
+  })
+
+  it('should set error when scheduler fails to stop on cleanup', async () => {
+    const failingContainer = {
+      startScheduler: () => undefined,
+      stopScheduler: () => {
+        throw new Error('Stop failed')
+      },
+    } as unknown as DIContainer
+
+    const safeContainer = {
+      startScheduler: () => undefined,
+      stopScheduler: () => undefined,
+    } as unknown as DIContainer
+
+    let currentContainer: DIContainer = failingContainer
+    const dynamicWrapper = ({ children }: { children: React.ReactNode }) => (
+      <DependencyProvider container={currentContainer}>{children}</DependencyProvider>
+    )
+
+    const { result, rerender } = renderHook(() => useBackgroundScheduler(), {
+      wrapper: dynamicWrapper,
+    })
+
+    currentContainer = safeContainer
+    rerender()
+
+    await waitFor(() => {
+      expect(result.current.error?.message).toBe('Stop failed')
+    })
   })
 })
