@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { useCheckIns } from '../useCheckIns'
 import { DependencyProvider } from '../../../di'
 import { DIContainer } from '../../../di/DIContainer'
@@ -20,7 +20,7 @@ describe('useCheckIns', () => {
   )
 
   describe('state management', () => {
-    it('should start with loading state', () => {
+    it('should start with loading state', async () => {
       // When
       const { result } = renderHook(() => useCheckIns(), { wrapper })
 
@@ -29,6 +29,10 @@ describe('useCheckIns', () => {
       expect(result.current.upcomingCheckIns).toBeNull()
       expect(result.current.overdueCheckIns).toBeNull()
       expect(result.current.error).toBeNull()
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
     })
 
     it('should load check-ins on mount', async () => {
@@ -54,12 +58,41 @@ describe('useCheckIns', () => {
       })
 
       // When
-      await result.current.operations.refresh()
+      await act(async () => {
+        await result.current.operations.refresh()
+      })
 
       // Then
       expect(result.current.upcomingCheckIns).toEqual([])
       expect(result.current.overdueCheckIns).toEqual([])
       expect(result.current.error).toBeNull()
+    })
+
+    it('should set Unknown error when loadCheckIns throws non-Error', async () => {
+      const failingContainer = {
+        getGetUpcomingCheckIns: () => ({
+          execute: async () => {
+            throw 'bad'
+          },
+        }),
+        getGetOverdueCheckIns: () => ({
+          execute: async () => [],
+        }),
+      } as unknown as DIContainer
+
+      const failingWrapper = ({ children }: { children: React.ReactNode }) => (
+        <DependencyProvider container={failingContainer}>{children}</DependencyProvider>
+      )
+
+      const { result } = renderHook(() => useCheckIns(), { wrapper: failingWrapper })
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
+
+      expect(result.current.upcomingCheckIns).toBeNull()
+      expect(result.current.overdueCheckIns).toBeNull()
+      expect(result.current.error?.message).toBe('Unknown')
     })
   })
 
@@ -116,15 +149,20 @@ describe('useCheckIns', () => {
       })
 
       // When
-      const completionResult = await result.current.operations.complete({
-        checkInId: scheduled.id,
-        completionDate: new Date(),
-        notes: 'Had a great conversation',
+      let completionResult: Awaited<
+        ReturnType<(typeof result.current.operations)['complete']>
+      >
+      await act(async () => {
+        completionResult = await result.current.operations.complete({
+          checkInId: scheduled.id,
+          completionDate: new Date(),
+          notes: 'Had a great conversation',
+        })
       })
 
       // Then
-      expect(completionResult.completedCheckIn).toBeDefined()
-      expect(completionResult.nextCheckIn).toBeDefined()
+      expect(completionResult!.completedCheckIn).toBeDefined()
+      expect(completionResult!.nextCheckIn).toBeDefined()
     })
 
     it('should reschedule a check-in', async () => {
@@ -165,13 +203,18 @@ describe('useCheckIns', () => {
       const newDate = addDays(new Date(), 7)
 
       // When
-      const rescheduled = await result.current.operations.reschedule({
-        checkInId: scheduled.id,
-        newScheduledDate: newDate,
+      let rescheduled: Awaited<
+        ReturnType<(typeof result.current.operations)['reschedule']>
+      >
+      await act(async () => {
+        rescheduled = await result.current.operations.reschedule({
+          checkInId: scheduled.id,
+          newScheduledDate: newDate,
+        })
       })
 
       // Then
-      expect(rescheduled.scheduledDate).toEqual(newDate)
+      expect(rescheduled!.scheduledDate).toEqual(newDate)
     })
 
     it('should get check-in history for contact', async () => {

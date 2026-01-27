@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { useCategories } from '../useCategories'
 import { DependencyProvider } from '../../../di'
 import { DIContainer } from '../../../di/DIContainer'
@@ -56,10 +56,12 @@ describe('useCategories', () => {
       })
 
       // When
-      await result.current.operations.createCategory({
-        name: 'Family',
-        frequencyValue: 1,
-        frequencyUnit: 'months',
+      await act(async () => {
+        await result.current.operations.createCategory({
+          name: 'Family',
+          frequencyValue: 1,
+          frequencyUnit: 'months',
+        })
       })
 
       // Then
@@ -79,11 +81,32 @@ describe('useCategories', () => {
       })
 
       // When
-      await result.current.operations.refresh()
+      await act(async () => {
+        await result.current.operations.refresh()
+      })
 
       // Then
       expect(result.current.categories).toEqual([])
       expect(result.current.error).toBeNull()
+    })
+
+    it('should set Unknown error when loadCategories throws non-Error', async () => {
+      container = {
+        getListCategories: () => ({
+          execute: async () => {
+            throw 'bad'
+          },
+        }),
+      } as unknown as DIContainer
+
+      const { result } = renderHook(() => useCategories(), { wrapper })
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
+
+      expect(result.current.categories).toBeNull()
+      expect(result.current.error?.message).toBe('Unknown')
     })
   })
 
@@ -97,16 +120,19 @@ describe('useCategories', () => {
       })
 
       // When
-      const category = await result.current.operations.createCategory({
-        name: 'Close Friends',
-        frequencyValue: 2,
-        frequencyUnit: 'weeks',
+      let category: Awaited<ReturnType<(typeof result.current.operations)['createCategory']>>
+      await act(async () => {
+        category = await result.current.operations.createCategory({
+          name: 'Close Friends',
+          frequencyValue: 2,
+          frequencyUnit: 'weeks',
+        })
       })
 
       // Then
-      expect(category.name).toBe('Close Friends')
-      expect(category.frequency.value).toBe(2)
-      expect(category.frequency.unit).toBe('weeks')
+      expect(category!.name).toBe('Close Friends')
+      expect(category!.frequency.value).toBe(2)
+      expect(category!.frequency.unit).toBe('weeks')
     })
 
     it('should update existing category', async () => {
@@ -117,20 +143,26 @@ describe('useCategories', () => {
         expect(result.current.isLoading).toBe(false)
       })
 
-      const created = await result.current.operations.createCategory({
-        name: 'Work Contacts',
-        frequencyValue: 3,
-        frequencyUnit: 'months',
+      let created: Awaited<ReturnType<(typeof result.current.operations)['createCategory']>>
+      await act(async () => {
+        created = await result.current.operations.createCategory({
+          name: 'Work Contacts',
+          frequencyValue: 3,
+          frequencyUnit: 'months',
+        })
       })
 
       // When
-      const updated = await result.current.operations.updateCategory(created.id, {
-        name: 'Business Contacts',
+      let updated: Awaited<ReturnType<(typeof result.current.operations)['updateCategory']>>
+      await act(async () => {
+        updated = await result.current.operations.updateCategory(created!.id, {
+          name: 'Business Contacts',
+        })
       })
 
       // Then
-      expect(updated.name).toBe('Business Contacts')
-      expect(updated.id).toBe(created.id)
+      expect(updated!.name).toBe('Business Contacts')
+      expect(updated!.id).toBe(created!.id)
     })
 
     it('should delete category', async () => {
@@ -141,14 +173,19 @@ describe('useCategories', () => {
         expect(result.current.isLoading).toBe(false)
       })
 
-      const created = await result.current.operations.createCategory({
-        name: 'Acquaintances',
-        frequencyValue: 6,
-        frequencyUnit: 'months',
+      let created: Awaited<ReturnType<(typeof result.current.operations)['createCategory']>>
+      await act(async () => {
+        created = await result.current.operations.createCategory({
+          name: 'Acquaintances',
+          frequencyValue: 6,
+          frequencyUnit: 'months',
+        })
       })
 
       // When
-      await result.current.operations.deleteCategory(created.id)
+      await act(async () => {
+        await result.current.operations.deleteCategory(created!.id)
+      })
 
       // Then
       await waitFor(() => {

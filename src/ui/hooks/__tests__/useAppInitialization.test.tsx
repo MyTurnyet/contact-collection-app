@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { useAppInitialization } from '../useAppInitialization'
 import { DependencyProvider } from '../../../di'
@@ -73,6 +73,62 @@ describe('useAppInitialization', () => {
     expect(result.current.isInitialized).toBe(false)
   })
 
+  it('should set Unknown error when initialization throws non-Error', async () => {
+    const failingContainer = {
+      ...container,
+      getGetDefaultCategories: () => {
+        throw 'bad'
+      },
+    } as unknown as DIContainer
+
+    const failingWrapper = ({ children }: { children: React.ReactNode }) => (
+      <DependencyProvider container={failingContainer}>{children}</DependencyProvider>
+    )
+
+    const { result } = renderHook(() => useAppInitialization(), {
+      wrapper: failingWrapper,
+    })
+
+    await waitFor(() => {
+      expect(result.current.isInitializing).toBe(false)
+    })
+
+    expect(result.current.isInitialized).toBe(false)
+    expect(result.current.error?.message).toBe('Unknown error')
+  })
+
+  it('should stop initialization work when unmounted mid-flight', async () => {
+    const deferred = createDeferred<void>()
+
+    const slowContainer = {
+      ...container,
+      getGetDefaultCategories: () => ({
+        execute: () => [
+          {
+            name: 'Family',
+            frequency: { value: 1, unit: 'days' },
+          },
+        ],
+      }),
+      getCreateCategory: () => ({
+        execute: async () => {
+          await deferred.promise
+        },
+      }),
+      startScheduler: vi.fn(),
+    } as unknown as DIContainer
+
+    const slowWrapper = ({ children }: { children: React.ReactNode }) => (
+      <DependencyProvider container={slowContainer}>{children}</DependencyProvider>
+    )
+
+    const { unmount } = renderHook(() => useAppInitialization(), { wrapper: slowWrapper })
+
+    unmount()
+    deferred.resolve()
+    await deferred.promise
+  })
+
   it('should provide retry function', () => {
     // When
     const { result } = renderHook(() => useAppInitialization(), { wrapper })
@@ -81,3 +137,13 @@ describe('useAppInitialization', () => {
     expect(result.current.retry).toBeInstanceOf(Function)
   })
 })
+
+function createDeferred<T>() {
+  let resolve!: (value: T) => void
+  let reject!: (reason?: unknown) => void
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res
+    reject = rej
+  })
+  return { promise, resolve, reject }
+}

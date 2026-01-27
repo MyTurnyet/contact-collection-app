@@ -403,10 +403,14 @@ src/
 - [x] Run tests: `npm run test`
 
 ### 9.2 Component Tests
-- [ ] Test all major components with React Testing Library
-- [ ] Test user interactions (click, type, submit)
-- [ ] Test loading and error states
-- [ ] Test accessibility
+- [x] Test all major components with React Testing Library
+- [x] Test user interactions (click, type, submit)
+- [x] Test loading and error states
+- [x] Test basic accessibility (roles/labels/assertions via RTL)
+
+**Coverage (highlights):**
+- `src/ui/pages`: 96.95% statements, 82.6% branches
+- `src/ui/hooks`: 94.52% statements, 71.42% branches
 
 ### 9.3 Integration Tests 
 - [x] Test complete user flows:
