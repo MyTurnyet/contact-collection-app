@@ -3,10 +3,13 @@ import { Container, Typography, Box, Divider } from '@mui/material'
 import { NotificationSettings } from '../components/NotificationSettings'
 import { DataExportSection } from '../components/DataExportSection'
 import { DataImportSection } from '../components/DataImportSection'
+import { BackupSection } from '../components/BackupSection'
 import { useDependencies } from '../../di'
+import { useBackup } from '../hooks/useBackup'
 
 export function SettingsPage() {
   const container = useDependencies()
+  const backup = useBackup()
   const [notificationEnabled, setNotificationEnabled] = useState(false)
   const [permissionState, setPermissionState] = useState<
     'default' | 'granted' | 'denied'
@@ -29,6 +32,12 @@ export function SettingsPage() {
           onPermissionRequest={() => handlePermissionRequest(setPermissionState)}
           onToggle={() => handleToggle(notificationEnabled, setNotificationEnabled)}
         />
+      </Box>
+
+      <Divider sx={{ my: 4 }} />
+
+      <Box sx={{ my: 4 }}>
+        <BackupSection onCreateBackup={() => backup.createBackup()} loading={backup.isCreating} />
       </Box>
 
       <Divider sx={{ my: 4 }} />

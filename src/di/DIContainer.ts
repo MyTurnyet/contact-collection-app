@@ -55,6 +55,10 @@ import { JsonImporter } from '../infrastructure/export/JsonImporter'
 import { MigrationManager } from '../infrastructure/migrations/MigrationManager'
 import { migrations } from '../infrastructure/migrations/migrations'
 
+// Backup
+import { AutomaticBackupService } from '../infrastructure/backup/AutomaticBackupService'
+import { BrowserDownloadService } from '../infrastructure/backup/BrowserDownloadService'
+
 export class DIContainer {
   // Singleton instances
   private storageAdapter = new LocalStorageAdapter()
@@ -70,6 +74,7 @@ export class DIContainer {
   private emailSimulator = this.createEmailSimulator()
   private scheduler = this.createScheduler()
   private migrationManager = this.createMigrationManager()
+  private backupService = this.createBackupService()
 
   // Contact Use Cases
   getCreateContact() {
@@ -195,6 +200,10 @@ export class DIContainer {
     await this.migrationManager.migrate()
   }
 
+  async createBackup(): Promise<void> {
+    await this.backupService.createBackup()
+  }
+
   // Private factory methods
   private createContactRepository() {
     return new LocalStorageContactRepository(
@@ -236,6 +245,14 @@ export class DIContainer {
 
   private createMigrationManager() {
     return new MigrationManager(localStorage, migrations)
+  }
+
+  private createBackupService() {
+    const exporter = this.getJsonExporter()
+    const downloader = new BrowserDownloadService()
+    return new AutomaticBackupService(exporter, (filename, content) =>
+      downloader.download(filename, content)
+    )
   }
 
   getJsonExporter() {
