@@ -8,6 +8,7 @@ import {
   Button,
   MenuItem,
   Box,
+  Alert,
 } from '@mui/material'
 import type { Contact } from '../../domain/contact/Contact'
 import {
@@ -32,14 +33,11 @@ export interface ContactFormModalProps {
   open: boolean
   contact?: Contact
   onClose: () => void
-  onSave: (data: ContactFormData) => void
+  onSave: (data: ContactFormData) => void | Promise<void>
 }
 
-interface FormErrors {
-  phone?: string
-  email?: string
-  location?: string
-}
+type FormErrorField = 'name' | 'phone' | 'email' | 'city' | 'country' | 'timezone'
+type FormErrors = Partial<Record<FormErrorField, string>>
 
 export function ContactFormModal({
   open,
@@ -51,11 +49,15 @@ export function ContactFormModal({
     getInitialFormData(contact)
   )
   const [errors, setErrors] = useState<FormErrors>({})
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     if (open) {
       setFormData(getInitialFormData(contact))
       setErrors({})
+      setSubmitError(null)
+      setIsSaving(false)
     }
   }, [open, contact])
 
@@ -67,10 +69,13 @@ export function ContactFormModal({
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+          {submitError && <Alert severity="error">{submitError}</Alert>}
           <TextField
             label="Name"
             value={formData.name}
             onChange={(e) => updateField('name', e.target.value)}
+            error={Boolean(errors.name)}
+            helperText={errors.name}
             required
             fullWidth
           />
@@ -98,6 +103,8 @@ export function ContactFormModal({
             label="City"
             value={formData.city}
             onChange={(e) => updateField('city', e.target.value)}
+            error={Boolean(errors.city)}
+            helperText={errors.city}
             required
             fullWidth
           />
@@ -111,6 +118,8 @@ export function ContactFormModal({
             label="Country"
             value={formData.country}
             onChange={(e) => updateField('country', e.target.value)}
+            error={Boolean(errors.country)}
+            helperText={errors.country}
             required
             fullWidth
           />
@@ -119,6 +128,8 @@ export function ContactFormModal({
             label="Timezone"
             value={formData.timezone}
             onChange={(e) => updateField('timezone', e.target.value)}
+            error={Boolean(errors.timezone)}
+            helperText={errors.timezone}
             required
             fullWidth
           >
@@ -139,8 +150,10 @@ export function ContactFormModal({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSave} variant="contained">
+        <Button onClick={onClose} disabled={isSaving}>
+          Cancel
+        </Button>
+        <Button onClick={handleSave} variant="contained" disabled={isSaving}>
           Save
         </Button>
       </DialogActions>
@@ -149,6 +162,10 @@ export function ContactFormModal({
 
   function updateField(field: keyof ContactFormData, value: string): void {
     setFormData((prev) => ({ ...prev, [field]: value }))
+
+    if (field === 'name' || field === 'city' || field === 'country' || field === 'timezone') {
+      setErrors((prev) => ({ ...prev, [field]: undefined }))
+    }
   }
 
   function updatePhoneField(value: string): void {
@@ -175,7 +192,15 @@ export function ContactFormModal({
     }
   }
 
-  function handleSave(): void {
+  async function handleSave(): Promise<void> {
+    setSubmitError(null)
+
+    const nextErrors: FormErrors = {}
+
+    if (!formData.name || formData.name.trim().length === 0) {
+      nextErrors.name = 'Name is required'
+    }
+
     const phoneValid = validatePhoneInput(formData.phone)
     const emailValid = validateEmailInput(formData.email)
     const locationValid = validateLocationInput({
@@ -184,20 +209,44 @@ export function ContactFormModal({
       timezone: formData.timezone,
     })
 
-    if (!phoneValid.valid || !emailValid.valid || !locationValid.valid) {
-      setErrors({
-        phone: phoneValid.error,
-        email: emailValid.error,
-        location: locationValid.error,
-      })
+    if (!locationValid.valid) {
+      if (!formData.city || formData.city.trim().length === 0) {
+        nextErrors.city = 'City is required'
+      }
+      if (!formData.country || formData.country.trim().length === 0) {
+        nextErrors.country = 'Country is required'
+      }
+      if (!formData.timezone || formData.timezone.trim().length === 0) {
+        nextErrors.timezone = 'Timezone is required'
+      }
+    }
+
+    if (!phoneValid.valid) {
+      nextErrors.phone = phoneValid.error
+    }
+
+    if (!emailValid.valid) {
+      nextErrors.email = emailValid.error
+    }
+
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors)
       return
     }
 
-    onSave({
-      ...formData,
-      state: normalizeOptionalString(formData.state),
-      relationshipContext: normalizeOptionalString(formData.relationshipContext),
-    })
+    try {
+      setIsSaving(true)
+      await onSave({
+        ...formData,
+        state: normalizeOptionalString(formData.state),
+        relationshipContext: normalizeOptionalString(formData.relationshipContext),
+      })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to save contact'
+      setSubmitError(message)
+    } finally {
+      setIsSaving(false)
+    }
   }
 }
 
