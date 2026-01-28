@@ -296,6 +296,7 @@ src/
 - [x] Create `CheckInCard` component 
 - [ ] Add sorting options (by date, contact name)
 - [ ] Add filtering options (by category)
+ - [ ] Add a clear call-to-action to view all check-ins (e.g. "View all check-ins" button) that navigates to the Check-ins page
 
 ### 6.5 Check-in Action UI 
 - [x] Create `CompleteCheckInModal` component
@@ -329,8 +330,11 @@ src/
     - [x] Contacts link
     - [x] Categories link
     - [x] Settings link
+    - [ ] Check-ins link
 - [ ] Create `Sidebar` component (optional, for desktop)
 - [x] Set up React Router with routes
+    - [ ] Add a dedicated Check-ins route (e.g. `/checkins`) and wire it into routing
+    - [ ] Create a Check-ins page component (e.g. `CheckInListPage`/`CheckInsPage`) that makes check-ins browsable outside the Dashboard
 - [x] Create `NotFoundPage` component
 - [x] Add responsive design (mobile-first)
 
@@ -407,6 +411,7 @@ src/
 - [x] Test user interactions (click, type, submit)
 - [x] Test loading and error states
 - [x] Test basic accessibility (roles/labels/assertions via RTL)
+ - [ ] Add component tests for the new Check-ins navigation entry and route rendering
 
 **Coverage (highlights):**
 - `src/ui/pages`: 96.95% statements, 82.6% branches
@@ -418,6 +423,7 @@ src/
     - [x] Complete check-in → verify next scheduled
     - [x] Reschedule → verify updated date
     - [x] Export data → import data → verify integrity
+    - [ ] Navigate via the UI to the Check-ins page and verify check-ins are visible and actionable (complete/reschedule)
 
 **Implementation Details:**
 - **ContactFlow.integration.test.tsx** (1 test) - Tests complete contact creation workflow from clicking "Create Contact" button through form submission with all required fields (name, email, phone, city, country, timezone) and verifies contact appears in list
@@ -456,11 +462,11 @@ Choose one:
     - [ ] Copy `dist/` folder to local web server (nginx, Apache)
     - [ ] Access via `http://localhost` or local network IP
 
-- [ ] **Option B: GitHub Pages (Free)**
-    - [ ] Create GitHub repository
-    - [ ] Configure GitHub Pages deployment
-    - [ ] Push code and deploy
-    - [ ] Access via `https://myturnyet.github.io/contact-checkin-app`
+- [x] **Option B: GitHub Pages (Free)**
+    - [x] Create GitHub repository
+    - [x] Configure GitHub Pages deployment
+    - [x] Push code and deploy
+    - [x] Access via `https://myturnyet.github.io/contact-checkin-app`
 
 - [ ] **Option C: Netlify/Vercel (Free Tier)**
     - [ ] Connect GitHub repository

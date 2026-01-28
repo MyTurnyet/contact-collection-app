@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 import { DependencyProvider } from '../../di'
 import { ContactListPage } from '../../ui/pages/ContactListPage'
 import { DashboardPage } from '../../ui/pages/DashboardPage'
@@ -56,7 +57,9 @@ describe('Contact Flow Integration', () => {
     // And - Switch to dashboard
     rerender(
       <DependencyProvider>
-        <DashboardPage />
+        <MemoryRouter>
+          <DashboardPage />
+        </MemoryRouter>
       </DependencyProvider>
     )
 

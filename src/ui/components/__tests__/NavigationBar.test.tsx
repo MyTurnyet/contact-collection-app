@@ -43,6 +43,13 @@ describe('NavigationBar', () => {
     expect(links.length).toBeGreaterThan(0)
   })
 
+  it('should display check-ins link', () => {
+    renderWithRouter(<NavigationBar />)
+
+    const links = screen.getAllByRole('link', { name: /check-ins/i })
+    expect(links.length).toBeGreaterThan(0)
+  })
+
   it('should display settings link', () => {
     // When
     renderWithRouter(<NavigationBar />)
@@ -77,6 +84,13 @@ describe('NavigationBar', () => {
     // Then
     const links = screen.getAllByRole('link', { name: /categories/i })
     expect(links[0]).toHaveAttribute('href', '/categories')
+  })
+
+  it('should have correct href for check-ins link', () => {
+    renderWithRouter(<NavigationBar />)
+
+    const links = screen.getAllByRole('link', { name: /check-ins/i })
+    expect(links[0]).toHaveAttribute('href', '/checkins')
   })
 
   it('should have correct href for settings link', () => {

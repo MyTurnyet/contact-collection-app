@@ -19,6 +19,9 @@ const ContactListPage = lazy(() =>
 const CategoryListPage = lazy(() =>
   import('./ui/pages/CategoryListPage').then((m) => ({ default: m.CategoryListPage }))
 )
+const CheckInsPage = lazy(() =>
+  import('./ui/pages/CheckInsPage').then((m) => ({ default: m.CheckInsPage }))
+)
 const SettingsPage = lazy(() =>
   import('./ui/pages/SettingsPage').then((m) => ({ default: m.SettingsPage }))
 )
@@ -74,6 +77,7 @@ function AppWithScheduler() {
             <Route path="/" element={<DashboardPage />} />
             <Route path="/contacts" element={<ContactListPage />} />
             <Route path="/categories" element={<CategoryListPage />} />
+            <Route path="/checkins" element={<CheckInsPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

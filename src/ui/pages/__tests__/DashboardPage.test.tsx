@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 import { DashboardPage } from '../DashboardPage'
 import { DependencyProvider } from '../../../di'
 import { DIContainer } from '../../../di/DIContainer'
@@ -17,7 +18,9 @@ describe('DashboardPage', () => {
   })
 
   const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <DependencyProvider container={container}>{children}</DependencyProvider>
+    <MemoryRouter>
+      <DependencyProvider container={container}>{children}</DependencyProvider>
+    </MemoryRouter>
   )
 
   it('should display loading state initially', async () => {

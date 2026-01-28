@@ -4,6 +4,7 @@ import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   Category as CategoryIcon,
+  EventNote as EventNoteIcon,
   Settings as SettingsIcon,
 } from '@mui/icons-material'
 
@@ -37,10 +38,12 @@ function renderNavigationLinks() {
       {renderLink('/', 'Dashboard', <DashboardIcon />)}
       {renderLink('/contacts', 'Contacts', <PeopleIcon />)}
       {renderLink('/categories', 'Categories', <CategoryIcon />)}
+      {renderLink('/checkins', 'Check-ins', <EventNoteIcon />)}
       {renderLink('/settings', 'Settings', <SettingsIcon />)}
       {renderMobileLink('/', <DashboardIcon />, 'Dashboard')}
       {renderMobileLink('/contacts', <PeopleIcon />, 'Contacts')}
       {renderMobileLink('/categories', <CategoryIcon />, 'Categories')}
+      {renderMobileLink('/checkins', <EventNoteIcon />, 'Check-ins')}
       {renderMobileLink('/settings', <SettingsIcon />, 'Settings')}
     </Box>
   )
