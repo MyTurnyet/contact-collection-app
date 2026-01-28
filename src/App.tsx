@@ -1,19 +1,33 @@
+import { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from '@mui/material/styles'
 import { CssBaseline, Box, CircularProgress } from '@mui/material'
 import { DependencyProvider } from './di'
 import { AppLayout } from './ui/components/AppLayout'
-import { DashboardPage } from './ui/pages/DashboardPage'
-import { ContactListPage } from './ui/pages/ContactListPage'
-import { CategoryListPage } from './ui/pages/CategoryListPage'
-import { SettingsPage } from './ui/pages/SettingsPage'
-import { NotFoundPage } from './ui/pages/NotFoundPage'
-import { WelcomeScreen } from './ui/components/WelcomeScreen'
 import { theme } from './ui/theme/theme'
 import { useBackgroundScheduler } from './ui/hooks/useBackgroundScheduler'
 import { useFirstRun } from './ui/hooks/useFirstRun'
 import { useAppInitialization } from './ui/hooks/useAppInitialization'
 import { useMigrations } from './ui/hooks/useMigrations'
+
+const DashboardPage = lazy(() =>
+  import('./ui/pages/DashboardPage').then((m) => ({ default: m.DashboardPage }))
+)
+const ContactListPage = lazy(() =>
+  import('./ui/pages/ContactListPage').then((m) => ({ default: m.ContactListPage }))
+)
+const CategoryListPage = lazy(() =>
+  import('./ui/pages/CategoryListPage').then((m) => ({ default: m.CategoryListPage }))
+)
+const SettingsPage = lazy(() =>
+  import('./ui/pages/SettingsPage').then((m) => ({ default: m.SettingsPage }))
+)
+const NotFoundPage = lazy(() =>
+  import('./ui/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
+)
+const WelcomeScreen = lazy(() =>
+  import('./ui/components/WelcomeScreen').then((m) => ({ default: m.WelcomeScreen }))
+)
 
 function App() {
   return (
@@ -32,6 +46,8 @@ function AppWithScheduler() {
   const firstRun = useFirstRun()
   const appInit = useAppInitialization()
 
+  const basename = import.meta.env.BASE_URL.replace(/\/$/, '')
+
   function handleWelcomeComplete(): void {
     firstRun.completeSetup()
   }
@@ -43,19 +59,25 @@ function AppWithScheduler() {
   }
 
   if (firstRun.isFirstRun) {
-    return <WelcomeScreen onComplete={handleWelcomeComplete} />
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <WelcomeScreen onComplete={handleWelcomeComplete} />
+      </Suspense>
+    )
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <AppLayout>
-        <Routes>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/contacts" element={<ContactListPage />} />
-          <Route path="/categories" element={<CategoryListPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+        <Suspense fallback={<LoadingScreen />}>
+          <Routes>
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/contacts" element={<ContactListPage />} />
+            <Route path="/categories" element={<CategoryListPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
       </AppLayout>
     </BrowserRouter>
   )
