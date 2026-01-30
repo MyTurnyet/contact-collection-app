@@ -16,6 +16,12 @@ export interface RescheduleCheckInInput {
   newScheduledDate: Date
 }
 
+export interface CreateManualCheckInInput {
+  contactId: ContactId
+  scheduledDate: Date
+  notes?: string
+}
+
 export interface UseCheckInsResult {
   upcomingCheckIns: readonly CheckIn[] | null
   overdueCheckIns: readonly CheckIn[] | null
@@ -27,6 +33,7 @@ export interface UseCheckInsResult {
     complete: (input: CompleteCheckInInput) => Promise<CompleteCheckInResult>
     reschedule: (input: RescheduleCheckInInput) => Promise<CheckIn>
     getHistory: (contactId: ContactId) => Promise<readonly CheckIn[]>
+    createManual: (input: CreateManualCheckInInput) => Promise<CheckIn>
     refresh: () => Promise<void>
   }
 }
@@ -116,6 +123,16 @@ export function useCheckIns(): UseCheckInsResult {
     [container]
   )
 
+  const createManual = useCallback(
+    async (input: CreateManualCheckInInput): Promise<CheckIn> => {
+      const useCase = container.getCreateManualCheckIn()
+      const checkIn = await useCase.execute(input)
+      await loadCheckIns()
+      return checkIn
+    },
+    [container, loadCheckIns]
+  )
+
   const refresh = useCallback(async (): Promise<void> => {
     await loadCheckIns()
   }, [loadCheckIns])
@@ -131,6 +148,7 @@ export function useCheckIns(): UseCheckInsResult {
       complete,
       reschedule,
       getHistory,
+      createManual,
       refresh,
     },
   }

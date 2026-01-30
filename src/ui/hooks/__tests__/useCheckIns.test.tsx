@@ -239,5 +239,40 @@ describe('useCheckIns', () => {
       // Then
       expect(history).toEqual([])
     })
+
+    it('should create a manual check-in', async () => {
+      // Given
+      const { result } = renderHook(() => useCheckIns(), { wrapper })
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
+
+      const createContact = container.getCreateContact()
+      const contact = await createContact.execute({
+        name: 'Test Contact',
+        location: 'Test City',
+        country: 'Test Country',
+        timezone: 'UTC',
+      })
+
+      const scheduledDate = addDays(new Date(), 10)
+
+      // When
+      let checkIn: Awaited<
+        ReturnType<(typeof result.current.operations)['createManual']>
+      >
+      await act(async () => {
+        checkIn = await result.current.operations.createManual({
+          contactId: contact.id,
+          scheduledDate,
+          notes: 'Follow up about project',
+        })
+      })
+
+      // Then
+      expect(checkIn!.contactId).toBe(contact.id)
+      expect(checkIn!.scheduledDate).toEqual(scheduledDate)
+    })
   })
 })

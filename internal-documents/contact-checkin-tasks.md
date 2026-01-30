@@ -1,9 +1,9 @@
 # Contact Check-in Application - Development Checklist
 ## React + TypeScript (Vite) with Local Storage
 
-**Last Updated:** 2026-01-27
-**Current Phase:** Phase 9 - Testing & Quality Assurance (2/5 subsections complete)
-**Test Status:** ✅ 956 tests passing across 116 test files
+**Last Updated:** 2026-01-30
+**Current Phase:** Phase 9 - Testing & Quality Assurance
+**Test Status:** ✅ 1018 tests passing across 119 test files
 **Code Quality:** All code follows TDD with 8-line method limit and complexity ≤4
 
 ## Project Overview
@@ -16,10 +16,10 @@ A single-page web application to track personal contacts and schedule regular ch
   - ✅ Category Domain (100%) - 3 value objects + Category entity + collections
   - ✅ Check-in Domain (100%) - 5 value objects + CheckIn entity + CheckInStatus enum + CheckInCollection + repository interface
   - ✅ Domain Services (100%) - DateCalculator + OverdueDetector
-- ✅ **Phase 3:** Application Services - COMPLETE (22/22 use cases)
+- ✅ **Phase 3:** Application Services - COMPLETE (23/23 use cases)
   - ✅ Contact Use Cases (100% - 6/6 complete: CreateContact, UpdateContact, GetContactById, ListAllContacts, DeleteContact, SearchContacts)
   - ✅ Category Use Cases (100% - 6/6 complete: CreateCategory, UpdateCategory, DeleteCategory, ListCategories, GetDefaultCategories, AssignContactToCategory)
-  - ✅ Check-in Use Cases (100% - 6/6 complete: ScheduleInitialCheckIn, GetUpcomingCheckIns, GetOverdueCheckIns, CompleteCheckIn, RescheduleCheckIn, GetCheckInHistory)
+  - ✅ Check-in Use Cases (100% - 7/7 complete: ScheduleInitialCheckIn, CreateManualCheckIn, GetUpcomingCheckIns, GetOverdueCheckIns, CompleteCheckIn, RescheduleCheckIn, GetCheckInHistory)
   - ✅ Dashboard Use Cases (100% - 4/4 complete: GetDashboardSummary, GetTodayCheckIns)
 - ✅ **Phase 4:** Infrastructure - COMPLETE (5/5 subsections complete)
   - ✅ LocalStorage Abstraction (100% - StorageService interface, LocalStorageAdapter, JsonSerializer with 21 tests)
@@ -31,15 +31,15 @@ A single-page web application to track personal contacts and schedule regular ch
   - ✅ DI Setup (100% - DIContainer with all repositories, use cases, and services with 25 tests)
   - ✅ React Context for DI (100% - DependencyProvider, useDependencies hook, App integration with 5 tests)
 - ✅ **Phase 6:** React UI Layer - COMPLETE (8/8 subsections complete + foundation)
-  - ✅ Custom Hooks (100% - 5/5 hooks with 32 tests: useContacts, useCategories, useCheckIns, useDashboard, useAppInitialization)
+  - ✅ Custom Hooks (100% - 5/5 hooks with 41 tests: useContacts, useCategories, useCheckIns [includes createManualCheckIn], useDashboard, useAppInitialization)
   - ✅ Error Hierarchy (100% - ApplicationError, ValidationError, DomainError with type guards, 21 tests)
   - ✅ Form Validation Helpers (100% - phone/email/location validation + timezone/frequency options, 21 tests)
   - ✅ Contact Management UI (100% - 5 components with 33 tests: ContactCard, ContactSearchBar, ContactFormModal, ContactDetailModal, ContactListPage)
   - ✅ Category Management UI (100% - 4 components with 26 tests: CategoryCard, FrequencySelector, CategoryFormModal, CategoryListPage)
-  - ✅ Dashboard UI (100% - 6 components with 32 tests: CheckInCard, DashboardStats, OverdueCheckIns, UpcomingCheckIns, TodayCheckIns, DashboardPage)
-  - ✅ Check-in Action UI (100% - 3 components with 22 tests: CompleteCheckInModal, RescheduleCheckInModal, CheckInHistoryModal)
+  - ✅ Dashboard UI (100% - 6 components with 32 tests: CheckInCard, DashboardStats, OverdueCheckIns, UpcomingCheckIns, TodayCheckIns, DashboardPage; includes link to Check-ins page)
+  - ✅ Check-in Action UI (100% - 4 components with 33 tests: CreateCheckInModal, CompleteCheckInModal, RescheduleCheckInModal, CheckInHistoryModal)
   - ✅ Settings & Export UI (100% - 4 components with 27 tests: NotificationSettings, DataExportSection, DataImportSection, SettingsPage)
-  - ✅ Navigation & Layout (100% - 4 components with 21 tests: NavigationBar, AppLayout, NotFoundPage, App routing integration)
+  - ✅ Navigation & Layout (100% - 4 components with 28 tests: NavigationBar, AppLayout, NotFoundPage, App routing integration; includes Check-ins page at /checkins route)
   - ✅ Styling & Responsive Design (100% - Theme configuration, responsive navigation, ResponsiveContainer, accessibility improvements with 11 tests)
 - ✅ **Phase 7:** Notifications & Scheduling - COMPLETE (3/3 subsections complete)
   - ✅ Browser Notifications (100% - useNotifications hook, NotificationPermissionPrompt component, automatic notifications for overdue/today check-ins, 6 tests)
@@ -173,12 +173,13 @@ src/
 - [x] Test & implement `GetDefaultCategories` use case 
 - [x] Test & implement `AssignContactToCategory` use case 
 
-### 3.3 Check-in Management Use Cases 
-- [x] Test & implement `ScheduleInitialCheckIn` use case 
-- [x] Test & implement `GetUpcomingCheckIns` use case (next 7/30 days) 
-- [x] Test & implement `GetOverdueCheckIns` use case 
-- [x] Test & implement `CompleteCheckIn` use case (with notes, schedules next from original) 
-- [x] Test & implement `RescheduleCheckIn` use case 
+### 3.3 Check-in Management Use Cases
+- [x] Test & implement `ScheduleInitialCheckIn` use case
+- [x] Test & implement `CreateManualCheckIn` use case (ad-hoc check-in, doesn't affect regular schedule)
+- [x] Test & implement `GetUpcomingCheckIns` use case (next 7/30 days)
+- [x] Test & implement `GetOverdueCheckIns` use case
+- [x] Test & implement `CompleteCheckIn` use case (with notes, schedules next from original)
+- [x] Test & implement `RescheduleCheckIn` use case
 - [x] Test & implement `GetCheckInHistory` use case (for a contact) 
 
 ### 3.4 Dashboard Use Cases 
@@ -263,7 +264,7 @@ src/
 ### 6.1 Custom Hooks
 - [x] Create `useContacts` hook (8 tests - state management + CRUD operations)
 - [x] Create `useCategories` hook (7 tests - state management + CRUD operations)
-- [x] Create `useCheckIns` hook (7 tests - state management + complete/reschedule/history)
+- [x] Create `useCheckIns` hook (9 tests - state management + complete/reschedule/history/createManual)
 - [x] Create `useDashboard` hook (6 tests - summary stats + today's check-ins)
 - [x] Create `useAppInitialization` hook (4 tests - first-run setup)
 - [x] Create `useNotifications` hook (manages browser notifications)
@@ -287,18 +288,22 @@ src/
 - [x] Add form validation 
 - [x] Add loading and empty states 
 
-### 6.4 Dashboard UI 
-- [x] Create `DashboardPage` component 
-- [x] Create `DashboardStats` component (summary cards) 
-- [x] Create `UpcomingCheckIns` component (list next 7 days) 
-- [x] Create `OverdueCheckIns` component (urgent attention needed) 
-- [x] Create `TodayCheckIns` component 
-- [x] Create `CheckInCard` component 
-- [ ] Add sorting options (by date, contact name)
-- [ ] Add filtering options (by category)
- - [ ] Add a clear call-to-action to view all check-ins (e.g. "View all check-ins" button) that navigates to the Check-ins page
+### 6.4 Dashboard UI
+- [x] Create `DashboardPage` component
+- [x] Create `DashboardStats` component (summary cards)
+- [x] Create `UpcomingCheckIns` component (list next 7 days)
+- [x] Create `OverdueCheckIns` component (urgent attention needed)
+- [x] Create `TodayCheckIns` component
+- [x] Create `CheckInCard` component
+- [x] Add a clear call-to-action to view all check-ins ("View all check-ins" button) that navigates to the Check-ins page
 
-### 6.5 Check-in Action UI 
+### 6.5 Check-in Action UI
+- [x] Create `CreateCheckInModal` component (manual ad-hoc check-in)
+    - [x] Contact selection dropdown (all contacts)
+    - [x] Scheduled date picker (required)
+    - [x] Notes textarea (optional)
+    - [x] Form validation (contact and date required)
+    - [x] Loading and error states
 - [x] Create `CompleteCheckInModal` component
     - [x] Contact info display
     - [x] Notes textarea
@@ -329,12 +334,17 @@ src/
     - [x] Dashboard link
     - [x] Contacts link
     - [x] Categories link
+    - [x] Check-ins link
     - [x] Settings link
-    - [ ] Check-ins link
-- [ ] Create `Sidebar` component (optional, for desktop)
 - [x] Set up React Router with routes
-    - [ ] Add a dedicated Check-ins route (e.g. `/checkins`) and wire it into routing
-    - [ ] Create a Check-ins page component (e.g. `CheckInListPage`/`CheckInsPage`) that makes check-ins browsable outside the Dashboard
+    - [x] Add a dedicated Check-ins route (`/checkins`) and wire it into routing
+    - [x] Create `CheckInsPage` component that makes check-ins browsable outside the Dashboard
+        - [x] Display all check-ins (upcoming, overdue, completed) with filtering
+        - [x] "Create Check-In" button to open CreateCheckInModal
+        - [x] Complete/Reschedule actions for each check-in
+        - [x] Sorting options (by date, contact name, status)
+        - [x] Filter by status (all, upcoming, overdue, completed)
+        - [x] Loading and empty states
 - [x] Create `NotFoundPage` component
 - [x] Add responsive design (mobile-first)
 
@@ -411,19 +421,23 @@ src/
 - [x] Test user interactions (click, type, submit)
 - [x] Test loading and error states
 - [x] Test basic accessibility (roles/labels/assertions via RTL)
- - [ ] Add component tests for the new Check-ins navigation entry and route rendering
+- [x] Add component tests for the new Check-ins navigation entry and route rendering
+- [x] Add component tests for CreateCheckInModal (contact selection, date picker, validation)
+- [x] Add component tests for CheckInsPage (filtering, sorting, create button)
+- [x] Add tests for useCheckIns hook with manual check-in creation
 
 **Coverage (highlights):**
 - `src/ui/pages`: 96.95% statements, 82.6% branches
 - `src/ui/hooks`: 97.6% statements, 78.57% branches
 
-### 9.3 Integration Tests 
+### 9.3 Integration Tests ✅ DONE
 - [x] Test complete user flows:
     - [x] Create contact → assign category → view dashboard
     - [x] Complete check-in → verify next scheduled
     - [x] Reschedule → verify updated date
     - [x] Export data → import data → verify integrity
-    - [ ] Navigate via the UI to the Check-ins page and verify check-ins are visible and actionable (complete/reschedule)
+    - [x] Navigate via the UI to the Check-ins page and verify check-ins are visible and actionable (complete/reschedule)
+    - [x] Create manual check-in → verify it appears in check-ins list → complete it → verify doesn't create next scheduled check-in
 
 **Implementation Details:**
 - **ContactFlow.integration.test.tsx** (1 test) - Tests complete contact creation workflow from clicking "Create Contact" button through form submission with all required fields (name, email, phone, city, country, timezone) and verifies contact appears in list
@@ -522,8 +536,8 @@ Choose one:
 
 Based on current progress, the recommended next steps are:
 
-1. **Testing & Quality Assurance** (Phase 9) 
-   - Complete remaining Phase 9 sections: Unit coverage targets, component/accessibility tests, manual cross-browser testing, and code-quality checks (lint/format)
+1. **Testing & Quality Assurance** (Phase 9)
+   - Complete remaining Phase 9 sections: Manual cross-browser testing, and code-quality checks (lint/format)
 
 2. **Build & Deployment** (Phase 10)
    - Run a production build (`npm run build`) and validate via preview (`npm run preview`)

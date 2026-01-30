@@ -30,6 +30,7 @@ import { AssignContactToCategory } from '../application/categories/AssignContact
 
 // CheckIn Use Cases
 import { ScheduleInitialCheckIn } from '../application/checkins/ScheduleInitialCheckIn'
+import { CreateManualCheckIn } from '../application/checkins/CreateManualCheckIn'
 import { GetUpcomingCheckIns } from '../application/checkins/GetUpcomingCheckIns'
 import { GetOverdueCheckIns } from '../application/checkins/GetOverdueCheckIns'
 import { CompleteCheckIn } from '../application/checkins/CompleteCheckIn'
@@ -133,6 +134,10 @@ export class DIContainer {
       this.contactRepo,
       this.categoryRepo
     )
+  }
+
+  getCreateManualCheckIn() {
+    return new CreateManualCheckIn(this.checkInRepo, this.contactRepo)
   }
 
   getGetUpcomingCheckIns() {

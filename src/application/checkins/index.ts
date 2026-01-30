@@ -3,6 +3,10 @@ export {
   type ScheduleInitialCheckInInput,
 } from './ScheduleInitialCheckIn'
 export {
+  CreateManualCheckIn,
+  type CreateManualCheckInInput,
+} from './CreateManualCheckIn'
+export {
   GetUpcomingCheckIns,
   type GetUpcomingCheckInsInput,
 } from './GetUpcomingCheckIns'

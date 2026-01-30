@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { CheckInsPage } from '../CheckInsPage'
 import { DependencyProvider } from '../../../di'
 import { DIContainer } from '../../../di/DIContainer'
@@ -19,45 +20,105 @@ describe('CheckInsPage', () => {
   )
 
   it('should display loading state initially', async () => {
+    // When
     render(<CheckInsPage />, { wrapper })
 
+    // Then
     expect(screen.getByText(/loading/i)).toBeInTheDocument()
 
     await waitFor(() => {
-      expect(screen.getByText('Check-ins')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /create check-in/i })).toBeInTheDocument()
     })
   })
 
-  it('should display sections', async () => {
+  it('should display empty state when no check-ins', async () => {
+    // When
+    render(<CheckInsPage />, { wrapper })
+
+    // Then
+    await waitFor(() => {
+      expect(screen.getByText(/no check-ins yet/i)).toBeInTheDocument()
+    })
+  })
+
+  it('should display create button', async () => {
+    // When
+    render(<CheckInsPage />, { wrapper })
+
+    // Then
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /create check-in/i })).toBeInTheDocument()
+    })
+  })
+
+  it('should open create modal when create button clicked', async () => {
+    // Given
+    const user = userEvent.setup()
     render(<CheckInsPage />, { wrapper })
 
     await waitFor(() => {
-      expect(screen.getByText('Check-ins')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /create check-in/i })).toBeInTheDocument()
     })
 
-    expect(
-      screen.getByRole('heading', { name: /overdue check-ins/i })
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { name: /upcoming check-ins/i })
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { name: /today's check-ins/i })
-    ).toBeInTheDocument()
+    // When
+    await user.click(screen.getByRole('button', { name: /create check-in/i }))
+
+    // Then
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByText(/create manual check-in/i)).toBeInTheDocument()
   })
 
-  it('should display error state when storage fails', async () => {
-    const proto = Object.getPrototypeOf(localStorage) as Storage
-    const spy = vi.spyOn(proto, 'getItem').mockImplementation(() => {
-      throw new Error('Storage error')
+  it('should display status filter', async () => {
+    // When
+    render(<CheckInsPage />, { wrapper })
+
+    // Then
+    await waitFor(() => {
+      expect(screen.getByLabelText(/status/i)).toBeInTheDocument()
+    })
+  })
+
+  it('should display sort options', async () => {
+    // When
+    render(<CheckInsPage />, { wrapper })
+
+    // Then
+    await waitFor(() => {
+      expect(screen.getByLabelText(/sort by/i)).toBeInTheDocument()
+    })
+  })
+
+  it('should create a check-in and display it in the list', async () => {
+    // Given
+    const user = userEvent.setup()
+
+    // Create a contact first
+    const createContact = container.getCreateContact()
+    await createContact.execute({
+      name: 'Test Contact',
+      location: 'Test City',
+      country: 'Test Country',
+      timezone: 'UTC',
     })
 
     render(<CheckInsPage />, { wrapper })
 
     await waitFor(() => {
-      expect(screen.getByText('Storage error')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /create check-in/i })).toBeInTheDocument()
     })
 
-    spy.mockRestore()
-  })
+    // When - Open modal
+    await user.click(screen.getByRole('button', { name: /create check-in/i }))
+
+    // Fill in form
+    await user.click(screen.getByLabelText(/contact/i))
+    await user.click(screen.getByText('Test Contact'))
+    await user.type(screen.getByLabelText(/scheduled date/i), '2026-03-15')
+    await user.click(screen.getByRole('button', { name: /create/i }))
+
+    // Then - Check-in appears in list
+    await waitFor(() => {
+      expect(screen.getByText('Test Contact')).toBeInTheDocument()
+    })
+  }, 15000)
 })

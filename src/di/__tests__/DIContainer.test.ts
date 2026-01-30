@@ -91,6 +91,12 @@ describe('DIContainer', () => {
       expect(useCase.execute).toBeDefined()
     })
 
+    it('should provide CreateManualCheckIn use case', () => {
+      const useCase = container.getCreateManualCheckIn()
+      expect(useCase).toBeDefined()
+      expect(useCase.execute).toBeDefined()
+    })
+
     it('should provide GetUpcomingCheckIns use case', () => {
       const useCase = container.getGetUpcomingCheckIns()
       expect(useCase).toBeDefined()
