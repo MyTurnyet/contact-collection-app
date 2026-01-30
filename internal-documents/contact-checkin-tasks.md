@@ -2,9 +2,10 @@
 ## React + TypeScript (Vite) with Local Storage
 
 **Last Updated:** 2026-01-30
-**Current Phase:** Phase 9 - Testing & Quality Assurance
+**Current Phase:** Phase 10 - Build & Deployment (Documentation complete, Category Selection feature pending)
 **Test Status:** ✅ 1018 tests passing across 119 test files
 **Code Quality:** All code follows TDD with 8-line method limit and complexity ≤4
+**Known Gap:** USER_GUIDE.md describes category selection during contact creation, but UI is not yet implemented
 
 ## Project Overview
 A single-page web application to track personal contacts and schedule regular check-in calls using React + TypeScript with Vite, following XP/TDD principles with strict OO design patterns.
@@ -49,8 +50,15 @@ A single-page web application to track personal contacts and schedule regular ch
   - ✅ Initial Data Seeding (100% - useFirstRun hook with first-run detection, WelcomeScreen component with feature highlights, App integration with loading states, 9 tests)
   - ✅ Data Migration (100% - MigrationManager with version tracking, useMigrations hook, sequential execution with error handling, 12 tests)
   - ✅ Data Backup (100% - AutomaticBackupService with timestamped downloads, BrowserDownloadService, useBackup hook, BackupSection component, SettingsPage integration, 19 tests)
-- 🚧 **Phase 9:** Testing & Quality Assurance - IN PROGRESS (1/5 subsections complete)
+- ✅ **Phase 9:** Testing & Quality Assurance - COMPLETE (3/3 subsections complete)
+  - ✅ Unit Tests (100% - Domain 100%, Application 100%, Infrastructure high coverage, UI 96%+)
+  - ✅ Component Tests (100% - All major components tested with React Testing Library)
   - ✅ Integration Tests (100% - 3 integration test files with 5 tests covering complete user flows: ContactFlow, CheckInFlow, DataIntegrity)
+- 🚧 **Phase 10:** Build & Deployment - IN PROGRESS (1/4 subsections complete)
+  - ✅ Documentation (100% - README.md, USER_GUIDE.md, ARCHITECTURE.md complete)
+  - ⚠️ Category Selection Feature (0% - USER_GUIDE describes it but not implemented)
+  - ⏳ Production Build (0% - Not started)
+  - ✅ Deployment (100% - GitHub Pages configured and deployed)
 
 ## Architecture Decision
 **Frontend-Only Application with Local Storage**
@@ -487,19 +495,103 @@ Choose one:
     - [ ] Configure build settings
     - [ ] Deploy automatically on push
 
-### 10.3 Documentation
-- [ ] Create README.md with:
-    - [ ] Project overview
-    - [ ] Installation instructions
-    - [ ] Development setup
-    - [ ] Build and deployment
-    - [ ] Architecture overview
-- [ ] Create USER_GUIDE.md with:
-    - [ ] How to add contacts
-    - [ ] How to manage categories
-    - [ ] How to handle check-ins
-    - [ ] How to export/import data
-- [ ] Document architecture decisions in ARCHITECTURE.md
+### 10.3 Documentation ✅ COMPLETE
+- [x] Create README.md with:
+    - [x] Project overview
+    - [x] Installation instructions
+    - [x] Development setup
+    - [x] Build and deployment
+    - [x] Architecture overview
+- [x] Create USER_GUIDE.md with:
+    - [x] How to add contacts
+    - [x] How to manage categories
+    - [x] How to handle check-ins
+    - [x] How to export/import data
+- [x] Document architecture decisions in ARCHITECTURE.md
+
+### 10.4 Category Selection Feature (Missing Implementation)
+**Status**: USER_GUIDE.md describes this feature but it's not implemented yet
+
+The USER_GUIDE.md states that users should "Select a Category" when adding a contact (step 5), but this UI doesn't exist. The domain model and use cases support it, but the UI integration is missing.
+
+#### 10.4.1 Add Category Selector to Contact Form
+- [ ] Update `ContactFormModal.tsx` to include category dropdown
+    - [ ] Add `categoryId` field to `ContactFormData` interface (optional CategoryId)
+    - [ ] Import and use `useCategories` hook to fetch available categories
+    - [ ] Add Material-UI Select/TextField with MenuItem for category selection
+    - [ ] Display category name and frequency in dropdown (e.g., "Family - Weekly")
+    - [ ] Make category required for create mode, optional for edit mode
+    - [ ] Add validation for category field in create mode
+    - [ ] Handle loading state while categories are being fetched
+    - [ ] Show empty state if no categories exist with "Create Category" link
+    - [ ] Position category dropdown after timezone field in form layout
+- [ ] Write component tests for category selector functionality
+    - [ ] Test category dropdown displays available categories
+    - [ ] Test validation error when category not selected in create mode
+    - [ ] Test category is pre-populated in edit mode
+    - [ ] Test loading state while fetching categories
+    - [ ] Test empty state when no categories exist
+
+#### 10.4.2 Integrate Category Assignment in Contact Creation Flow
+- [ ] Update `ContactListPage.tsx` to handle category assignment
+    - [ ] Modify `handleCreateContact` to accept categoryId from form data
+    - [ ] After `CreateContact` succeeds, call `AssignContactToCategory` use case
+    - [ ] After category assignment, call `ScheduleInitialCheckIn` use case
+    - [ ] Implement error handling with rollback (delete contact if assignment fails)
+    - [ ] Show success message when contact created with category
+    - [ ] Refresh contact list to show new contact
+- [ ] Update `useContacts` hook if needed
+    - [ ] Add `createWithCategory` method that orchestrates the three operations
+    - [ ] Or keep orchestration in ContactListPage (preferred for simplicity)
+- [ ] Write integration tests for complete flow
+    - [ ] Test contact is created with selected category
+    - [ ] Test initial check-in is scheduled based on category frequency
+    - [ ] Test rollback when category assignment fails
+    - [ ] Test contact appears in list with correct category
+    - [ ] Test check-in appears in dashboard with correct date
+
+#### 10.4.3 Update Contact Editing to Support Category Changes
+- [ ] Update `ContactFormModal.tsx` to pre-populate category in edit mode
+    - [ ] Load contact's current categoryId and display in dropdown
+    - [ ] Allow user to change category when editing
+- [ ] Update `ContactListPage.tsx` to handle category changes
+    - [ ] Detect when categoryId changes in edit form
+    - [ ] Call `AssignContactToCategory` if category changed
+    - [ ] Show confirmation dialog: "Changing category will affect future check-in schedule"
+    - [ ] Update contact in list after successful category change
+- [ ] Document behavior for existing check-ins
+    - [ ] Existing check-ins remain unchanged (don't reschedule)
+    - [ ] Future check-ins will use new category's frequency
+- [ ] Write tests for category change flow
+    - [ ] Test category pre-populates correctly in edit mode
+    - [ ] Test category can be changed when editing
+    - [ ] Test confirmation dialog appears
+    - [ ] Test contact's category is updated after save
+    - [ ] Test existing check-ins are not rescheduled
+
+#### 10.4.4 Update Contact Display to Show Category
+- [ ] Update `ContactCard.tsx` to display contact's category
+    - [ ] Fetch category name using categoryId
+    - [ ] Display category badge or chip on contact card
+    - [ ] Show category frequency in tooltip
+- [ ] Update `ContactDetailModal.tsx` to show category information
+    - [ ] Display current category with name and frequency
+    - [ ] Show next scheduled check-in date
+- [ ] Write tests for category display
+    - [ ] Test category appears on contact card
+    - [ ] Test category appears in contact detail modal
+    - [ ] Test handles missing/null category gracefully
+
+#### 10.4.5 Update Documentation
+- [ ] Review and update USER_GUIDE.md for accuracy
+    - [ ] Verify "Adding a Contact" section step 5 matches implementation
+    - [ ] Add notes about how category affects check-in scheduling
+    - [ ] Document category change behavior in "Editing a Contact" section
+    - [ ] Add troubleshooting for "no categories exist" scenario
+- [ ] Update CLAUDE.md if needed
+    - [ ] Note that category selection is now fully integrated
+- [ ] Update README.md if needed
+    - [ ] Ensure feature list mentions category assignment during contact creation
 
 ## Phase 11: MVP Launch
 - [ ] Deploy to chosen hosting platform
@@ -536,12 +628,25 @@ Choose one:
 
 Based on current progress, the recommended next steps are:
 
-1. **Testing & Quality Assurance** (Phase 9)
-   - Complete remaining Phase 9 sections: Manual cross-browser testing, and code-quality checks (lint/format)
+1. **Category Selection Feature** (Phase 10.4) - HIGH PRIORITY
+   - USER_GUIDE.md describes category selection during contact creation, but it's not implemented
+   - Implement category dropdown in ContactFormModal
+   - Integrate category assignment in contact creation flow
+   - Update contact editing to support category changes
+   - Add tests for complete category integration
+   - Update documentation to match implementation
 
-2. **Build & Deployment** (Phase 10)
-   - Run a production build (`npm run build`) and validate via preview (`npm run preview`)
-   - Choose a static host (GitHub Pages / Netlify / Vercel) and deploy
+2. **Production Build** (Phase 10.1)
+   - Optimize bundle size with code splitting
+   - Run production build (`npm run build`) and validate via preview (`npm run preview`)
+   - Verify LocalStorage works in production build
+
+3. **MVP Launch** (Phase 11)
+   - Import initial contacts
+   - Set up categories
+   - Enable browser notifications
+   - Use app for one week
+   - Collect feedback and issues
 
 ---
 
