@@ -65,22 +65,29 @@ The app has five main sections accessible from the navigation bar:
    - **City** (required)
    - **Country** (required)
    - **Timezone** (required, select from dropdown)
-4. Optional fields:
+4. **Select a Category** (required if categories exist)
+   - Choose a category to assign check-in frequency
+   - Displays as "Category Name - Frequency" (e.g., "Family - Every 1 week")
+   - If no categories exist, you'll see a message to create one first
+5. Optional fields:
    - **Relationship Context** - How you know this person
    - **Important Dates** - Birthdays, anniversaries, etc.
-5. **Select a Category** to assign check-in frequency
 6. Click **"Save"**
 
 The app will automatically schedule the first check-in based on the category's frequency.
+
+**Note**: Category selection is required when creating a contact (if categories exist). You can create contacts without categories only if you haven't created any categories yet.
 
 ### Editing a Contact
 
 1. Navigate to **Contacts**
 2. Click the **"Edit"** button on any contact card
 3. Update the fields you want to change
+   - Category is optional in edit mode (can be left unchanged)
+   - If you change the category, the contact will be reassigned
 4. Click **"Save"**
 
-**Note**: Changing a contact's category will reschedule their check-ins based on the new frequency.
+**Note**: If you change a contact's category, they will be reassigned to the new category. Existing check-ins remain unchanged, but future check-in scheduling will use the new category's frequency.
 
 ### Viewing Contact Details
 
@@ -145,7 +152,7 @@ Categories help you organize contacts by relationship type and automatically det
 3. Update the name or frequency
 4. Click **"Save"**
 
-**Note**: Changing a category's frequency will affect all contacts in that category. Their next check-ins will be rescheduled based on the new frequency.
+**Note**: Changing a category's frequency will affect future check-ins for all contacts in that category. Existing scheduled check-ins are not automatically rescheduled.
 
 ### Deleting a Category
 
