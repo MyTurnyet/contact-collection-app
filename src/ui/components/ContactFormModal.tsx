@@ -9,6 +9,8 @@ import {
   MenuItem,
   Box,
   Alert,
+  CircularProgress,
+  Typography,
 } from '@mui/material'
 import type { Contact } from '../../domain/contact/Contact'
 import {
@@ -17,6 +19,10 @@ import {
   validateLocationInput,
   getAvailableTimezones,
 } from '../helpers/validation'
+import { useCategories } from '../hooks/useCategories'
+import { isNullCategoryId } from '../../domain/category/CategoryId'
+import { formatFrequency } from '../../domain/category/CheckInFrequency'
+import type { Category } from '../../domain/category/Category'
 
 export interface ContactFormData {
   name: string
@@ -26,6 +32,7 @@ export interface ContactFormData {
   state?: string
   country: string
   timezone: string
+  categoryId?: string
   relationshipContext?: string
 }
 
@@ -36,7 +43,7 @@ export interface ContactFormModalProps {
   onSave: (data: ContactFormData) => void | Promise<void>
 }
 
-type FormErrorField = 'name' | 'phone' | 'email' | 'city' | 'country' | 'timezone'
+type FormErrorField = 'name' | 'phone' | 'email' | 'city' | 'country' | 'timezone' | 'category'
 type FormErrors = Partial<Record<FormErrorField, string>>
 
 export function ContactFormModal({
@@ -45,6 +52,7 @@ export function ContactFormModal({
   onClose,
   onSave,
 }: ContactFormModalProps) {
+  const categoriesHook = useCategories()
   const [formData, setFormData] = useState<ContactFormData>(
     getInitialFormData(contact)
   )
@@ -139,6 +147,7 @@ export function ContactFormModal({
               </MenuItem>
             ))}
           </TextField>
+          {renderCategoryField()}
           <TextField
             label="Relationship Context"
             value={formData.relationshipContext || ''}
@@ -160,12 +169,68 @@ export function ContactFormModal({
     </Dialog>
   )
 
+  function renderCategoryField() {
+    if (categoriesHook.isLoading) {
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <CircularProgress size={20} />
+          <Typography variant="body2" color="text.secondary">
+            Loading categories...
+          </Typography>
+        </Box>
+      )
+    }
+
+    if (categoriesHook.error) {
+      return (
+        <Alert severity="error">
+          Failed to load categories: {categoriesHook.error.message}
+        </Alert>
+      )
+    }
+
+    const categories = categoriesHook.categories || []
+
+    if (categories.length === 0) {
+      return (
+        <Alert severity="info">
+          No categories available. Please create a category first in the
+          Categories page.
+        </Alert>
+      )
+    }
+
+    return (
+      <TextField
+        select
+        label="Category"
+        value={formData.categoryId || ''}
+        onChange={(e) => updateCategoryField(e.target.value)}
+        error={Boolean(errors.category)}
+        helperText={errors.category}
+        required={!isEditMode && categories.length > 0}
+        fullWidth
+      >
+        {categories.map((category) => (
+          <MenuItem key={category.id} value={category.id}>
+            {formatCategoryDisplay(category)}
+          </MenuItem>
+        ))}
+      </TextField>
+    )
+  }
+
   function updateField(field: keyof ContactFormData, value: string): void {
     setFormData((prev) => ({ ...prev, [field]: value }))
 
     if (field === 'name' || field === 'city' || field === 'country' || field === 'timezone') {
       setErrors((prev) => ({ ...prev, [field]: undefined }))
     }
+  }
+
+  function updateCategoryField(value: string): void {
+    setFormData((prev) => ({ ...prev, categoryId: value }))
+    setErrors((prev) => ({ ...prev, category: undefined }))
   }
 
   function updatePhoneField(value: string): void {
@@ -229,6 +294,11 @@ export function ContactFormModal({
       nextErrors.email = emailValid.error
     }
 
+    const hasCategories = categoriesHook.categories && categoriesHook.categories.length > 0
+    if (!isEditMode && hasCategories && (!formData.categoryId || formData.categoryId.trim().length === 0)) {
+      nextErrors.category = 'Category is required'
+    }
+
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors)
       return
@@ -239,6 +309,7 @@ export function ContactFormModal({
       await onSave({
         ...formData,
         state: normalizeOptionalString(formData.state),
+        categoryId: normalizeOptionalString(formData.categoryId),
         relationshipContext: normalizeOptionalString(formData.relationshipContext),
       })
     } catch (err) {
@@ -248,6 +319,10 @@ export function ContactFormModal({
       setIsSaving(false)
     }
   }
+}
+
+function formatCategoryDisplay(category: Category): string {
+  return `${category.name} - ${formatFrequency(category.frequency)}`
 }
 
 function normalizeOptionalString(value?: string): string | undefined {
@@ -266,6 +341,7 @@ function getInitialFormData(contact?: Contact): ContactFormData {
       state: contact.location.state,
       country: contact.location.country,
       timezone: contact.location.timezone,
+      categoryId: isNullCategoryId(contact.categoryId) ? undefined : contact.categoryId,
       relationshipContext: contact.relationshipContext,
     }
   }
