@@ -18,6 +18,7 @@ import { CompleteCheckInModal } from '../components/CompleteCheckInModal'
 import { RescheduleCheckInModal } from '../components/RescheduleCheckInModal'
 import type { CheckIn } from '../../domain/checkin/CheckIn'
 import { CheckInStatus } from '../../domain/checkin/CheckInStatus'
+import { checkInIdFromString } from '../../domain/checkin/CheckInId'
 
 type StatusFilter = 'all' | CheckInStatus
 type SortOption = 'date' | 'contact' | 'status'
@@ -178,7 +179,11 @@ export function CheckInsPage() {
     completionDate: Date
     notes?: string
   }) {
-    await checkInsHook.operations.complete(input)
+    await checkInsHook.operations.complete({
+      checkInId: checkInIdFromString(input.checkInId),
+      completionDate: input.completionDate,
+      notes: input.notes,
+    })
     setCompletingCheckIn(null)
   }
 
@@ -186,7 +191,10 @@ export function CheckInsPage() {
     checkInId: string
     newScheduledDate: Date
   }) {
-    await checkInsHook.operations.reschedule(input)
+    await checkInsHook.operations.reschedule({
+      checkInId: checkInIdFromString(input.checkInId),
+      newScheduledDate: input.newScheduledDate,
+    })
     setReschedulingCheckIn(null)
   }
 }

@@ -8,7 +8,6 @@ import {
   TextField,
   MenuItem,
   Box,
-  Alert,
 } from '@mui/material'
 import type { Contact } from '../../domain/contact/Contact'
 import type { ContactId } from '../../domain/contact/ContactId'

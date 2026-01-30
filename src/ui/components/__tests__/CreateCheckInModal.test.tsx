@@ -237,7 +237,7 @@ describe('CreateCheckInModal', () => {
   it('should display loading state when saving', async () => {
     // Given
     const user = userEvent.setup()
-    const onCreate = vi.fn(() => new Promise(() => {})) // Never resolves
+    const onCreate = vi.fn(() => new Promise<void>(() => {})) // Never resolves
 
     // When
     render(
