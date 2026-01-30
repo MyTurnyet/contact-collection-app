@@ -8,15 +8,40 @@ import { createPhoneNumber } from '../../../domain/contact/PhoneNumber'
 import { createEmailAddress } from '../../../domain/contact/EmailAddress'
 import { createLocation } from '../../../domain/contact/Location'
 import { createCategoryId } from '../../../domain/category/CategoryId'
+import { DependencyProvider } from '../../../di'
+import { DIContainer } from '../../../di/DIContainer'
+import type { ReactNode } from 'react'
 
 describe('ContactFormModal', () => {
-  beforeEach(() => {
+  let container: DIContainer
+
+  beforeEach(async () => {
     vi.useRealTimers()
+    container = new DIContainer()
+    await seedDefaultCategories()
   })
 
   afterEach(() => {
     vi.useRealTimers()
   })
+
+  async function seedDefaultCategories() {
+    const getDefaultCategories = container.getGetDefaultCategories()
+    const createCategory = container.getCreateCategory()
+    const defaults = await getDefaultCategories.execute()
+
+    for (const category of defaults) {
+      await createCategory.execute({
+        name: category.name,
+        frequencyValue: category.frequency.value,
+        frequencyUnit: category.frequency.unit,
+      })
+    }
+  }
+
+  const wrapper = ({ children }: { children: ReactNode }) => (
+    <DependencyProvider container={container}>{children}</DependencyProvider>
+  )
 
   const mockContact = createContact({
     id: createContactId(),
@@ -34,7 +59,7 @@ describe('ContactFormModal', () => {
   describe('create mode', () => {
     it('should display create title when no contact provided', () => {
       // When
-      render(<ContactFormModal open onClose={vi.fn()} onSave={vi.fn()} />)
+      render(<ContactFormModal open onClose={vi.fn()} onSave={vi.fn()} />, { wrapper })
 
       // Then
       expect(screen.getByText(/create contact/i)).toBeInTheDocument()
@@ -44,7 +69,7 @@ describe('ContactFormModal', () => {
       // Given
       const user = userEvent.setup()
       const onSave = vi.fn()
-      render(<ContactFormModal open onClose={vi.fn()} onSave={onSave} />)
+      render(<ContactFormModal open onClose={vi.fn()} onSave={onSave} />, { wrapper })
 
       // When
       await user.type(screen.getByLabelText(/name/i), 'Jane Doe')
@@ -52,6 +77,9 @@ describe('ContactFormModal', () => {
       await user.type(screen.getByLabelText(/email/i), 'jane@example.com')
       await user.type(screen.getByLabelText(/city/i), 'Boston')
       await user.type(screen.getByLabelText(/country/i), 'USA')
+      await user.click(screen.getByLabelText(/category/i))
+      const options = await screen.findAllByText('Family - Every 1 week')
+      await user.click(options[options.length - 1])
       await user.click(screen.getByRole('button', { name: /save/i }))
 
       // Then
@@ -63,6 +91,7 @@ describe('ContactFormModal', () => {
             email: 'jane@example.com',
             city: 'Boston',
             country: 'USA',
+            categoryId: expect.any(String),
           })
         )
       })
@@ -72,7 +101,7 @@ describe('ContactFormModal', () => {
       const user = userEvent.setup()
       const onSave = vi.fn()
 
-      render(<ContactFormModal open onClose={vi.fn()} onSave={onSave} />)
+      render(<ContactFormModal open onClose={vi.fn()} onSave={onSave} />, { wrapper })
 
       await user.type(screen.getByLabelText(/name/i), 'Jane Doe')
       await user.type(screen.getByLabelText(/phone/i), '+15559876543')
@@ -81,6 +110,9 @@ describe('ContactFormModal', () => {
       await user.type(screen.getByLabelText(/country/i), 'USA')
       await user.type(screen.getByLabelText(/state\/province/i), '   ')
       await user.type(screen.getByLabelText(/relationship context/i), '  Friend  ')
+      await user.click(screen.getByLabelText(/category/i))
+      const options = await screen.findAllByText('Family - Every 1 week')
+      await user.click(options[options.length - 1])
       await user.click(screen.getByRole('button', { name: /save/i }))
 
       await waitFor(() => {
@@ -95,7 +127,7 @@ describe('ContactFormModal', () => {
     it('should not save when location is invalid', async () => {
       const user = userEvent.setup()
       const onSave = vi.fn()
-      render(<ContactFormModal open onClose={vi.fn()} onSave={onSave} />)
+      render(<ContactFormModal open onClose={vi.fn()} onSave={onSave} />, { wrapper })
 
       await user.type(screen.getByLabelText(/name/i), 'Jane Doe')
       await user.type(screen.getByLabelText(/phone/i), '+15559876543')
@@ -111,7 +143,7 @@ describe('ContactFormModal', () => {
     it('should show validation error for invalid phone', async () => {
       // Given
       const user = userEvent.setup()
-      render(<ContactFormModal open onClose={vi.fn()} onSave={vi.fn()} />)
+      render(<ContactFormModal open onClose={vi.fn()} onSave={vi.fn()} />, { wrapper })
 
       // When
       await user.type(screen.getByLabelText(/phone/i), 'invalid')
@@ -126,7 +158,7 @@ describe('ContactFormModal', () => {
     it('should show validation error for invalid email', async () => {
       // Given
       const user = userEvent.setup()
-      render(<ContactFormModal open onClose={vi.fn()} onSave={vi.fn()} />)
+      render(<ContactFormModal open onClose={vi.fn()} onSave={vi.fn()} />, { wrapper })
 
       // When
       await user.type(screen.getByLabelText(/email/i), 'invalid')
@@ -148,7 +180,8 @@ describe('ContactFormModal', () => {
           contact={mockContact}
           onClose={vi.fn()}
           onSave={vi.fn()}
-        />
+        />,
+        { wrapper }
       )
 
       // Then
@@ -163,7 +196,8 @@ describe('ContactFormModal', () => {
           contact={mockContact}
           onClose={vi.fn()}
           onSave={vi.fn()}
-        />
+        />,
+        { wrapper }
       )
 
       // Then
@@ -188,13 +222,16 @@ describe('ContactFormModal', () => {
       })
 
       const { rerender } = render(
-        <ContactFormModal open contact={contactA} onClose={vi.fn()} onSave={vi.fn()} />
+        <ContactFormModal open contact={contactA} onClose={vi.fn()} onSave={vi.fn()} />,
+        { wrapper }
       )
 
       expect(screen.getByDisplayValue('John Doe')).toBeInTheDocument()
 
       rerender(
-        <ContactFormModal open contact={contactB} onClose={vi.fn()} onSave={vi.fn()} />
+        <DependencyProvider container={container}>
+          <ContactFormModal open contact={contactB} onClose={vi.fn()} onSave={vi.fn()} />
+        </DependencyProvider>
       )
 
       expect(screen.getByDisplayValue('Jane Smith')).toBeInTheDocument()
@@ -209,7 +246,7 @@ describe('ContactFormModal', () => {
     const onClose = vi.fn()
 
     // When
-    render(<ContactFormModal open onClose={onClose} onSave={vi.fn()} />)
+    render(<ContactFormModal open onClose={onClose} onSave={vi.fn()} />, { wrapper })
     await user.click(screen.getByRole('button', { name: /cancel/i }))
 
     // Then
