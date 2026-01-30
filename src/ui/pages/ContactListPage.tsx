@@ -15,8 +15,11 @@ import { ContactFormModal, type ContactFormData } from '../components/ContactFor
 import { ContactDetailModal } from '../components/ContactDetailModal'
 import type { Contact } from '../../domain/contact/Contact'
 import type { ContactId } from '../../domain/contact/ContactId'
+import { useDependencies } from '../../di'
+import { categoryIdFromString } from '../../domain/category/CategoryId'
 
 export function ContactListPage() {
+  const container = useDependencies()
   const { contacts, isLoading, error, operations } = useContacts()
   const [searchQuery, setSearchQuery] = useState('')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
@@ -114,15 +117,61 @@ export function ContactListPage() {
   }
 
   async function handleCreate(data: ContactFormData) {
-    await operations.createContact(data)
-    setIsCreateModalOpen(false)
+    let createdContact: Contact | null = null
+    try {
+      createdContact = await operations.createContact(data)
+
+      if (data.categoryId) {
+        await assignCategoryAndScheduleCheckIn(createdContact, data.categoryId)
+      }
+
+      await operations.refresh()
+      setIsCreateModalOpen(false)
+    } catch (err) {
+      if (createdContact) {
+        await rollbackContactCreation(createdContact.id)
+      }
+      throw err
+    }
+  }
+
+  async function assignCategoryAndScheduleCheckIn(contact: Contact, categoryIdString: string) {
+    const categoryId = categoryIdFromString(categoryIdString)
+    const assignUseCase = container.getAssignContactToCategory()
+    await assignUseCase.execute({ contactId: contact.id, categoryId })
+
+    const scheduleUseCase = container.getScheduleInitialCheckIn()
+    await scheduleUseCase.execute({ contactId: contact.id })
+  }
+
+  async function rollbackContactCreation(contactId: ContactId) {
+    try {
+      await operations.deleteContact(contactId)
+    } catch (rollbackErr) {
+      console.error('Failed to rollback contact creation:', rollbackErr)
+    }
   }
 
   async function handleEdit(data: ContactFormData) {
-    if (editingContact) {
-      await operations.updateContact(editingContact.id, data)
-      setEditingContact(null)
+    if (!editingContact) return
+
+    await operations.updateContact(editingContact.id, data)
+
+    if (data.categoryId) {
+      const newCategoryId = categoryIdFromString(data.categoryId)
+      const currentCategoryId = editingContact.categoryId
+
+      if (newCategoryId !== currentCategoryId) {
+        const assignUseCase = container.getAssignContactToCategory()
+        await assignUseCase.execute({
+          contactId: editingContact.id,
+          categoryId: newCategoryId,
+        })
+      }
     }
+
+    await operations.refresh()
+    setEditingContact(null)
   }
 
   async function handleDelete(id: ContactId) {
