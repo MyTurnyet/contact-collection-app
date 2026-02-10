@@ -33,8 +33,8 @@ export function CheckInsPage() {
   const [sortBy, setSortBy] = useState<SortOption>('date')
 
   const allCheckIns = useMemo(() => {
-    return combineCheckInLists(checkInsHook)
-  }, [checkInsHook.upcomingCheckIns, checkInsHook.overdueCheckIns])
+    return checkInsHook.allCheckIns || []
+  }, [checkInsHook.allCheckIns])
 
   const filtered = useFilteredCheckIns(allCheckIns, statusFilter)
   const sorted = useSortedCheckIns(filtered, sortBy)
@@ -197,12 +197,6 @@ export function CheckInsPage() {
     })
     setReschedulingCheckIn(null)
   }
-}
-
-function combineCheckInLists(checkInsHook: ReturnType<typeof useCheckIns>) {
-  const upcoming = checkInsHook.upcomingCheckIns || []
-  const overdue = checkInsHook.overdueCheckIns || []
-  return [...upcoming, ...overdue]
 }
 
 function useFilteredCheckIns(

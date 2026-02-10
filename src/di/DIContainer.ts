@@ -209,6 +209,11 @@ export class DIContainer {
     await this.backupService.createBackup()
   }
 
+  // Repository accessors
+  getCheckInRepository() {
+    return this.checkInRepo
+  }
+
   // Private factory methods
   private createContactRepository() {
     return new LocalStorageContactRepository(

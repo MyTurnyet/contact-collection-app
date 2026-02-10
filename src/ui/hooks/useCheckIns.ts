@@ -25,11 +25,13 @@ export interface CreateManualCheckInInput {
 export interface UseCheckInsResult {
   upcomingCheckIns: readonly CheckIn[] | null
   overdueCheckIns: readonly CheckIn[] | null
+  allCheckIns: readonly CheckIn[] | null
   isLoading: boolean
   error: Error | null
   operations: {
     getUpcoming: (days?: number) => Promise<readonly CheckIn[]>
     getOverdue: () => Promise<readonly CheckIn[]>
+    getAll: () => Promise<readonly CheckIn[]>
     complete: (input: CompleteCheckInInput) => Promise<CompleteCheckInResult>
     reschedule: (input: RescheduleCheckInInput) => Promise<CheckIn>
     getHistory: (contactId: ContactId) => Promise<readonly CheckIn[]>
@@ -46,6 +48,7 @@ export function useCheckIns(): UseCheckInsResult {
   const container = useDependencies()
   const [upcomingCheckIns, setUpcomingCheckIns] = useState<readonly CheckIn[] | null>(null)
   const [overdueCheckIns, setOverdueCheckIns] = useState<readonly CheckIn[] | null>(null)
+  const [allCheckIns, setAllCheckIns] = useState<readonly CheckIn[] | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
@@ -56,14 +59,17 @@ export function useCheckIns(): UseCheckInsResult {
 
       const upcomingUseCase = container.getGetUpcomingCheckIns()
       const overdueUseCase = container.getGetOverdueCheckIns()
+      const repository = container.getCheckInRepository()
 
-      const [upcomingCollection, overdueCollection] = await Promise.all([
+      const [upcomingCollection, overdueCollection, allCollection] = await Promise.all([
         upcomingUseCase.execute({ days: 7 }),
         overdueUseCase.execute(),
+        repository.findAll(),
       ])
 
       setUpcomingCheckIns(upcomingCollection.toArray())
       setOverdueCheckIns(overdueCollection.toArray())
+      setAllCheckIns(allCollection.toArray())
     } catch (err) {
       const appError = err instanceof Error ? err : new Error('Unknown')
       setError(appError)
@@ -89,6 +95,15 @@ export function useCheckIns(): UseCheckInsResult {
     async (): Promise<readonly CheckIn[]> => {
       const useCase = container.getGetOverdueCheckIns()
       const collection = await useCase.execute()
+      return collection.toArray()
+    },
+    [container]
+  )
+
+  const getAll = useCallback(
+    async (): Promise<readonly CheckIn[]> => {
+      const repository = container.getCheckInRepository()
+      const collection = await repository.findAll()
       return collection.toArray()
     },
     [container]
@@ -140,11 +155,13 @@ export function useCheckIns(): UseCheckInsResult {
   return {
     upcomingCheckIns,
     overdueCheckIns,
+    allCheckIns,
     isLoading,
     error,
     operations: {
       getUpcoming,
       getOverdue,
+      getAll,
       complete,
       reschedule,
       getHistory,

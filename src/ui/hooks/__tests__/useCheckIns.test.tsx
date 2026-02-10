@@ -28,6 +28,7 @@ describe('useCheckIns', () => {
       expect(result.current.isLoading).toBe(true)
       expect(result.current.upcomingCheckIns).toBeNull()
       expect(result.current.overdueCheckIns).toBeNull()
+      expect(result.current.allCheckIns).toBeNull()
       expect(result.current.error).toBeNull()
 
       await waitFor(() => {
@@ -46,6 +47,7 @@ describe('useCheckIns', () => {
 
       expect(result.current.upcomingCheckIns).toEqual([])
       expect(result.current.overdueCheckIns).toEqual([])
+      expect(result.current.allCheckIns).toEqual([])
       expect(result.current.error).toBeNull()
     })
 
@@ -65,6 +67,7 @@ describe('useCheckIns', () => {
       // Then
       expect(result.current.upcomingCheckIns).toEqual([])
       expect(result.current.overdueCheckIns).toEqual([])
+      expect(result.current.allCheckIns).toEqual([])
       expect(result.current.error).toBeNull()
     })
 
@@ -77,6 +80,9 @@ describe('useCheckIns', () => {
         }),
         getGetOverdueCheckIns: () => ({
           execute: async () => [],
+        }),
+        getCheckInRepository: () => ({
+          findAll: async () => ({ toArray: () => [] }),
         }),
       } as unknown as DIContainer
 
@@ -92,6 +98,7 @@ describe('useCheckIns', () => {
 
       expect(result.current.upcomingCheckIns).toBeNull()
       expect(result.current.overdueCheckIns).toBeNull()
+      expect(result.current.allCheckIns).toBeNull()
       expect(result.current.error?.message).toBe('Unknown')
     })
   })
