@@ -6,6 +6,7 @@ import { createCheckIn } from '../../../domain/checkin/CheckIn'
 import { createCheckInId } from '../../../domain/checkin/CheckInId'
 import { createContactId } from '../../../domain/contact/ContactId'
 import { createScheduledDate } from '../../../domain/checkin/ScheduledDate'
+import { createCompletionDate } from '../../../domain/checkin/CompletionDate'
 
 describe('CheckInCard', () => {
   const mockCheckIn = createCheckIn({
@@ -98,5 +99,67 @@ describe('CheckInCard', () => {
     // Then
     expect(screen.queryByRole('button', { name: /complete/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /reschedule/i })).not.toBeInTheDocument()
+  })
+
+  it('should not show complete button for completed check-ins', () => {
+    // Given
+    const completedCheckIn = createCheckIn({
+      id: createCheckInId(),
+      contactId: createContactId(),
+      scheduledDate: createScheduledDate(new Date('2026-02-15')),
+      completionDate: createCompletionDate(new Date('2026-02-15')),
+    })
+    const onComplete = vi.fn()
+
+    // When
+    render(
+      <CheckInCard
+        checkIn={completedCheckIn}
+        contactName="John Doe"
+        onComplete={onComplete}
+      />
+    )
+
+    // Then
+    expect(screen.queryByRole('button', { name: /complete/i })).not.toBeInTheDocument()
+  })
+
+  it('should not show reschedule button for completed check-ins', () => {
+    // Given
+    const completedCheckIn = createCheckIn({
+      id: createCheckInId(),
+      contactId: createContactId(),
+      scheduledDate: createScheduledDate(new Date('2026-02-15')),
+      completionDate: createCompletionDate(new Date('2026-02-15')),
+    })
+    const onReschedule = vi.fn()
+
+    // When
+    render(
+      <CheckInCard
+        checkIn={completedCheckIn}
+        contactName="John Doe"
+        onReschedule={onReschedule}
+      />
+    )
+
+    // Then
+    expect(screen.queryByRole('button', { name: /reschedule/i })).not.toBeInTheDocument()
+  })
+
+  it('should show completed status badge for completed check-ins', () => {
+    // Given
+    const completedCheckIn = createCheckIn({
+      id: createCheckInId(),
+      contactId: createContactId(),
+      scheduledDate: createScheduledDate(new Date('2026-02-15')),
+      completionDate: createCompletionDate(new Date('2026-02-15')),
+    })
+
+    // When
+    render(<CheckInCard checkIn={completedCheckIn} contactName="John Doe" />)
+
+    // Then
+    expect(screen.getByText(/completed/i)).toBeInTheDocument()
   })
 })

@@ -59,11 +59,16 @@ function renderActions(
   onComplete?: (checkIn: CheckIn) => void,
   onReschedule?: (checkIn: CheckIn) => void
 ) {
-  if (!onComplete && !onReschedule) return null
+  const isCompleted = checkIn.status === CheckInStatus.Completed
+  const showComplete = onComplete && !isCompleted
+  const showReschedule = onReschedule && !isCompleted
+
+  if (!showComplete && !showReschedule) return null
+
   return (
     <CardActions>
-      {onComplete && createCompleteButton(checkIn, onComplete)}
-      {onReschedule && createRescheduleButton(checkIn, onReschedule)}
+      {showComplete && createCompleteButton(checkIn, onComplete)}
+      {showReschedule && createRescheduleButton(checkIn, onReschedule)}
     </CardActions>
   )
 }
