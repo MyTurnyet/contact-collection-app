@@ -29,6 +29,7 @@ import { GetDefaultCategories } from '../application/categories/GetDefaultCatego
 import { AssignContactToCategory } from '../application/categories/AssignContactToCategory'
 
 // CheckIn Use Cases
+import { ListAllCheckIns } from '../application/checkins/ListAllCheckIns'
 import { ScheduleInitialCheckIn } from '../application/checkins/ScheduleInitialCheckIn'
 import { CreateManualCheckIn } from '../application/checkins/CreateManualCheckIn'
 import { GetUpcomingCheckIns } from '../application/checkins/GetUpcomingCheckIns'
@@ -128,6 +129,10 @@ export class DIContainer {
   }
 
   // CheckIn Use Cases
+  getListAllCheckIns() {
+    return new ListAllCheckIns(this.checkInRepo)
+  }
+
   getScheduleInitialCheckIn() {
     return new ScheduleInitialCheckIn(
       this.checkInRepo,
@@ -207,11 +212,6 @@ export class DIContainer {
 
   async createBackup(): Promise<void> {
     await this.backupService.createBackup()
-  }
-
-  // Repository accessors
-  getCheckInRepository() {
-    return this.checkInRepo
   }
 
   // Private factory methods

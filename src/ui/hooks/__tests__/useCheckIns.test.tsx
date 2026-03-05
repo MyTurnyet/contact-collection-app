@@ -81,8 +81,8 @@ describe('useCheckIns', () => {
         getGetOverdueCheckIns: () => ({
           execute: async () => [],
         }),
-        getCheckInRepository: () => ({
-          findAll: async () => ({ toArray: () => [] }),
+        getListAllCheckIns: () => ({
+          execute: async () => ({ toArray: () => [] }),
         }),
       } as unknown as DIContainer
 

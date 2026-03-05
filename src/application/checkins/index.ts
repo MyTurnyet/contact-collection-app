@@ -1,3 +1,4 @@
+export { ListAllCheckIns } from './ListAllCheckIns'
 export {
   ScheduleInitialCheckIn,
   type ScheduleInitialCheckInInput,

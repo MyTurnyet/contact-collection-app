@@ -59,12 +59,12 @@ export function useCheckIns(): UseCheckInsResult {
 
       const upcomingUseCase = container.getGetUpcomingCheckIns()
       const overdueUseCase = container.getGetOverdueCheckIns()
-      const repository = container.getCheckInRepository()
+      const listAllUseCase = container.getListAllCheckIns()
 
       const [upcomingCollection, overdueCollection, allCollection] = await Promise.all([
         upcomingUseCase.execute({ days: 7 }),
         overdueUseCase.execute(),
-        repository.findAll(),
+        listAllUseCase.execute(),
       ])
 
       setUpcomingCheckIns(upcomingCollection.toArray())
@@ -102,8 +102,8 @@ export function useCheckIns(): UseCheckInsResult {
 
   const getAll = useCallback(
     async (): Promise<readonly CheckIn[]> => {
-      const repository = container.getCheckInRepository()
-      const collection = await repository.findAll()
+      const useCase = container.getListAllCheckIns()
+      const collection = await useCase.execute()
       return collection.toArray()
     },
     [container]
