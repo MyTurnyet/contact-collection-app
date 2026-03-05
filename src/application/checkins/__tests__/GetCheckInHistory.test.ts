@@ -9,7 +9,7 @@ import {
   createCompletionDate,
 } from '../../../domain/checkin'
 import { createContactId } from '../../../domain/contact'
-import { addDays, addWeeks } from 'date-fns'
+import { addDays, addWeeks, addMonths } from 'date-fns'
 
 describe('GetCheckInHistory', () => {
   let repository: InMemoryCheckInRepository
@@ -65,7 +65,7 @@ describe('GetCheckInHistory', () => {
     const scheduledCheckIn = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: createScheduledDate(new Date('2026-02-01')),
+      scheduledDate: createScheduledDate(addMonths(new Date(), 1)),
     })
 
     await repository.save(completedCheckIn)

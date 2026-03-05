@@ -67,14 +67,14 @@ function calculateStatus(checkIn: Omit<CheckIn, 'status'>): CheckInStatus {
   if (isCompleted(checkIn.completionDate)) {
     return CheckInStatus.Completed
   }
-  return isOverdue(checkIn.scheduledDate)
+  return statusFromScheduledDate(checkIn.scheduledDate)
 }
 
 function isCompleted(completionDate: CompletionDate): boolean {
   return !isNullCompletionDate(completionDate)
 }
 
-function isOverdue(scheduledDate: ScheduledDate): CheckInStatus {
+function statusFromScheduledDate(scheduledDate: ScheduledDate): CheckInStatus {
   const now = new Date()
   if (scheduledDate < now) {
     return CheckInStatus.Overdue

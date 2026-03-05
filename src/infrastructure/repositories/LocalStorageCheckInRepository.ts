@@ -1,5 +1,6 @@
 import type { CheckInRepository } from '../../domain/checkin/CheckInRepository'
 import type { CheckIn } from '../../domain/checkin/CheckIn'
+import { createCheckIn } from '../../domain/checkin/CheckIn'
 import type { CheckInId } from '../../domain/checkin/CheckInId'
 import { checkInIdEquals } from '../../domain/checkin/CheckInId'
 import type { ContactId } from '../../domain/contact/ContactId'
@@ -7,6 +8,7 @@ import { contactIdEquals } from '../../domain/contact/ContactId'
 import type CheckInCollection from '../../domain/checkin/collections/CheckInCollection'
 import { createCheckInCollection } from '../../domain/checkin/collections/CheckInCollection'
 import { CheckInStatus } from '../../domain/checkin/CheckInStatus'
+import { isNullCompletionDate } from '../../domain/checkin/CompletionDate'
 import type { DateRange } from '../../domain/shared/DateRange'
 import { isDateInRange } from '../../domain/shared/DateRange'
 import type { StorageService } from '../storage/StorageService'
@@ -68,7 +70,9 @@ export class LocalStorageCheckInRepository implements CheckInRepository {
 
   private async loadCheckIns(): Promise<CheckIn[]> {
     const data = this.storage.getItem(STORAGE_KEY)
-    return data ? this.serializer.deserializeCollection(data) : []
+    if (!data) return []
+    const raw = this.serializer.deserializeCollection(data)
+    return raw.map(refreshStatus)
   }
 
   private persistCheckIns(checkIns: CheckIn[]): void {
@@ -91,4 +95,20 @@ export class LocalStorageCheckInRepository implements CheckInRepository {
   private filterByDateRange(checkIns: CheckIn[], range: DateRange): CheckIn[] {
     return checkIns.filter((c) => isDateInRange(c.scheduledDate, range))
   }
+}
+
+/**
+ * Recomputes the status of a deserialized CheckIn using the current time.
+ * Prevents stale status values that were baked in at the time of serialization.
+ * isNullCompletionDate() uses timestamp comparison, so it correctly identifies
+ * the null sentinel even after JSON round-tripping.
+ */
+function refreshStatus(raw: CheckIn): CheckIn {
+  return createCheckIn({
+    id: raw.id,
+    contactId: raw.contactId,
+    scheduledDate: raw.scheduledDate,
+    completionDate: isNullCompletionDate(raw.completionDate) ? undefined : raw.completionDate,
+    notes: raw.notes,
+  })
 }

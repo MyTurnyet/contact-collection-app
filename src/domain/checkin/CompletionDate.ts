@@ -27,5 +27,5 @@ export function createNullCompletionDate(): CompletionDate {
 }
 
 export function isNullCompletionDate(date: CompletionDate): boolean {
-  return date === NULL_COMPLETION_DATE
+  return date.getTime() === NULL_COMPLETION_DATE.getTime()
 }

@@ -4,6 +4,7 @@ import {
   createCheckIn,
   createCheckInId,
   createScheduledDate,
+  createCompletionDate,
   CheckInStatus,
 } from '../../../domain/checkin'
 import { createContactId } from '../../../domain/contact'
@@ -52,14 +53,42 @@ describe('LocalStorageCheckInRepository', () => {
       })
       await repository.save(checkIn)
 
-      const updated = { ...checkIn, status: CheckInStatus.Completed }
+      const completed = createCheckIn({
+        id: checkIn.id,
+        contactId: checkIn.contactId,
+        scheduledDate: checkIn.scheduledDate,
+        completionDate: createCompletionDate(new Date()),
+      })
 
       // When
-      await repository.save(updated)
+      await repository.save(completed)
 
       // Then
       const found = await repository.findById(checkIn.id)
       expect(found?.status).toBe(CheckInStatus.Completed)
+    })
+
+    it('should refresh stale Scheduled status to Overdue when the schedule date has passed', async () => {
+      // Given — simulate a check-in that was saved when its date was in the future
+      const pastDate = new Date()
+      pastDate.setDate(pastDate.getDate() - 7)
+      const id = createCheckInId()
+      const contactId = createContactId()
+      const staleData = JSON.stringify([{
+        id,
+        contactId,
+        scheduledDate: pastDate.toISOString(),
+        completionDate: new Date(0).toISOString(),
+        notes: '',
+        status: CheckInStatus.Scheduled, // intentionally stale
+      }])
+      storage.setItem('checkins', staleData)
+
+      // When
+      const found = await repository.findById(id)
+
+      // Then
+      expect(found?.status).toBe(CheckInStatus.Overdue)
     })
   })
 

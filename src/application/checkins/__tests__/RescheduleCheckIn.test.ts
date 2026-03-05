@@ -46,11 +46,11 @@ describe('RescheduleCheckIn', () => {
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId: createContactId(),
-      scheduledDate: createScheduledDate(new Date('2026-02-01')),
+      scheduledDate: createScheduledDate(addDays(new Date(), -5)),
     })
     await repository.save(checkIn)
 
-    const newDate = createScheduledDate(new Date('2026-03-01'))
+    const newDate = createScheduledDate(addDays(new Date(), 30))
     const result = await rescheduleCheckIn.execute({
       checkInId: checkIn.id,
       newScheduledDate: newDate,

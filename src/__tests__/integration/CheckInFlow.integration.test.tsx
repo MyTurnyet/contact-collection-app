@@ -51,7 +51,8 @@ describe('Check-In Flow Integration', () => {
     await user.click(within(dialog).getByRole('button', { name: /^complete$/i }))
 
     await waitFor(() => {
-      expect(screen.getByText(getExpectedContactName())).toBeInTheDocument()
+      // After completing, a new check-in is scheduled — both show the same contact name
+      expect(screen.getAllByText(getExpectedContactName()).length).toBeGreaterThan(0)
     })
   })
 

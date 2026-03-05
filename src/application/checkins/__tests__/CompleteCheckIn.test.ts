@@ -23,7 +23,7 @@ import {
   createCategoryName,
   createCheckInFrequency,
 } from '../../../domain/category'
-import { addWeeks, addMonths } from 'date-fns'
+import { addWeeks, addMonths, addDays } from 'date-fns'
 
 describe('CompleteCheckIn', () => {
   let checkInRepository: InMemoryCheckInRepository
@@ -100,7 +100,7 @@ describe('CompleteCheckIn', () => {
     })
     await contactRepository.save(contact)
 
-    const scheduledDate = createScheduledDate(new Date('2026-02-01'))
+    const scheduledDate = createScheduledDate(addDays(new Date(), -3))
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId,
@@ -108,7 +108,7 @@ describe('CompleteCheckIn', () => {
     })
     await checkInRepository.save(checkIn)
 
-    const completionDate = createCompletionDate(new Date('2026-02-05'))
+    const completionDate = createCompletionDate(new Date())
     const expectedNextDate = addWeeks(scheduledDate, 1)
 
     const result = await completeCheckIn.execute({
@@ -212,13 +212,13 @@ describe('CompleteCheckIn', () => {
     const checkIn = createCheckIn({
       id: createCheckInId(),
       contactId,
-      scheduledDate: createScheduledDate(new Date('2026-02-01')),
+      scheduledDate: createScheduledDate(addDays(new Date(), -3)),
     })
     await checkInRepository.save(checkIn)
 
     const result = await completeCheckIn.execute({
       checkInId: checkIn.id,
-      completionDate: createCompletionDate(new Date('2026-02-01')),
+      completionDate: createCompletionDate(new Date()),
     })
 
     const savedCompleted = await checkInRepository.findById(

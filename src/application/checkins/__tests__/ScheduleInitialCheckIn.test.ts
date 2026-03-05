@@ -15,6 +15,7 @@ import {
   createCheckInFrequency,
 } from '../../../domain/category'
 import { CheckInStatus } from '../../../domain/checkin'
+import { addDays, addWeeks } from 'date-fns'
 
 describe('ScheduleInitialCheckIn', () => {
   let checkInRepository: InMemoryCheckInRepository
@@ -51,7 +52,7 @@ describe('ScheduleInitialCheckIn', () => {
     })
     await contactRepository.save(contact)
 
-    const baseDate = new Date('2026-02-01')
+    const baseDate = addDays(new Date(), 14)
     const checkIn = await scheduleInitialCheckIn.execute({
       contactId,
       baseDate,
@@ -59,7 +60,7 @@ describe('ScheduleInitialCheckIn', () => {
 
     expect(checkIn.contactId).toBe(contactId)
     expect(checkIn.status).toBe(CheckInStatus.Scheduled)
-    expect(checkIn.scheduledDate).toEqual(new Date('2026-02-08'))
+    expect(checkIn.scheduledDate).toEqual(addWeeks(baseDate, 1))
   })
 
   it('should schedule a check-in with monthly frequency', async () => {
