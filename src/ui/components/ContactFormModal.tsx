@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Dialog,
   DialogTitle,
@@ -18,6 +18,7 @@ import {
   validateEmailInput,
   validateLocationInput,
   getAvailableTimezones,
+  getDefaultTimezone,
 } from '../helpers/validation'
 import { useCategories } from '../hooks/useCategories'
 import { isNullCategoryId } from '../../domain/category/CategoryId'
@@ -53,6 +54,7 @@ export function ContactFormModal({
   onSave,
 }: ContactFormModalProps) {
   const categoriesHook = useCategories()
+  const availableTimezones = useMemo(() => getAvailableTimezones(), [])
   const [formData, setFormData] = useState<ContactFormData>(
     getInitialFormData(contact)
   )
@@ -141,7 +143,7 @@ export function ContactFormModal({
             required
             fullWidth
           >
-            {getAvailableTimezones().map((tz) => (
+            {availableTimezones.map((tz) => (
               <MenuItem key={tz} value={tz}>
                 {tz}
               </MenuItem>
@@ -351,6 +353,6 @@ function getInitialFormData(contact?: Contact): ContactFormData {
     email: '',
     city: '',
     country: '',
-    timezone: 'UTC',
+    timezone: getDefaultTimezone(),
   }
 }

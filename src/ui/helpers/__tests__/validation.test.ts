@@ -171,16 +171,25 @@ describe('validation helpers', () => {
   })
 
   describe('getAvailableTimezones', () => {
-    it('should return list of common timezones', () => {
+    it('should return a comprehensive list of IANA timezones', () => {
       // When
       const timezones = getAvailableTimezones()
 
       // Then
       expect(timezones).toBeInstanceOf(Array)
-      expect(timezones.length).toBeGreaterThan(0)
+      expect(timezones.length).toBeGreaterThan(13) // far more than the old hardcoded list
       expect(timezones).toContain('America/New_York')
       expect(timezones).toContain('America/Los_Angeles')
       expect(timezones).toContain('Europe/London')
+    })
+
+    it('should include timezones beyond the original hardcoded set', () => {
+      // When
+      const timezones = getAvailableTimezones()
+
+      // Then — spot-check a few timezones absent from the old list
+      expect(timezones).toContain('Asia/Dubai')
+      expect(timezones).toContain('America/Toronto')
     })
 
     it('should return timezones in sorted order', () => {

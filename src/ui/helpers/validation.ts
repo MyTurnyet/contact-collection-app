@@ -78,9 +78,33 @@ export function validateLocationInput(input: LocationInput): ValidationResult {
 }
 
 /**
- * Get list of commonly used timezones
+ * Get all IANA timezones supported by the current browser/runtime,
+ * sorted alphabetically. Falls back to a minimal list if the
+ * Intl.supportedValuesOf API is unavailable (e.g. older environments).
  */
 export function getAvailableTimezones(): string[] {
+  if (isIntlSupportedValuesAvailable()) {
+    return Intl.supportedValuesOf('timeZone').sort()
+  }
+  return getFallbackTimezones()
+}
+
+function isIntlSupportedValuesAvailable(): boolean {
+  return typeof Intl !== 'undefined' && typeof Intl.supportedValuesOf === 'function'
+}
+
+/**
+ * Returns the user's local IANA timezone if it is in the available list,
+ * otherwise falls back to 'America/New_York'.
+ * Avoids defaulting to bare 'UTC' which is absent from Intl.supportedValuesOf.
+ */
+export function getDefaultTimezone(): string {
+  const available = getAvailableTimezones()
+  const local = Intl.DateTimeFormat().resolvedOptions().timeZone
+  return available.includes(local) ? local : 'America/New_York'
+}
+
+function getFallbackTimezones(): string[] {
   return [
     'Africa/Cairo',
     'America/Chicago',
