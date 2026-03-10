@@ -9,6 +9,7 @@ export interface CompleteCheckInInput {
   checkInId: CheckInId
   completionDate: Date
   notes?: string
+  scheduleNext?: boolean
 }
 
 export interface RescheduleCheckInInput {

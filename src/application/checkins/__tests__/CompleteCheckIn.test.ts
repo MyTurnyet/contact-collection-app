@@ -116,9 +116,10 @@ describe('CompleteCheckIn', () => {
       completionDate,
     })
 
-    expect(result.nextCheckIn.scheduledDate).toEqual(expectedNextDate)
-    expect(result.nextCheckIn.status).toBe(CheckInStatus.Scheduled)
-    expect(result.nextCheckIn.contactId).toBe(contactId)
+    expect(result.nextCheckIn!.scheduledDate).toEqual(expectedNextDate)
+    expect(result.nextCheckIn).not.toBeNull()
+    expect(result.nextCheckIn!.status).toBe(CheckInStatus.Scheduled)
+    expect(result.nextCheckIn!.contactId).toBe(contactId)
   })
 
   it('should handle monthly frequency correctly', async () => {
@@ -154,7 +155,8 @@ describe('CompleteCheckIn', () => {
       completionDate: createCompletionDate(new Date('2026-02-20')),
     })
 
-    expect(result.nextCheckIn.scheduledDate).toEqual(expectedNextDate)
+    expect(result.nextCheckIn!.scheduledDate).toEqual(expectedNextDate)
+    expect(result.nextCheckIn).not.toBeNull()
   })
 
   it('should allow completion without notes', async () => {
@@ -224,7 +226,8 @@ describe('CompleteCheckIn', () => {
     const savedCompleted = await checkInRepository.findById(
       result.completedCheckIn.id
     )
-    const savedNext = await checkInRepository.findById(result.nextCheckIn.id)
+    const savedNext = await checkInRepository.findById(result.nextCheckIn!.id)
+    expect(result.nextCheckIn).not.toBeNull()
 
     expect(savedCompleted).toBeDefined()
     expect(savedCompleted?.status).toBe(CheckInStatus.Completed)
@@ -284,5 +287,40 @@ describe('CompleteCheckIn', () => {
         completionDate: createCompletionDate(new Date()),
       })
     ).rejects.toThrow('Category not found')
+  })
+
+  it('should not schedule next check-in when scheduleNext is false', async () => {
+    const categoryId = createCategoryId()
+    const category = createCategory({
+      id: categoryId,
+      name: createCategoryName('Friends'),
+      frequency: createCheckInFrequency({ value: 1, unit: 'weeks' }),
+    })
+    await categoryRepository.save(category)
+
+    const contactId = createContactId()
+    const contact = createContact({
+      id: contactId,
+      name: 'John Doe',
+      categoryId,
+      importantDates: createImportantDateCollection([]),
+    })
+    await contactRepository.save(contact)
+
+    const checkIn = createCheckIn({
+      id: createCheckInId(),
+      contactId,
+      scheduledDate: createScheduledDate(new Date('2026-02-01')),
+    })
+    await checkInRepository.save(checkIn)
+
+    const result = await completeCheckIn.execute({
+      checkInId: checkIn.id,
+      completionDate: createCompletionDate(new Date('2026-02-01')),
+      scheduleNext: false,
+    })
+
+    expect(result.completedCheckIn.status).toBe(CheckInStatus.Completed)
+    expect(result.nextCheckIn).toBeNull()
   })
 })

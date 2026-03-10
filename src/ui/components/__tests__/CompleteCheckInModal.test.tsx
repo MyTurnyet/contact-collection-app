@@ -6,6 +6,7 @@ import { createCheckIn } from '../../../domain/checkin/CheckIn'
 import { createCheckInId } from '../../../domain/checkin/CheckInId'
 import { createContactId } from '../../../domain/contact/ContactId'
 import { createScheduledDate } from '../../../domain/checkin/ScheduledDate'
+import { createCheckInFrequency } from '../../../domain/category/CheckInFrequency'
 
 describe('CompleteCheckInModal', () => {
   const mockCheckIn = createCheckIn({
@@ -14,6 +15,7 @@ describe('CompleteCheckInModal', () => {
     scheduledDate: createScheduledDate(new Date('2026-02-15T12:00:00')),
   })
 
+  const mockFrequency = createCheckInFrequency({ value: 1, unit: 'months' })
   const mockContactName = 'John Doe'
 
   it('should display modal title', () => {
@@ -80,7 +82,40 @@ describe('CompleteCheckInModal', () => {
     expect(screen.getByLabelText(/notes/i)).toBeInTheDocument()
   })
 
-  it('should call onComplete with check-in data when complete clicked', async () => {
+  it('should display schedule next checkbox when frequency provided', () => {
+    // When
+    render(
+      <CompleteCheckInModal
+        open
+        checkIn={mockCheckIn}
+        contactName={mockContactName}
+        frequency={mockFrequency}
+        onClose={vi.fn()}
+        onComplete={vi.fn()}
+      />
+    )
+
+    // Then
+    expect(screen.getByLabelText(/schedule next check-in/i)).toBeInTheDocument()
+  })
+
+  it('should display warning when no frequency provided', () => {
+    // When
+    render(
+      <CompleteCheckInModal
+        open
+        checkIn={mockCheckIn}
+        contactName={mockContactName}
+        onClose={vi.fn()}
+        onComplete={vi.fn()}
+      />
+    )
+
+    // Then
+    expect(screen.getByText(/no check-in frequency set/i)).toBeInTheDocument()
+  })
+
+  it('should call onComplete with check-in data and scheduleNext when complete clicked', async () => {
     // Given
     const user = userEvent.setup()
     const onComplete = vi.fn()
@@ -91,6 +126,7 @@ describe('CompleteCheckInModal', () => {
         open
         checkIn={mockCheckIn}
         contactName={mockContactName}
+        frequency={mockFrequency}
         onClose={vi.fn()}
         onComplete={onComplete}
       />
@@ -103,6 +139,35 @@ describe('CompleteCheckInModal', () => {
       checkInId: mockCheckIn.id,
       completionDate: expect.any(Date),
       notes: 'Had a great conversation',
+      scheduleNext: true,
+    })
+  })
+
+  it('should call onComplete with scheduleNext false when checkbox unchecked', async () => {
+    // Given
+    const user = userEvent.setup()
+    const onComplete = vi.fn()
+
+    // When
+    render(
+      <CompleteCheckInModal
+        open
+        checkIn={mockCheckIn}
+        contactName={mockContactName}
+        frequency={mockFrequency}
+        onClose={vi.fn()}
+        onComplete={onComplete}
+      />
+    )
+    await user.click(screen.getByLabelText(/schedule next check-in/i))
+    await user.click(screen.getByRole('button', { name: /complete/i }))
+
+    // Then
+    expect(onComplete).toHaveBeenCalledWith({
+      checkInId: mockCheckIn.id,
+      completionDate: expect.any(Date),
+      notes: undefined,
+      scheduleNext: false,
     })
   })
 
@@ -117,6 +182,7 @@ describe('CompleteCheckInModal', () => {
         open
         checkIn={mockCheckIn}
         contactName={mockContactName}
+        frequency={mockFrequency}
         onClose={vi.fn()}
         onComplete={onComplete}
       />
@@ -128,6 +194,7 @@ describe('CompleteCheckInModal', () => {
       checkInId: mockCheckIn.id,
       completionDate: expect.any(Date),
       notes: undefined,
+      scheduleNext: true,
     })
   })
 

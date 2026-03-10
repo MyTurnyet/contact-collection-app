@@ -12,13 +12,16 @@ import {
 import { Add as AddIcon } from '@mui/icons-material'
 import { useCheckIns } from '../hooks/useCheckIns'
 import { useContacts } from '../hooks/useContacts'
+import { useCategories } from '../hooks/useCategories'
 import { CheckInCard } from '../components/CheckInCard'
 import { CreateCheckInModal, type CreateCheckInFormData } from '../components/CreateCheckInModal'
 import { CompleteCheckInModal } from '../components/CompleteCheckInModal'
 import { RescheduleCheckInModal } from '../components/RescheduleCheckInModal'
 import type { CheckIn } from '../../domain/checkin/CheckIn'
+import type { CheckInFrequency } from '../../domain/category/CheckInFrequency'
 import { CheckInStatus } from '../../domain/checkin/CheckInStatus'
 import { checkInIdFromString } from '../../domain/checkin/CheckInId'
+import { isNullCategoryId } from '../../domain/category/CategoryId'
 
 type StatusFilter = 'all' | CheckInStatus
 type SortOption = 'date' | 'contact' | 'status'
@@ -26,6 +29,7 @@ type SortOption = 'date' | 'contact' | 'status'
 export function CheckInsPage() {
   const checkInsHook = useCheckIns()
   const contactsHook = useContacts()
+  const categoriesHook = useCategories()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [completingCheckIn, setCompletingCheckIn] = useState<CheckIn | null>(null)
   const [reschedulingCheckIn, setReschedulingCheckIn] = useState<CheckIn | null>(null)
@@ -39,7 +43,7 @@ export function CheckInsPage() {
   const filtered = useFilteredCheckIns(allCheckIns, statusFilter)
   const sorted = useSortedCheckIns(filtered, sortBy)
 
-  if (checkInsHook.isLoading || contactsHook.isLoading) {
+  if (checkInsHook.isLoading || contactsHook.isLoading || categoriesHook.isLoading) {
     return renderLoading()
   }
 
@@ -139,6 +143,10 @@ export function CheckInsPage() {
   }
 
   function renderModals() {
+    const completingFrequency = completingCheckIn
+      ? getCheckInFrequency(completingCheckIn)
+      : undefined
+
     return (
       <>
         <CreateCheckInModal
@@ -152,6 +160,7 @@ export function CheckInsPage() {
             open
             checkIn={completingCheckIn}
             contactName={getContactName(completingCheckIn, contactsHook.contacts)}
+            frequency={completingFrequency}
             onClose={() => setCompletingCheckIn(null)}
             onComplete={handleComplete}
           />
@@ -169,6 +178,16 @@ export function CheckInsPage() {
     )
   }
 
+  function getCheckInFrequency(checkIn: CheckIn): CheckInFrequency | undefined {
+    const contact = contactsHook.contacts?.find((c) => c.id === checkIn.contactId)
+    if (!contact || isNullCategoryId(contact.categoryId)) {
+      return undefined
+    }
+
+    const category = categoriesHook.categories?.find((c) => c.id === contact.categoryId)
+    return category?.frequency
+  }
+
   async function handleCreate(data: CreateCheckInFormData) {
     await checkInsHook.operations.createManual(data)
     setIsCreateModalOpen(false)
@@ -178,11 +197,13 @@ export function CheckInsPage() {
     checkInId: string
     completionDate: Date
     notes?: string
+    scheduleNext?: boolean
   }) {
     await checkInsHook.operations.complete({
       checkInId: checkInIdFromString(input.checkInId),
       completionDate: input.completionDate,
       notes: input.notes,
+      scheduleNext: input.scheduleNext,
     })
     setCompletingCheckIn(null)
   }

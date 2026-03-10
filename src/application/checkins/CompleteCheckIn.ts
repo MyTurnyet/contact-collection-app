@@ -24,11 +24,12 @@ export interface CompleteCheckInInput {
   checkInId: CheckInId
   completionDate: Date
   notes?: string
+  scheduleNext?: boolean
 }
 
 export interface CompleteCheckInResult {
   completedCheckIn: CheckIn
-  nextCheckIn: CheckIn
+  nextCheckIn: CheckIn | null
 }
 
 export class CompleteCheckIn {
@@ -51,7 +52,12 @@ export class CompleteCheckIn {
     const contact = await this.findContact(checkIn.contactId)
     const category = await this.findCategory(contact.categoryId)
     const completed = this.createCompleted(checkIn, input)
-    const next = this.createNext(checkIn, category.frequency)
+
+    const shouldScheduleNext = input.scheduleNext ?? true
+    const next = shouldScheduleNext
+      ? this.createNext(checkIn, category.frequency)
+      : null
+
     await this.saveCheckIns(completed, next)
     return { completedCheckIn: completed, nextCheckIn: next }
   }
@@ -109,8 +115,10 @@ export class CompleteCheckIn {
     })
   }
 
-  private async saveCheckIns(completed: CheckIn, next: CheckIn) {
+  private async saveCheckIns(completed: CheckIn, next: CheckIn | null) {
     await this.checkInRepository.save(completed)
-    await this.checkInRepository.save(next)
+    if (next) {
+      await this.checkInRepository.save(next)
+    }
   }
 }
