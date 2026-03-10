@@ -8,14 +8,16 @@ The Contact Check-in Application helps you maintain meaningful relationships by 
 
 **Architecture**: Frontend-only application with browser LocalStorage persistence. No backend server required - runs entirely in the browser.
 
-**Status**: Feature-complete with 1018 passing tests across 119 test files.
+**Status**: Feature-complete with 1042 passing tests across 121 test files.
 
 ## Features
 
 - **Contact Management**: Store contact details including phone, email, location, timezone, and relationship context
+- **Category Display & Filtering**: View category badges with color coding, filter by category, and group contacts by category
 - **Categorization**: Organize contacts by relationship type (Family, Close Friends, Friends, Professional)
 - **Smart Scheduling**: Set check-in frequencies per category (daily, weekly, monthly, quarterly, yearly)
-- **Check-in Tracking**: Mark check-ins complete with notes, automatically schedule the next one from the original date
+- **Check-in Tracking**: Mark check-ins complete with notes, optional schedule next confirmation with date preview
+- **Delete Check-ins**: Remove scheduled or overdue check-ins with confirmation dialog
 - **Manual Check-ins**: Create ad-hoc check-ins that don't affect regular schedules
 - **Dashboard**: View upcoming, overdue, and today's check-ins at a glance
 - **Browser Notifications**: Get browser notifications for due and overdue check-ins
@@ -127,7 +129,7 @@ npm run test:coverage
 
 ### Test Status
 
-**Current**: 1018 tests passing across 119 test files
+**Current**: 1042 tests passing across 121 test files
 - Domain layer: 100% coverage
 - Application layer: 100% coverage
 - Infrastructure layer: High coverage
@@ -207,7 +209,7 @@ src/
 │   │   ├── ListCategories.ts
 │   │   ├── GetDefaultCategories.ts
 │   │   └── AssignContactToCategory.ts
-│   ├── checkins/               # Check-in use cases (7 use cases, 61 tests)
+│   ├── checkins/               # Check-in use cases (8 use cases, 61 tests)
 │   │   ├── ScheduleInitialCheckIn.ts
 │   │   ├── CreateManualCheckIn.ts
 │   │   ├── GetUpcomingCheckIns.ts
@@ -215,6 +217,7 @@ src/
 │   │   ├── CompleteCheckIn.ts
 │   │   ├── RescheduleCheckIn.ts
 │   │   └── GetCheckInHistory.ts
+│   │   ├── DeleteCheckIn.ts
 │   ├── dashboard/              # Dashboard use cases (2 use cases, 16 tests)
 │   │   ├── GetDashboardSummary.ts
 │   │   └── GetTodayCheckIns.ts
@@ -491,12 +494,12 @@ For end-user documentation, see [USER_GUIDE.md](./USER_GUIDE.md).
 
 ## Development Status
 
-### ✅ Phase 1-9: Complete (1018 tests passing)
+### ✅ Phase 1-9: Complete (1042 tests passing)
 
 - [x] Project setup with Vite, React, TypeScript
 - [x] Testing infrastructure with Vitest
 - [x] Domain layer (Contact, Category, CheckIn aggregates)
-- [x] Application services (23 use cases)
+- [x] Application services (24 use cases including DeleteCheckIn)
 - [x] Infrastructure (LocalStorage, notifications, scheduler, export/import, backup, migration)
 - [x] Dependency injection (DIContainer + React Context)
 - [x] React UI layer (10 pages, 30+ components, 10+ hooks)

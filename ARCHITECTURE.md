@@ -275,8 +275,8 @@ export class LocalStorageContactRepository implements IContactRepository {
 
 - **Components** (Dumb layer)
   - `ContactCard`, `ContactFormModal`, `ContactDetailModal`
-  - `CategoryCard`, `CategoryFormModal`, `FrequencySelector`
-  - `CheckInCard`, `CreateCheckInModal`, `CompleteCheckInModal`
+  - `CategoryCard`, `CategoryFormModal`, `FrequencySelector`, `CategoryFilter`
+  - `CheckInCard`, `CreateCheckInModal`, `CompleteCheckInModal`, `DeleteCheckInDialog`
   - `DashboardStats`, `OverdueCheckIns`, `UpcomingCheckIns`
   - `NavigationBar`, `AppLayout`, `ResponsiveContainer`
 
@@ -291,6 +291,10 @@ export class LocalStorageContactRepository implements IContactRepository {
   - `validatePhoneInput`, `validateEmailInput`, `validateLocationInput`
   - Non-throwing validation for real-time feedback
   - Returns `{valid: boolean, error?: string}`
+
+- **UI Helpers**
+  - `getCategoryColor` - Consistent color coding for categories
+  - Returns color based on category ID hash
 
 **Example**: Smart Hook
 ```typescript
@@ -744,7 +748,7 @@ Each use case:
 5. `GetDefaultCategories` - Get predefined categories
 6. `AssignContactToCategory` - Change contact's category
 
-**Check-in Use Cases** (7):
+**Check-in Use Cases** (8):
 1. `ScheduleInitialCheckIn` - Schedule first check-in for new contact
 2. `CreateManualCheckIn` - Create ad-hoc check-in
 3. `GetUpcomingCheckIns` - Get check-ins in next 7/30 days
@@ -752,6 +756,7 @@ Each use case:
 5. `CompleteCheckIn` - Mark complete, schedule next
 6. `RescheduleCheckIn` - Move to new date
 7. `GetCheckInHistory` - Get completed check-ins for contact
+8. `DeleteCheckIn` - Delete scheduled or overdue check-in
 
 **Dashboard Use Cases** (2):
 1. `GetDashboardSummary` - Aggregate stats (overdue, today, upcoming, total)
@@ -945,7 +950,7 @@ DIContainer
 │   ├── OverdueCheckInDetector
 │   ├── AutomaticBackupService
 │   └── MigrationManager
-├── Use Cases (23 total)
+├── Use Cases (24 total)
 │   ├── CreateContact
 │   ├── UpdateContact
 │   └── ...

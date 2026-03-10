@@ -95,12 +95,34 @@ The app will automatically schedule the first check-in based on the category's f
 2. Click **"View Details"** on any contact card
 3. See all contact information including:
    - Contact details
-   - Current category
+   - Current category (with colored badge)
    - Check-in history
 4. From here you can:
    - Edit the contact
    - View check-in history
    - Delete the contact
+
+### Category Display on Contact Cards
+
+Each contact card shows:
+- **Category Badge**: Colored chip displaying the category name (e.g., "Family", "Close Friends")
+- **Check-in Frequency**: Text showing how often to check in (e.g., "Check-in: Every month")
+- **Color Coding**: Each category gets a consistent color for easy visual identification
+
+### Filtering Contacts by Category
+
+1. Navigate to **Contacts**
+2. Use the **Category Filter** dropdown at the top
+3. Select a category to view only contacts in that category
+4. Select **"All Categories"** to view all contacts
+
+### Grouping Contacts by Category
+
+1. Navigate to **Contacts**
+2. Toggle the **"Group by Category"** switch
+3. Contacts will be organized into sections by category
+4. Each section shows the category name and contact count
+5. Uncategorized contacts appear in their own section
 
 ### Searching Contacts
 
@@ -200,12 +222,19 @@ When you've contacted someone:
 1. Find the check-in in the **Dashboard** or **Check-ins** page
 2. Click the **"Complete"** button (checkmark icon)
 3. Optionally add notes about the conversation
-4. Click **"Complete Check-In"**
+4. **Schedule Next Check-in** (new feature):
+   - A checkbox to schedule the next check-in (checked by default)
+   - Preview of the next check-in date based on the category's frequency
+   - If no frequency is set, you'll see a warning
+   - Uncheck if you don't want to schedule the next check-in automatically
+5. Click **"Complete Check-In"**
 
 **What happens next**:
 - The check-in is marked complete with the current date
-- A new check-in is automatically scheduled based on the **original scheduled date** (not the completion date)
-- Example: If a weekly check-in was due Monday but completed Wednesday, the next check-in will be scheduled for next Monday (not next Wednesday)
+- If you left "Schedule next check-in" checked:
+  - A new check-in is scheduled based on the **original scheduled date** (not the completion date)
+  - Example: If a weekly check-in was due Monday but completed Wednesday, the next check-in will be scheduled for next Monday (not next Wednesday)
+- If you unchecked it, no new check-in is scheduled
 
 ### Rescheduling a Check-in
 
@@ -231,6 +260,21 @@ Need to schedule an ad-hoc check-in outside the regular schedule?
 6. Click **"Create"**
 
 **Important**: Manual check-ins don't affect the regular schedule. When you complete a manual check-in, it won't create a new scheduled check-in.
+
+### Deleting a Check-in
+
+If you need to remove a scheduled or overdue check-in:
+
+1. Navigate to **Check-ins** or **Dashboard**
+2. Find the check-in you want to delete
+3. Click the **"Delete"** button (red button, only visible for non-completed check-ins)
+4. Review the confirmation dialog showing:
+   - Contact name
+   - Scheduled date
+   - Warning that this action cannot be undone
+5. Click **"Delete"** to confirm, or **"Cancel"** to keep the check-in
+
+**Note**: The Delete button only appears for scheduled and overdue check-ins. Completed check-ins cannot be deleted to preserve your history.
 
 ### Viewing Check-in History
 
