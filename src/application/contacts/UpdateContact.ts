@@ -46,6 +46,7 @@ export class UpdateContact {
       email: this.updateEmail(existing, input),
       location: this.updateLocation(existing, input),
       relationshipContext: this.updateRelationshipContext(existing, input),
+      categoryId: existing.categoryId,
       importantDates: existing.importantDates,
     })
   }
