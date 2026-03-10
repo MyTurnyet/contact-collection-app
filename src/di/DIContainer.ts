@@ -36,6 +36,7 @@ import { GetUpcomingCheckIns } from '../application/checkins/GetUpcomingCheckIns
 import { GetOverdueCheckIns } from '../application/checkins/GetOverdueCheckIns'
 import { CompleteCheckIn } from '../application/checkins/CompleteCheckIn'
 import { RescheduleCheckIn } from '../application/checkins/RescheduleCheckIn'
+import { DeleteCheckIn } from '../application/checkins/DeleteCheckIn'
 import { GetCheckInHistory } from '../application/checkins/GetCheckInHistory'
 
 // Dashboard Use Cases
@@ -163,6 +164,10 @@ export class DIContainer {
 
   getRescheduleCheckIn() {
     return new RescheduleCheckIn(this.checkInRepo)
+  }
+
+  getDeleteCheckIn() {
+    return new DeleteCheckIn(this.checkInRepo)
   }
 
   getGetCheckInHistory() {

@@ -37,6 +37,7 @@ export interface UseCheckInsResult {
     reschedule: (input: RescheduleCheckInInput) => Promise<CheckIn>
     getHistory: (contactId: ContactId) => Promise<readonly CheckIn[]>
     createManual: (input: CreateManualCheckInInput) => Promise<CheckIn>
+    delete: (checkInId: CheckInId) => Promise<void>
     refresh: () => Promise<void>
   }
 }
@@ -149,6 +150,15 @@ export function useCheckIns(): UseCheckInsResult {
     [container, loadCheckIns]
   )
 
+  const deleteCheckIn = useCallback(
+    async (checkInId: CheckInId): Promise<void> => {
+      const useCase = container.getDeleteCheckIn()
+      await useCase.execute(checkInId)
+      await loadCheckIns()
+    },
+    [container, loadCheckIns]
+  )
+
   const refresh = useCallback(async (): Promise<void> => {
     await loadCheckIns()
   }, [loadCheckIns])
@@ -167,6 +177,7 @@ export function useCheckIns(): UseCheckInsResult {
       reschedule,
       getHistory,
       createManual,
+      delete: deleteCheckIn,
       refresh,
     },
   }
