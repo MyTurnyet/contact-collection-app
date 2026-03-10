@@ -8,7 +8,7 @@ export interface ContactInput {
   name: string
   phone?: string
   email?: string
-  city: string
+  city?: string
   state?: string
   country: string
   timezone: string

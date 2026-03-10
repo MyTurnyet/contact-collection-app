@@ -27,9 +27,9 @@ import type { Category } from '../../domain/category/Category'
 
 export interface ContactFormData {
   name: string
-  phone: string
+  phone?: string
   email: string
-  city: string
+  city?: string
   state?: string
   country: string
   timezone: string
@@ -96,7 +96,6 @@ export function ContactFormModal({
             onBlur={() => validatePhone()}
             error={Boolean(errors.phone)}
             helperText={errors.phone}
-            required
             fullWidth
           />
           <TextField
@@ -115,7 +114,6 @@ export function ContactFormModal({
             onChange={(e) => updateField('city', e.target.value)}
             error={Boolean(errors.city)}
             helperText={errors.city}
-            required
             fullWidth
           />
           <TextField
@@ -268,7 +266,7 @@ export function ContactFormModal({
       nextErrors.name = 'Name is required'
     }
 
-    const phoneValid = validatePhoneInput(formData.phone)
+    const phoneValid = formData.phone && formData.phone.trim().length > 0 ? validatePhoneInput(formData.phone) : { valid: true }
     const emailValid = validateEmailInput(formData.email)
     const locationValid = validateLocationInput({
       city: formData.city,
@@ -277,9 +275,6 @@ export function ContactFormModal({
     })
 
     if (!locationValid.valid) {
-      if (!formData.city || formData.city.trim().length === 0) {
-        nextErrors.city = 'City is required'
-      }
       if (!formData.country || formData.country.trim().length === 0) {
         nextErrors.country = 'Country is required'
       }
