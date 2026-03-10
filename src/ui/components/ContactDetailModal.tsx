@@ -13,6 +13,7 @@ import type { Contact } from '../../domain/contact/Contact'
 export interface ContactDetailModalProps {
   open: boolean
   contact: Contact
+  categoryName?: string
   onClose: () => void
   onEdit?: (contact: Contact) => void
 }
@@ -20,6 +21,7 @@ export interface ContactDetailModalProps {
 export function ContactDetailModal({
   open,
   contact,
+  categoryName,
   onClose,
   onEdit,
 }: ContactDetailModalProps) {
@@ -28,6 +30,9 @@ export function ContactDetailModal({
       <DialogTitle>{contact.name}</DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {categoryName && (
+            <DetailSection label="Category" value={categoryName} />
+          )}
           <DetailSection label="Phone" value={contact.phone} />
           <DetailSection label="Email" value={contact.email} />
           <DetailSection label="Location" value={formatLocation(contact)} />

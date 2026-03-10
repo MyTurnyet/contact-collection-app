@@ -5,6 +5,7 @@ import {
   Typography,
   IconButton,
   Box,
+  Chip,
 } from '@mui/material'
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material'
 import type { Contact } from '../../domain/contact/Contact'
@@ -12,6 +13,7 @@ import type { ContactId } from '../../domain/contact/ContactId'
 
 export interface ContactCardProps {
   contact: Contact
+  categoryName?: string
   onEdit?: (contact: Contact) => void
   onDelete?: (id: ContactId) => void
   onView?: (contact: Contact) => void
@@ -19,6 +21,7 @@ export interface ContactCardProps {
 
 export function ContactCard({
   contact,
+  categoryName,
   onEdit,
   onDelete,
   onView,
@@ -30,9 +33,14 @@ export function ContactCard({
       sx={{ cursor: onView ? 'pointer' : 'default' }}
     >
       <CardContent>
-        <Typography variant="h6" component="div">
-          {contact.name}
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+          <Typography variant="h6" component="div">
+            {contact.name}
+          </Typography>
+          {categoryName && (
+            <Chip label={categoryName} size="small" color="primary" />
+          )}
+        </Box>
         <Typography color="text.secondary" sx={{ mt: 1 }}>
           {contact.phone}
         </Typography>

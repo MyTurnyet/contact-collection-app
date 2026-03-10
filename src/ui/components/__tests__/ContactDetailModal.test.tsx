@@ -106,4 +106,27 @@ describe('ContactDetailModal', () => {
     // Then
     expect(onEdit).toHaveBeenCalledWith(mockContact)
   })
+
+  it('should display category name when provided', () => {
+    // When
+    render(
+      <ContactDetailModal
+        open
+        contact={mockContact}
+        onClose={vi.fn()}
+        categoryName="Close Friends"
+      />
+    )
+
+    // Then
+    expect(screen.getByText('Close Friends')).toBeInTheDocument()
+  })
+
+  it('should not display category when not provided', () => {
+    // When
+    render(<ContactDetailModal open contact={mockContact} onClose={vi.fn()} />)
+
+    // Then
+    expect(screen.queryByText('Category')).not.toBeInTheDocument()
+  })
 })

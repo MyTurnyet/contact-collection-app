@@ -9,24 +9,29 @@ import {
 } from '@mui/material'
 import { Add as AddIcon } from '@mui/icons-material'
 import { useContacts } from '../hooks/useContacts'
+import { useCategories } from '../hooks/useCategories'
 import { ContactCard } from '../components/ContactCard'
 import { ContactSearchBar } from '../components/ContactSearchBar'
 import { ContactFormModal, type ContactFormData } from '../components/ContactFormModal'
 import { ContactDetailModal } from '../components/ContactDetailModal'
 import type { Contact } from '../../domain/contact/Contact'
 import type { ContactId } from '../../domain/contact/ContactId'
+import type { Category } from '../../domain/category/Category'
+import type { CategoryId } from '../../domain/category/CategoryId'
 import { useDependencies } from '../../di'
-import { categoryIdFromString } from '../../domain/category/CategoryId'
+import { categoryIdFromString, isNullCategoryId } from '../../domain/category/CategoryId'
 
 export function ContactListPage() {
   const container = useDependencies()
   const { contacts, isLoading, error, operations } = useContacts()
+  const { categories } = useCategories()
   const [searchQuery, setSearchQuery] = useState('')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingContact, setEditingContact] = useState<Contact | null>(null)
   const [viewingContact, setViewingContact] = useState<Contact | null>(null)
 
   const filteredContacts = useFilteredContacts(contacts, searchQuery)
+  const getCategoryName = useCategoryLookup(categories)
 
   if (isLoading) {
     return renderLoading()
@@ -72,6 +77,7 @@ export function ContactListPage() {
         <ContactDetailModal
           open
           contact={viewingContact}
+          categoryName={getCategoryName(viewingContact.categoryId)}
           onClose={() => setViewingContact(null)}
           onEdit={handleViewToEdit}
         />
@@ -93,6 +99,7 @@ export function ContactListPage() {
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={contact.id}>
             <ContactCard
               contact={contact}
+              categoryName={getCategoryName(contact.categoryId)}
               onEdit={setEditingContact}
               onDelete={handleDelete}
               onView={setViewingContact}
@@ -200,6 +207,23 @@ function useFilteredContacts(
         contact.phone.toLowerCase().includes(query)
     )
   }, [contacts, searchQuery])
+}
+
+function useCategoryLookup(categories: readonly Category[] | null) {
+  return useMemo(() => {
+    const categoryMap = new Map<string, string>()
+    if (categories) {
+      categories.forEach((category) => {
+        categoryMap.set(category.id, category.name)
+      })
+    }
+    return (categoryId: CategoryId): string | undefined => {
+      if (isNullCategoryId(categoryId)) {
+        return undefined
+      }
+      return categoryMap.get(categoryId)
+    }
+  }, [categories])
 }
 
 function renderLoading() {

@@ -93,4 +93,20 @@ describe('ContactCard', () => {
     // Then
     expect(onView).toHaveBeenCalledWith(mockContact)
   })
+
+  it('should display category name when provided', () => {
+    // When
+    render(<ContactCard contact={mockContact} categoryName="Family" />)
+
+    // Then
+    expect(screen.getByText('Family')).toBeInTheDocument()
+  })
+
+  it('should not display category when not provided', () => {
+    // When
+    render(<ContactCard contact={mockContact} />)
+
+    // Then
+    expect(screen.queryByText('Family')).not.toBeInTheDocument()
+  })
 })
