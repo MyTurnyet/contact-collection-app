@@ -10,10 +10,13 @@ import {
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material'
 import type { Contact } from '../../domain/contact/Contact'
 import type { ContactId } from '../../domain/contact/ContactId'
+import type { CategoryColor } from '../helpers/categoryColors'
 
 export interface ContactCardProps {
   contact: Contact
   categoryName?: string
+  categoryColor?: CategoryColor
+  frequency?: string
   onEdit?: (contact: Contact) => void
   onDelete?: (id: ContactId) => void
   onView?: (contact: Contact) => void
@@ -22,6 +25,8 @@ export interface ContactCardProps {
 export function ContactCard({
   contact,
   categoryName,
+  categoryColor,
+  frequency,
   onEdit,
   onDelete,
   onView,
@@ -38,9 +43,18 @@ export function ContactCard({
             {contact.name}
           </Typography>
           {categoryName && (
-            <Chip label={categoryName} size="small" color="primary" />
+            <Chip
+              label={categoryName}
+              size="small"
+              color={categoryColor || 'primary'}
+            />
           )}
         </Box>
+        {frequency && (
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+            Check-in: {frequency}
+          </Typography>
+        )}
         <Typography color="text.secondary" sx={{ mt: 1 }}>
           {contact.phone}
         </Typography>

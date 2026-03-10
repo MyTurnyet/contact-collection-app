@@ -109,4 +109,20 @@ describe('ContactCard', () => {
     // Then
     expect(screen.queryByText('Family')).not.toBeInTheDocument()
   })
+
+  it('should display frequency when provided', () => {
+    // When
+    render(<ContactCard contact={mockContact} frequency="Every 2 months" />)
+
+    // Then
+    expect(screen.getByText('Check-in: Every 2 months')).toBeInTheDocument()
+  })
+
+  it('should not display frequency when not provided', () => {
+    // When
+    render(<ContactCard contact={mockContact} />)
+
+    // Then
+    expect(screen.queryByText(/Check-in:/)).not.toBeInTheDocument()
+  })
 })
