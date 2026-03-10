@@ -6,12 +6,16 @@ import {
   CircularProgress,
   Alert,
   Grid,
+  FormControlLabel,
+  Switch,
+  Stack,
 } from '@mui/material'
 import { Add as AddIcon } from '@mui/icons-material'
 import { useContacts } from '../hooks/useContacts'
 import { useCategories } from '../hooks/useCategories'
 import { ContactCard } from '../components/ContactCard'
 import { ContactSearchBar } from '../components/ContactSearchBar'
+import { CategoryFilter } from '../components/CategoryFilter'
 import { ContactFormModal, type ContactFormData } from '../components/ContactFormModal'
 import { ContactDetailModal } from '../components/ContactDetailModal'
 import type { Contact } from '../../domain/contact/Contact'
@@ -20,18 +24,24 @@ import type { Category } from '../../domain/category/Category'
 import type { CategoryId } from '../../domain/category/CategoryId'
 import { useDependencies } from '../../di'
 import { categoryIdFromString, isNullCategoryId } from '../../domain/category/CategoryId'
+import { getCategoryColor } from '../helpers/categoryColors'
+import { formatFrequency } from '../../domain/category/CheckInFrequency'
 
 export function ContactListPage() {
   const container = useDependencies()
   const { contacts, isLoading, error, operations } = useContacts()
   const { categories } = useCategories()
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategoryId, setSelectedCategoryId] = useState<CategoryId | null>(null)
+  const [groupByCategory, setGroupByCategory] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingContact, setEditingContact] = useState<Contact | null>(null)
   const [viewingContact, setViewingContact] = useState<Contact | null>(null)
 
-  const filteredContacts = useFilteredContacts(contacts, searchQuery)
+  const filteredContacts = useFilteredContacts(contacts, searchQuery, selectedCategoryId)
+  const groupedContacts = useGroupedContacts(filteredContacts, categories, groupByCategory)
   const getCategoryName = useCategoryLookup(categories)
+  const getCategoryInfo = useCategoryInfoLookup(categories)
 
   if (isLoading) {
     return renderLoading()
@@ -54,9 +64,25 @@ export function ContactListPage() {
         </Button>
       </Box>
 
-      <Box sx={{ mb: 3 }}>
+      <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
         <ContactSearchBar value={searchQuery} onSearch={setSearchQuery} />
-      </Box>
+        {categories && categories.length > 0 && (
+          <CategoryFilter
+            categories={categories}
+            selectedCategoryId={selectedCategoryId}
+            onFilterChange={setSelectedCategoryId}
+          />
+        )}
+        <FormControlLabel
+          control={
+            <Switch
+              checked={groupByCategory}
+              onChange={(e) => setGroupByCategory(e.target.checked)}
+            />
+          }
+          label="Group by Category"
+        />
+      </Stack>
 
       {renderContent()}
 
@@ -86,26 +112,56 @@ export function ContactListPage() {
   )
 
   function renderContent() {
+    if (groupByCategory) {
+      return renderGroupedContacts()
+    }
     if (!filteredContacts || filteredContacts.length === 0) {
       return renderEmptyState()
     }
-    return renderContactGrid()
+    return renderContactGrid(filteredContacts)
   }
 
-  function renderContactGrid() {
+  function renderGroupedContacts() {
+    if (groupedContacts.length === 0) {
+      return renderEmptyState()
+    }
+
+    return (
+      <Box>
+        {groupedContacts.map(({ category, contacts: groupContacts }) => (
+          <Box key={category?.id || 'uncategorized'} sx={{ mb: 4 }}>
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              {category?.name || 'Uncategorized'}
+              <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 2 }}>
+                ({groupContacts.length} contact{groupContacts.length !== 1 ? 's' : ''})
+              </Typography>
+            </Typography>
+            {renderContactGrid(groupContacts)}
+          </Box>
+        ))}
+      </Box>
+    )
+  }
+
+  function renderContactGrid(contactsList: readonly Contact[]) {
     return (
       <Grid container spacing={2}>
-        {filteredContacts?.map((contact) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={contact.id}>
-            <ContactCard
-              contact={contact}
-              categoryName={getCategoryName(contact.categoryId)}
-              onEdit={setEditingContact}
-              onDelete={handleDelete}
-              onView={setViewingContact}
-            />
-          </Grid>
-        ))}
+        {contactsList.map((contact) => {
+          const categoryInfo = getCategoryInfo(contact.categoryId)
+          return (
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={contact.id}>
+              <ContactCard
+                contact={contact}
+                categoryName={categoryInfo?.name}
+                categoryColor={categoryInfo?.color}
+                frequency={categoryInfo?.frequency}
+                onEdit={setEditingContact}
+                onDelete={handleDelete}
+                onView={setViewingContact}
+              />
+            </Grid>
+          )
+        })}
       </Grid>
     )
   }
@@ -193,20 +249,62 @@ export function ContactListPage() {
 
 function useFilteredContacts(
   contacts: readonly Contact[] | null,
-  searchQuery: string
+  searchQuery: string,
+  categoryFilter: CategoryId | null
 ) {
   return useMemo(() => {
     if (!contacts) return null
-    if (!searchQuery) return contacts
 
-    const query = searchQuery.toLowerCase()
-    return contacts.filter(
-      (contact) =>
-        contact.name.toLowerCase().includes(query) ||
-        contact.email.toLowerCase().includes(query) ||
-        contact.phone.toLowerCase().includes(query)
-    )
-  }, [contacts, searchQuery])
+    let filtered = contacts
+
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(
+        (contact) =>
+          contact.name.toLowerCase().includes(query) ||
+          contact.email.toLowerCase().includes(query) ||
+          contact.phone.toLowerCase().includes(query)
+      )
+    }
+
+    // Apply category filter
+    if (categoryFilter) {
+      filtered = filtered.filter((contact) => contact.categoryId === categoryFilter)
+    }
+
+    return filtered
+  }, [contacts, searchQuery, categoryFilter])
+}
+
+function useGroupedContacts(
+  contacts: readonly Contact[] | null,
+  categories: readonly Category[] | null,
+  groupByCategory: boolean
+) {
+  return useMemo(() => {
+    if (!groupByCategory || !contacts || !categories) {
+      return []
+    }
+
+    const categoryMap = new Map<string, Category>()
+    categories.forEach((cat) => categoryMap.set(cat.id, cat))
+
+    const groups = new Map<string, Contact[]>()
+
+    contacts.forEach((contact) => {
+      const key = isNullCategoryId(contact.categoryId) ? 'uncategorized' : contact.categoryId
+      if (!groups.has(key)) {
+        groups.set(key, [])
+      }
+      groups.get(key)!.push(contact)
+    })
+
+    return Array.from(groups.entries()).map(([key, groupContacts]) => ({
+      category: key === 'uncategorized' ? null : categoryMap.get(key),
+      contacts: groupContacts,
+    }))
+  }, [contacts, categories, groupByCategory])
 }
 
 function useCategoryLookup(categories: readonly Category[] | null) {
@@ -222,6 +320,30 @@ function useCategoryLookup(categories: readonly Category[] | null) {
         return undefined
       }
       return categoryMap.get(categoryId)
+    }
+  }, [categories])
+}
+
+function useCategoryInfoLookup(categories: readonly Category[] | null) {
+  return useMemo(() => {
+    const categoryMap = new Map<string, Category>()
+    if (categories) {
+      categories.forEach((category) => {
+        categoryMap.set(category.id, category)
+      })
+    }
+    return (categoryId: CategoryId) => {
+      if (isNullCategoryId(categoryId)) {
+        return null
+      }
+      const category = categoryMap.get(categoryId)
+      if (!category) return null
+
+      return {
+        name: category.name,
+        color: getCategoryColor(categoryId),
+        frequency: formatFrequency(category.frequency),
+      }
     }
   }, [categories])
 }
