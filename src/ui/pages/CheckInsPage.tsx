@@ -17,6 +17,7 @@ import { CheckInCard } from '../components/CheckInCard'
 import { CreateCheckInModal, type CreateCheckInFormData } from '../components/CreateCheckInModal'
 import { CompleteCheckInModal } from '../components/CompleteCheckInModal'
 import { RescheduleCheckInModal } from '../components/RescheduleCheckInModal'
+import { DeleteCheckInDialog } from '../components/DeleteCheckInDialog'
 import type { CheckIn } from '../../domain/checkin/CheckIn'
 import type { CheckInFrequency } from '../../domain/category/CheckInFrequency'
 import { CheckInStatus } from '../../domain/checkin/CheckInStatus'
@@ -33,6 +34,7 @@ export function CheckInsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [completingCheckIn, setCompletingCheckIn] = useState<CheckIn | null>(null)
   const [reschedulingCheckIn, setReschedulingCheckIn] = useState<CheckIn | null>(null)
+  const [deletingCheckIn, setDeletingCheckIn] = useState<CheckIn | null>(null)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [sortBy, setSortBy] = useState<SortOption>('date')
 
@@ -122,6 +124,7 @@ export function CheckInsPage() {
               contactName={getContactName(checkIn, contactsHook.contacts)}
               onComplete={setCompletingCheckIn}
               onReschedule={setReschedulingCheckIn}
+              onDelete={setDeletingCheckIn}
             />
           </Grid>
         ))}
@@ -174,6 +177,15 @@ export function CheckInsPage() {
             onReschedule={handleReschedule}
           />
         )}
+        {deletingCheckIn && (
+          <DeleteCheckInDialog
+            open
+            checkIn={deletingCheckIn}
+            contactName={getContactName(deletingCheckIn, contactsHook.contacts)}
+            onClose={() => setDeletingCheckIn(null)}
+            onConfirm={handleDeleteConfirm}
+          />
+        )}
       </>
     )
   }
@@ -217,6 +229,12 @@ export function CheckInsPage() {
       newScheduledDate: input.newScheduledDate,
     })
     setReschedulingCheckIn(null)
+  }
+
+  async function handleDeleteConfirm() {
+    if (!deletingCheckIn) return
+    await checkInsHook.operations.delete(deletingCheckIn.id)
+    setDeletingCheckIn(null)
   }
 }
 

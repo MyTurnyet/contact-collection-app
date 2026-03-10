@@ -8,6 +8,7 @@ export interface CheckInCardProps {
   contactName: string
   onComplete?: (checkIn: CheckIn) => void
   onReschedule?: (checkIn: CheckIn) => void
+  onDelete?: (checkIn: CheckIn) => void
 }
 
 export function CheckInCard({
@@ -15,6 +16,7 @@ export function CheckInCard({
   contactName,
   onComplete,
   onReschedule,
+  onDelete,
 }: CheckInCardProps) {
   return (
     <Card>
@@ -27,7 +29,7 @@ export function CheckInCard({
           {formatScheduledDate(checkIn.scheduledDate)}
         </Typography>
       </CardContent>
-      {renderActions(checkIn, onComplete, onReschedule)}
+      {renderActions(checkIn, onComplete, onReschedule, onDelete)}
     </Card>
   )
 }
@@ -57,18 +59,21 @@ function formatScheduledDate(date: Date): string {
 function renderActions(
   checkIn: CheckIn,
   onComplete?: (checkIn: CheckIn) => void,
-  onReschedule?: (checkIn: CheckIn) => void
+  onReschedule?: (checkIn: CheckIn) => void,
+  onDelete?: (checkIn: CheckIn) => void
 ) {
   const isCompleted = checkIn.status === CheckInStatus.Completed
   const showComplete = onComplete && !isCompleted
   const showReschedule = onReschedule && !isCompleted
+  const showDelete = onDelete && !isCompleted
 
-  if (!showComplete && !showReschedule) return null
+  if (!showComplete && !showReschedule && !showDelete) return null
 
   return (
     <CardActions>
       {showComplete && createCompleteButton(checkIn, onComplete)}
       {showReschedule && createRescheduleButton(checkIn, onReschedule)}
+      {showDelete && createDeleteButton(checkIn, onDelete)}
     </CardActions>
   )
 }
@@ -91,6 +96,17 @@ function createRescheduleButton(
   return (
     <Button size="small" onClick={() => onReschedule(checkIn)}>
       Reschedule
+    </Button>
+  )
+}
+
+function createDeleteButton(
+  checkIn: CheckIn,
+  onDelete: (checkIn: CheckIn) => void
+) {
+  return (
+    <Button size="small" color="error" onClick={() => onDelete(checkIn)}>
+      Delete
     </Button>
   )
 }
